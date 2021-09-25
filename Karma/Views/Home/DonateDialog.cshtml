@@ -1,0 +1,53 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div id="donateDialog" class="modal-body">
+        <div class="container-fluid">
+            <div class="row">
+                @*TODO: redirect to page with person requests*@
+                <div class="col-6">
+                    <button type="button" class="btn btn-success">
+                        <div class="row h4" style="color:white; text-align:center">
+                            Person
+                        </div>
+                        <div class="row">
+                            <img src="~/data/person.png" class="img-fluid">
+                        </div>
+                    </button>
+                </div>
+                @*TODO: redirect to page with charity requests*@
+                <div class="col-6">
+                    <button type="button" class="btn btn-success col">
+                        <div class="row h4" style="color: white; text-align: center">
+                            Charity
+                        </div>
+                        <div class="row">
+                            <img src="~/data/charity.png" class="img-fluid">
+                        </div>
+                    </button>
+                </div>
+            </div>
+            @*TODO: redirect to page (dialog?) for donate post creation*@
+            <div class="row">
+                <button type="button" class="btn btn-light col">
+                    <div class="row">
+                        Create a post
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

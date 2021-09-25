@@ -150,13 +150,5 @@ namespace Karma.Controllers
             return _context.Post.Any(e => e.Id == id);
         }
 
-        public IActionResult DonateDialog()
-        {
-            return View();
-        }
-        public IActionResult RequestDialog()
-        {
-            return View();
-        }
     }
 }

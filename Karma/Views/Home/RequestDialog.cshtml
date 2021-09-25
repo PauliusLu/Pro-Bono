@@ -1,0 +1,48 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div id="requestDialog" class="modal-body">
+        <div class="container-fluid">
+            @*TODO: redirect to page with all donation posts*@
+            <div class="row">
+                <button type="button" class="btn btn-warning">
+                    <div class="row h4" style="color:white; text-align:center">
+                        Check posts
+                    </div>
+                    <div class="row" style="color:white; text-align:center">
+                        Have you  searched for your item in the donations list?
+                    </div>
+                    <div class="row">
+                        <img src="~/data/search-posts.png" class="img-fluid">
+                    </div>
+                </button>
+            </div>
+            <div class="row">
+                <div class="row">
+                    If you haven’t found anything, create a request
+                </div>
+            </div>
+            @*TODO: redirect to page (dialog?) to create a request*@
+            <div class="row">
+                <button type="button" class="btn btn-light col">
+                    <div class="row">
+                        Create a request
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -7,10 +7,6 @@ a.navbar-brand {
   word-break: break-all;
 }
 
-.nav-item {
-    padding: 0px 10px 0px !important;
-}
-
 /* Provide sufficient contrast against white background */
 a {
     color: #0366d6;
