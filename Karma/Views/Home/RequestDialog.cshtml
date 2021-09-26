@@ -15,21 +15,27 @@
     <div id="requestDialog" class="modal-body">
         <div class="container-fluid">
             @*TODO: redirect to page with all donation posts*@
-            <div class="row">
-                <button type="button" class="btn btn-warning">
-                    <div class="row h4" style="color:white; text-align:center">
-                        Check posts
-                    </div>
-                    <div class="row" style="color:white; text-align:center">
-                        Have you  searched for your item in the donations list?
+            <div class="row justify-content-around">
+                <button type="button" class="btn btn-warning col-10">
+                    <div class="row">
+                        <h4 class="col-12 text-center btn-title">
+                            Check posts
+                        </h4>
                     </div>
                     <div class="row">
-                        <img src="~/data/search-posts.png" class="img-fluid">
+                        <div class="col-12 text text-center">
+                            Have you searched for your item in the donations list?
+                        </div>
+                    </div>
+                    <div class="row justify-content-around">
+                        <div class="ratio ratio-4x3">
+                            <img src="~/data/search-posts.png" class="img-fluid col-12 mx-auto">
+                        </div>
                     </div>
                 </button>
             </div>
             <div class="row">
-                <div class="row">
+                <div class="col-12 text text-center">
                     If you haven’t found anything, create a request
                 </div>
             </div>
@@ -37,7 +43,9 @@
             <div class="row">
                 <button type="button" class="btn btn-light col">
                     <div class="row">
-                        Create a request
+                        <div class="col-12 text-center font-weight-bold">
+                            Create a request
+                        </div>
                     </div>
                 </button>
             </div>

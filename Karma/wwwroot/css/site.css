@@ -12,6 +12,30 @@ a {
     color: #0366d6;
 }
 
+.nav-item {
+    padding: 0px 5px 0px;
+}
+
+.btn-image {
+    display: flex;
+}
+
+.btn .btn-title {
+    color: white;
+}
+
+.modal-body .text {
+    color: black;
+}
+
+.btn .row .text {
+    color: white;
+}
+
+.modal-body .row {
+    padding: 5px 5px 5px 5px;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;

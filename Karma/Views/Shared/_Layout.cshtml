@@ -25,10 +25,10 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-outline-dark" asp-area="" asp-controller="Posts" asp-action="RequestDialog">Request</a>
+                            <button class="btn btn-warning" data-toggle="modal" data-target="#dialog">Request</button>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-dark" asp-area="" asp-controller="Posts" asp-action="DonateDialog">Donate</a>
+                            <button class="btn btn-success" data-toggle="modal" data-target="#dialog">Donate</button>
                         </li>
                     </ul>
                 </div>
@@ -36,8 +36,16 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main">
             @RenderBody()
+            <div id="dialog" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -47,6 +55,20 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $('#dialog').on('show.bs.modal', function (event) {
+                if (event.relatedTarget.innerHTML == 'Donate') {
+                    $('#dialog .modal-body').load('@Url.Action("DonateDialog", "Home")');
+                }
+                else if (event.relatedTarget.innerHTML == 'Request') {
+                    $('#dialog .modal-body').load('@Url.Action("RequestDialog", "Home")');
+                }
+
+            });
+        });
+    </script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

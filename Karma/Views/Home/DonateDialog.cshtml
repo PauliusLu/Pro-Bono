@@ -16,33 +16,48 @@
         <div class="container-fluid">
             <div class="row">
                 @*TODO: redirect to page with person requests*@
-                <div class="col-6">
+                <div class="col-6 btn-image">
                     <button type="button" class="btn btn-success">
-                        <div class="row h4" style="color:white; text-align:center">
-                            Person
+                        <div class="row">
+                            <h4 class="col-12 text-center btn-title">
+                                Person
+                            </h4>
                         </div>
                         <div class="row">
-                            <img src="~/data/person.png" class="img-fluid">
+                            <div class="ratio ratio-4x3">
+                                <img src="~/data/person.png" class="img-fluid col-12 mx-auto">
+                            </div>
                         </div>
                     </button>
                 </div>
                 @*TODO: redirect to page with charity requests*@
-                <div class="col-6">
-                    <button type="button" class="btn btn-success col">
-                        <div class="row h4" style="color: white; text-align: center">
-                            Charity
+                <div class="col-6 btn-image">
+                    <button type="button" class="btn btn-success">
+                        <div class="row">
+                            <h4 class="col-12 text-center btn-title">
+                                Charity
+                            </h4>
                         </div>
                         <div class="row">
-                            <img src="~/data/charity.png" class="img-fluid">
+                            <div class="ratio ratio-4x3">
+                                <img src="~/data/charity.png" class="img-fluid col-12 mx-auto">
+                            </div>
                         </div>
                     </button>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-12 text text-center">
+                    Your item is currently not on demand?
                 </div>
             </div>
             @*TODO: redirect to page (dialog?) for donate post creation*@
             <div class="row">
                 <button type="button" class="btn btn-light col">
-                    <div class="row">
-                        Create a post
+                    <div class="row align-items-center">
+                        <div class="col-12 text-center font-weight-bold">
+                            Create a post
+                        </div>
                     </div>
                 </button>
             </div>
