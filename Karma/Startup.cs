@@ -25,6 +25,11 @@ namespace Karma
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Adding localization services
+            services.AddLocalization(option => { option.ResourcesPath = "Resources"; });
+            services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+                .AddDataAnnotationsLocalization();
+            
             services.AddControllersWithViews();
 
             services.AddDbContext<KarmaContext>(options =>
@@ -50,6 +55,14 @@ namespace Karma
             app.UseRouting();
 
             app.UseAuthorization();
+
+            // Supported cultures for localization
+            var supportedCultures = new[] { "en", "lt" };
+            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+
+            app.UseRequestLocalization(localizationOptions);
 
             app.UseEndpoints(endpoints =>
             {
