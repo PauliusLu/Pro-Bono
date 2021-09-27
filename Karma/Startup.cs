@@ -57,6 +57,9 @@ namespace Karma
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // Create "PostImages" directory if it does not exist.
+            System.IO.Directory.CreateDirectory(env.ContentRootPath + "\\PostImages");
         }
     }
 }
