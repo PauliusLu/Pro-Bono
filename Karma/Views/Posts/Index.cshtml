@@ -7,8 +7,10 @@
 <h1>All posts</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Donate">Create Donation</a>
+    <a asp-action="CreateRequest">Create Request</a>
 </p>
+
 <style>
     table thead th {
         background-color: #54585d;
@@ -47,10 +49,10 @@
                         @Html.DisplayFor(modelItem => item.UserId)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.PostType)
+                        @Html.DisplayFor(modelItem => item.IsDonation)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.PostingDate)
+                        @Html.DisplayFor(modelItem => item.Date)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Title)
@@ -59,10 +61,10 @@
                         @Html.DisplayFor(modelItem => item.ItemType)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.PostText)
+                        @Html.DisplayFor(modelItem => item.Description)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Image)
+                        @Html.DisplayFor(modelItem => item.ImagePath)
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

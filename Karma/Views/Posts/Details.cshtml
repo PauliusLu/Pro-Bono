@@ -3,23 +3,24 @@
 @{
     ViewData["Title"] = Html.DisplayFor(model => model.Title);
 }
-<h4>User @Post.GetPostTypeName(Model.PostType)s</h4>
+<h4>User @Post.GetPostTypeName(Model.IsDonation)s</h4>
 <h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
 
 <div>
     <hr />
-    Category: @Post.GetItemTypeName(Model.ItemType)
+    Category: @Html.DisplayFor(model => model.ItemType)
     <br />
-    @Html.DisplayFor(model => model.PostText)
+    @Html.DisplayFor(model => model.Description)
     <br />
-    @if (Model.Image != null && Model.Image != "")
+    @if (Model.ImagePath != null && Model.ImagePath != "")
     {
-        <img src="Model.Image" alt="Item image" />
+        <img src="/PostImages/@Model.GetImageName()" asp-append-version="true"
+             alt="Item image" class="img-fluid" style="max-width:400px;" />
     }
 </div>
 <br />
 <div>
-    Posted at @Html.DisplayFor(model => model.PostingDate)
+    Posted at @Html.DisplayFor(model => model.Date)
 </div>
 <hr />
 <div>
