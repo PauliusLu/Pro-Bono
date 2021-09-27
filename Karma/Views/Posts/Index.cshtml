@@ -7,8 +7,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Donate">Create Donation</a>
+    <a asp-action="CreateRequest">Create Request</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -16,10 +18,10 @@
                 @Html.DisplayNameFor(model => model.UserId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PostType)
+                @Html.DisplayNameFor(model => model.IsDonation)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PostingDate)
+                @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
@@ -28,10 +30,10 @@
                 @Html.DisplayNameFor(model => model.ItemType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PostText)
+                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Image)
+                @Html.DisplayNameFor(model => model.ImagePath)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsVisible)
@@ -46,10 +48,10 @@
                 @Html.DisplayFor(modelItem => item.UserId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PostType)
+                @Html.DisplayFor(modelItem => item.IsDonation)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PostingDate)
+                @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -58,10 +60,10 @@
                 @Html.DisplayFor(modelItem => item.ItemType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PostText)
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Image)
+                @Html.DisplayFor(modelItem => item.ImagePath)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsVisible)

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Karma.Migrations
 {
     [DbContext(typeof(KarmaContext))]
-    [Migration("20210918172511_initalsetup")]
-    partial class initalsetup
+    [Migration("20210926175731_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,8 +28,19 @@ namespace Karma.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Image")
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDonation")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
@@ -37,17 +48,10 @@ namespace Karma.Migrations
                     b.Property<int>("ItemType")
                         .HasColumnType("int");
 
-                    b.Property<string>("PostText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PostType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("PostingDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");

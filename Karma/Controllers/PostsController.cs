@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Karma.Data;
 using Karma.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Karma.Controllers
 {
@@ -14,14 +17,18 @@ namespace Karma.Controllers
     {
         private readonly KarmaContext _context;
 
-        public PostsController(KarmaContext context)
+        private readonly IWebHostEnvironment _iWebHostEnv;
+
+        public PostsController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _iWebHostEnv = webHostEnvironment;
         }
 
         // GET: Posts
         public async Task<IActionResult> Index()
         {
+            Console.WriteLine("test");
             return View(await _context.Post.ToListAsync());
         }
 
@@ -43,26 +50,90 @@ namespace Karma.Controllers
             return View(post);
         }
 
-        // GET: Posts/Create
-        public IActionResult Create()
+        // GET: Posts/Donate
+        public IActionResult Donate()
         {
             return View();
         }
 
-        // POST: Posts/Create
+        // POST: Posts/Donate
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,PostType,PostingDate,Title,ItemType,PostText,Image,IsVisible")] Post post)
+        public async Task<IActionResult> Donate([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post, IFormFile file)
         {
             if (ModelState.IsValid)
             {
+                if (file != null && file.Length != 0)
+                {
+                    var ext = Path.GetExtension(file.FileName);
+                    if (!IsValidExtension(ext))
+                    {
+                        ViewBag.Message = "Invalid file type.";
+                        return View(post);
+                    }
+
+                    // Copying file to /PostImages
+                    var path = Path.Combine(_iWebHostEnv.ContentRootPath, "PostImages", post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
+                    var stream = new FileStream(path, FileMode.Create);
+                    _ = file.CopyToAsync(stream);
+
+                    post.ImagePath = stream.Name;
+                }
+
+                FillPostFields(post, true);
                 _context.Add(post);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(post);
+        }
+
+        // GET: Posts/CreateRequest
+        public IActionResult CreateRequest()
+        {
+            return View();
+        }
+
+        // POST: Posts/CreateRequest
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateRequest([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post)
+        {
+            if (ModelState.IsValid)
+            {
+                FillPostFields(post, false);
+                _context.Add(post);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(post);
+        }
+
+
+
+        private void FillPostFields(Post post, bool isDonation)
+        {
+            post.IsDonation = isDonation;
+            post.Date = DateTime.UtcNow;
+            post.IsVisible = true;
+        }
+
+        private bool IsValidExtension(string ext)
+        {
+            var validExtensions = new[] { ".jpg", ".png", ".jpeg", ".bmp" };
+            foreach (string validExt in validExtensions)
+            {
+                if (validExt == ext)
+                    return true;
+            }
+
+            return false;
         }
 
         // GET: Posts/Edit/5
@@ -86,7 +157,7 @@ namespace Karma.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,PostType,PostingDate,Title,ItemType,PostText,Image,IsVisible")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post)
         {
             if (id != post.Id)
             {
