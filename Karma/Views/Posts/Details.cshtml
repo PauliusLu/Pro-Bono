@@ -1,66 +1,27 @@
 ﻿@model Karma.Models.Post
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Html.DisplayFor(model => model.Title);
 }
-
-<h1>Details</h1>
+<h4>User @Post.GetPostTypeName(Model.PostType)s</h4>
+<h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
 
 <div>
-    <h4>Post</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PostType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PostType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PostingDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PostingDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ItemType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ItemType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PostText)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PostText)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsVisible)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsVisible)
-        </dd>
-    </dl>
+    Category: @Post.GetItemTypeName(Model.ItemType)
+    <br />
+    @Html.DisplayFor(model => model.PostText)
+    <br />
+    @if (Model.Image != null && Model.Image != "")
+    {
+        <img src="Model.Image" alt="Item image" />
+    }
 </div>
+<br />
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    Posted at @Html.DisplayFor(model => model.PostingDate)
+</div>
+<hr />
+<div>
     <a asp-action="Index">Back to List</a>
 </div>
