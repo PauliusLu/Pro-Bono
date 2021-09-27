@@ -1,0 +1,56 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div id="requestDialog" class="modal-body">
+        <div class="container-fluid">
+            @*TODO: redirect to page with all donation posts*@
+            <div class="row justify-content-around">
+                <button type="button" class="btn btn-warning col-10">
+                    <div class="row">
+                        <h4 class="col-12 text-center btn-title">
+                            Check posts
+                        </h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text text-center">
+                            Have you searched for your item in the donations list?
+                        </div>
+                    </div>
+                    <div class="row justify-content-around">
+                        <div class="ratio ratio-4x3">
+                            <img src="~/data/search-posts.png" class="img-fluid col-12 mx-auto">
+                        </div>
+                    </div>
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-12 text text-center">
+                    If you haven’t found anything, create a request
+                </div>
+            </div>
+            @*TODO: redirect to page (dialog?) to create a request*@
+            <div class="row">
+                <button type="button" class="btn btn-light col">
+                    <div class="row">
+                        <div class="col-12 text-center font-weight-bold">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="CreateRequest">Create a request</a>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

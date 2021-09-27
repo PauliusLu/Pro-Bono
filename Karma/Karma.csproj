@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="PostImages\" />
+    <None Include="wwwroot\data\person.png" />
   </ItemGroup>
 
 </Project>

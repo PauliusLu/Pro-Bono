@@ -59,7 +59,7 @@ namespace Karma
             });
 
             // Create "PostImages" directory if it does not exist.
-            System.IO.Directory.CreateDirectory(env.ContentRootPath + "\\PostImages");
+            System.IO.Directory.CreateDirectory(env.WebRootPath + "\\PostImages");
         }
     }
 }

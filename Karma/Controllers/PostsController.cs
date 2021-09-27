@@ -19,6 +19,8 @@ namespace Karma.Controllers
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
+
+        // Passes an object of type IWebHostEnvironment that carries information about our host environment.
         public PostsController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
@@ -75,7 +77,7 @@ namespace Karma.Controllers
                     }
 
                     // Copying file to /PostImages
-                    var path = Path.Combine(_iWebHostEnv.ContentRootPath, "PostImages", post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
+                    var path = Path.Combine(_iWebHostEnv.WebRootPath, "PostImages", post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
                     var stream = new FileStream(path, FileMode.Create);
                     _ = file.CopyToAsync(stream);
 
@@ -220,5 +222,6 @@ namespace Karma.Controllers
         {
             return _context.Post.Any(e => e.Id == id);
         }
+
     }
 }

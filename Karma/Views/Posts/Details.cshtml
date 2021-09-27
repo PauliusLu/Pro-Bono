@@ -1,66 +1,28 @@
 ﻿@model Karma.Models.Post
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Html.DisplayFor(model => model.Title);
 }
-
-<h1>Details</h1>
+<h4>User @Post.GetPostTypeName(Model.IsDonation)s</h4>
+<h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
 
 <div>
-    <h4>Post</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsDonation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsDonation)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ItemType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ItemType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImagePath)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImagePath)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsVisible)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsVisible)
-        </dd>
-    </dl>
+    Category: @Html.DisplayFor(model => model.ItemType)
+    <br />
+    @Html.DisplayFor(model => model.Description)
+    <br />
+    @if (Model.ImagePath != null && Model.ImagePath != "")
+    {
+        <img src="/PostImages/@Model.GetImageName()" asp-append-version="true"
+             alt="Item image" class="img-fluid" style="max-width:400px;" />
+    }
 </div>
+<br />
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    Posted at @Html.DisplayFor(model => model.Date)
+</div>
+<hr />
+<div>
     <a asp-action="Index">Back to List</a>
 </div>

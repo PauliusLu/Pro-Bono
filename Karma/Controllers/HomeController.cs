@@ -20,7 +20,8 @@ namespace Karma.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            // Redirecting the primary page to 'All posts'
+            return RedirectToAction("Index", "Posts");
         }
 
         public IActionResult Privacy()
@@ -32,6 +33,20 @@ namespace Karma.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        // Returns the DonateDialog view
+        // Is called from _Layout.cshtml button #donateDialog
+        public IActionResult DonateDialog()
+        {
+            return View();
+        }
+
+        // Returns the RequestDialog view
+        // Is called from _Layout.cshtml button #requestDialog
+        public IActionResult RequestDialog()
+        {
+            return View();
         }
     }
 }
