@@ -1,5 +1,4 @@
-﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
-
+﻿
 @{
     Layout = null;
 }
@@ -20,12 +19,12 @@
                 <button type="button" class="btn btn-warning col-10">
                     <div class="row">
                         <h4 class="col-12 text-center btn-title">
-                            @localizer["checkPosts"]
+                            Check posts
                         </h4>
                     </div>
                     <div class="row">
                         <div class="col-12 text text-center">
-                            @localizer["requestDialogPhrase"]
+                            Have you searched for your item in the donations list?
                         </div>
                     </div>
                     <div class="row justify-content-around">
@@ -37,7 +36,7 @@
             </div>
             <div class="row">
                 <div class="col-12 text text-center">
-                    @localizer["createRequestPhrase"]
+                    If you haven’t found anything, create a request
                 </div>
             </div>
             @*TODO: redirect to page (dialog?) to create a request*@
@@ -45,7 +44,7 @@
                 <button type="button" class="btn btn-light col">
                     <div class="row">
                         <div class="col-12 text-center font-weight-bold">
-                            @localizer["createRequest"]
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="CreateRequest">Create a request</a>
                         </div>
                     </div>
                 </button>

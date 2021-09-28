@@ -1,5 +1,4 @@
-﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
-
+﻿
 @{
     Layout = null;
 }
@@ -21,7 +20,7 @@
                     <button type="button" class="btn btn-success">
                         <div class="row">
                             <h4 class="col-12 text-center btn-title">
-                                @localizer["person"]
+                                Person
                             </h4>
                         </div>
                         <div class="row">
@@ -36,7 +35,7 @@
                     <button type="button" class="btn btn-success">
                         <div class="row">
                             <h4 class="col-12 text-center btn-title">
-                                @localizer["charity"]
+                                Charity
                             </h4>
                         </div>
                         <div class="row">
@@ -49,7 +48,7 @@
             </div>
             <div class="row align-items-center">
                 <div class="col-12 text text-center">
-                    @localizer["createPostPhrase"]
+                    Your item is currently not on demand?
                 </div>
             </div>
             @*TODO: redirect to page (dialog?) for donate post creation*@
@@ -57,7 +56,7 @@
                 <button type="button" class="btn btn-light col">
                     <div class="row align-items-center">
                         <div class="col-12 text-center font-weight-bold">
-                            @localizer["createPost"]
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="Donate">Create a donation post</a>
                         </div>
                     </div>
                 </button>
