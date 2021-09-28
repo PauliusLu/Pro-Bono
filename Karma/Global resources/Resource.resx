@@ -117,9 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="allPosts" xml:space="preserve">
+    <value>All posts</value>
+    <comment>_Layout.cshtml</comment>
+  </data>
   <data name="charity" xml:space="preserve">
     <value>Charity</value>
     <comment>DonateDialog.cshtml</comment>
+  </data>
+  <data name="checkPosts" xml:space="preserve">
+    <value>Check posts</value>
+    <comment>RequestDialog.cshtml</comment>
   </data>
   <data name="createPost" xml:space="preserve">
     <value>Create a post</value>
@@ -129,16 +137,32 @@
     <value>Your item is currently not on demand?</value>
     <comment>DonateDialog.cshtml</comment>
   </data>
-  <data name="donateCharityPhrase" xml:space="preserve">
-    <value>Answer to the requests of your local charity demands</value>
-    <comment>DonateDialog.cshtml</comment>
+  <data name="createRequest" xml:space="preserve">
+    <value>Create a request</value>
+    <comment>RequestDialog.cshtml</comment>
   </data>
-  <data name="donatePersonPhrase" xml:space="preserve">
-    <value>Answer to the requests of the people around you</value>
-    <comment>DonateDialog.cshtml</comment>
+  <data name="createRequestPhrase" xml:space="preserve">
+    <value>If you haven’t found anything, create a request</value>
+    <comment>RequestDialog.cshtml</comment>
+  </data>
+  <data name="donate" xml:space="preserve">
+    <value>Donate</value>
+    <comment>_Layout.cshtml</comment>
   </data>
   <data name="person" xml:space="preserve">
     <value>Person</value>
     <comment>DonateDialog.cshtml</comment>
+  </data>
+  <data name="privacy" xml:space="preserve">
+    <value>Privacy</value>
+    <comment>_Layout.cshtml</comment>
+  </data>
+  <data name="request" xml:space="preserve">
+    <value>Request</value>
+    <comment>_Layout.cshtml</comment>
+  </data>
+  <data name="requestDialogPhrase" xml:space="preserve">
+    <value>Have you searched for your item in the donations list?</value>
+    <comment>RequestDialog.cshtml</comment>
   </data>
 </root>
