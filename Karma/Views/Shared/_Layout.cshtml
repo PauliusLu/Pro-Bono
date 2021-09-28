@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -19,16 +21,16 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="Index">All posts</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="Index">@localizer["allPosts"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">@localizer["privacy"]</a>
                         </li>
                         <li class="nav-item">
-                            <button class="btn btn-warning" data-toggle="modal" data-target="#dialog">Request</button>
+                            <button class="btn btn-warning" data-toggle="modal" data-target="#dialog">@localizer["request"]</button>
                         </li>
                         <li class="nav-item">
-                            <button class="btn btn-success" data-toggle="modal" data-target="#dialog">Donate</button>
+                            <button class="btn btn-success" data-toggle="modal" data-target="#dialog">@localizer["donate"]</button>
                         </li>
                     </ul>
                 </div>
@@ -55,6 +57,8 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    @*Click event handler for buttons. Loads dialog views to the .modal-body in #dialog*@
     <script>
         $(function () {
             $('#dialog').on('show.bs.modal', function (event) {
