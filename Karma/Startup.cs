@@ -32,8 +32,9 @@ namespace Karma
             
             services.AddControllersWithViews();
 
+            // Adding database context with sqlite option
             services.AddDbContext<KarmaContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("KarmaContext")));
+                    options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
