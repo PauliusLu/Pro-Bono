@@ -15,24 +15,25 @@
 <body>
     <div id="requestDialog" class="modal-body">
         <div class="container-fluid">
-            @*TODO: redirect to page with all donation posts*@
             <div class="row justify-content-around">
                 <button type="button" class="btn btn-warning col-10">
-                    <div class="row">
-                        <h4 class="col-12 text-center btn-title">
-                            @localizer["checkPosts"]
-                        </h4>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 text text-center">
-                            @localizer["requestDialogPhrase"]
+                    <a class="nav-link text-dark" asp-controller="Posts" asp-action="Index" asp-route-isDonation="true">
+                        <div class="row">
+                            <h4 class="col-12 text-center btn-title">
+                                @localizer["checkPosts"]
+                            </h4>
                         </div>
-                    </div>
-                    <div class="row justify-content-around">
-                        <div class="ratio ratio-4x3">
-                            <img src="~/data/search-posts.png" class="img-fluid col-12 mx-auto">
+                        <div class="row">
+                            <div class="col-12 text text-center">
+                                @localizer["requestDialogPhrase"]
+                            </div>
                         </div>
-                    </div>
+                        <div class="row justify-content-around">
+                            <div class="ratio ratio-4x3">
+                                <img src="~/data/search-posts.png" class="img-fluid col-12 mx-auto">
+                            </div>
+                        </div>
+                    </a>
                 </button>
             </div>
             <div class="row">

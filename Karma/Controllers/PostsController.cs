@@ -28,10 +28,22 @@ namespace Karma.Controllers
         }
 
         // GET: Posts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool? isDonation)
         {
-            Console.WriteLine("test");
-            return View(await _context.Post.ToListAsync());
+            List<Post> posts;
+
+            if (isDonation == null)
+            {
+                ViewBag.Header = "All posts";
+                posts = await _context.Post.ToListAsync();
+            }
+            else
+            {
+                posts = await _context.Post.Where(p => p.IsDonation).ToListAsync();
+                ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
+            }
+
+            return View(posts);
         }
 
         // GET: Posts/Details/5
