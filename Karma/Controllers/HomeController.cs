@@ -35,7 +35,8 @@ namespace Karma.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        // Returns the DonateDialog view
+        // Returns the
+        // view
         // Is called from _Layout.cshtml button #donateDialog
         public IActionResult DonateDialog()
         {
@@ -48,5 +49,30 @@ namespace Karma.Controllers
         {
             return View();
         }
+
+        //[Route("Home/SelectCategory/{actionType?}")]
+        public IActionResult SelectCategory(Enums.ActionType actionType)
+        {
+            // ItemType = -1 to prevent from the field from having an arbitraty valid value.
+            SelectCategoryViewModel model = new() { ActionType = actionType, ItemType = (Enums.Category)(-1)};
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Route("Home/SelectCategory")]
+        public async Task<IActionResult> SelectCategory(SelectCategoryViewModel model)
+        {
+            switch (model.ActionType)
+            {
+                case Enums.ActionType.Donate:
+                    return RedirectToAction("FilteredCharities", "Charities", new {itemType = model.ItemType });
+                case Enums.ActionType.Request:
+                    break;
+                default:
+                    break;
+            }
+            return View(model);
+        }
+
     }
 }

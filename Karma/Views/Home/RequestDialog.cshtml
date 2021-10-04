@@ -41,10 +41,10 @@
                 </div>
             </div>
             <div class="row">
-                <button type="button" class="btn btn-light col">
+                <button type="button" class="btn btn-light col" onclick="@("window.location.href='" + @Url.Action("CreateRequest", "Posts") + "'");">
                     <div class="row">
                         <div class="col-12 text-center font-weight-bold">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="CreateRequest">@localizer["createRequest"]</a>
+                            @localizer["createRequest"]
                         </div>
                     </div>
                 </button>

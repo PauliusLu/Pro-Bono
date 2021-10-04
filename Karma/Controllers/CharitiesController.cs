@@ -7,34 +7,51 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Karma.Data;
 using Karma.Models;
-using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace Karma.Controllers
 {
-    public class PostsController : Controller
+    public class CharitiesController : Controller
     {
         private readonly KarmaContext _context;
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
-
         // Passes an object of type IWebHostEnvironment that carries information about our host environment.
-        public PostsController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
+        public CharitiesController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _iWebHostEnv = webHostEnvironment;
         }
 
-        // GET: Posts
+        // GET: Charities
         public async Task<IActionResult> Index()
         {
-            Console.WriteLine("test");
-            return View(await _context.Post.ToListAsync());
+            return View(await _context.Charity.ToListAsync());
+        }
+        public async Task<IActionResult> FilteredCharities(Enums.Category itemType)
+        {
+            List<Charity> charities = await _context.Charity.ToListAsync();
+
+            List<Charity> filtered = new List<Charity>();
+
+            ViewBag.ItemType = itemType.ToString();
+
+            foreach (Charity c in charities)
+            {
+                c.LoadItemTypes();
+                if (c.ItemTypes.Contains(itemType))
+                {
+                    filtered.Add(c);
+                }
+            }
+
+            return View(filtered);
         }
 
-        // GET: Posts/Details/5
+        // GET: Charities/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,92 +59,67 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Post
+            var charity = await _context.Charity
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (post == null)
+            if (charity == null)
             {
                 return NotFound();
             }
 
-            return View(post);
+            return View(charity);
         }
 
-        // GET: Posts/Donate
-        public IActionResult Donate()
+        // GET: Charities/Create
+        public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Posts/Donate
+        // POST: Charities/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Donate([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post, IFormFile file)
+        public async Task<IActionResult> Create([Bind("Name,Address,ItemTypes,ImagePath,Description")] CreateCharityViewModel charityForm, IFormFile file)
         {
+            Console.WriteLine("Was here");
             if (ModelState.IsValid)
             {
+                Console.WriteLine("Here tii");
+                Charity charity = new();
+
                 if (file != null && file.Length != 0)
                 {
                     var ext = Path.GetExtension(file.FileName);
                     if (!Utils.IsValidExtension(ext))
                     {
                         ViewBag.Message = "Invalid file type.";
-                        return View(post);
+                        return View(charityForm);
                     }
 
-                    // Copying file to /PostImages
-                    var path = Path.Combine(_iWebHostEnv.WebRootPath, "PostImages", post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
-                    var stream = new FileStream(path, FileMode.Create);
+                    string path = Path.Combine(_iWebHostEnv.WebRootPath, "CharityImages", charity.Id.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
+                    FileStream stream = new FileStream(path, FileMode.Create);
                     _ = file.CopyToAsync(stream);
-
-                    post.ImagePath = stream.Name;
+                    charity.ImagePath = stream.Name;                    
                 }
 
-                FillPostFields(post, true);
-                _context.Add(post);
+                FillCharityDetails(charity, charityForm);
+                _context.Add(charity);
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Index));
             }
-            return View(post);
+            return View(charityForm);
         }
 
-        // GET: Posts/CreateRequest
-        public IActionResult CreateRequest()
+        private void FillCharityDetails(Charity charity, CreateCharityViewModel charityForm)
         {
-            return View();
+            charity.Description = charityForm.Description;
+            charity.Name = charityForm.Name;
+            charity.ItemTypePath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, "ItemTypes");
+            charity.AddressesPath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, "Address");
         }
 
-        // POST: Posts/CreateRequest
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateRequest([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post)
-        {
-            if (ModelState.IsValid)
-            {
-                FillPostFields(post, false);
-                _context.Add(post);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-            return View(post);
-        }
-
-
-
-        private void FillPostFields(Post post, bool isDonation)
-        {
-            post.IsDonation = isDonation;
-            post.Date = DateTime.UtcNow;
-            post.IsVisible = true;
-        }
-
-
-        // GET: Posts/Edit/5
+        // GET: Charities/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -135,22 +127,22 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Post.FindAsync(id);
-            if (post == null)
+            var charity = await _context.Charity.FindAsync(id);
+            if (charity == null)
             {
                 return NotFound();
             }
-            return View(post);
+            return View(charity);
         }
 
-        // POST: Posts/Edit/5
+        // POST: Charities/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,AddressesPath,ItemTypePath,ImagePath,Description")] Charity charity)
         {
-            if (id != post.Id)
+            if (id != charity.Id)
             {
                 return NotFound();
             }
@@ -159,12 +151,12 @@ namespace Karma.Controllers
             {
                 try
                 {
-                    _context.Update(post);
+                    _context.Update(charity);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PostExists(post.Id))
+                    if (!CharityExists(charity.Id))
                     {
                         return NotFound();
                     }
@@ -175,10 +167,10 @@ namespace Karma.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(post);
+            return View(charity);
         }
 
-        // GET: Posts/Delete/5
+        // GET: Charities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -186,31 +178,30 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Post
+            var charity = await _context.Charity
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (post == null)
+            if (charity == null)
             {
                 return NotFound();
             }
 
-            return View(post);
+            return View(charity);
         }
 
-        // POST: Posts/Delete/5
+        // POST: Charities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var post = await _context.Post.FindAsync(id);
-            _context.Post.Remove(post);
+            var charity = await _context.Charity.FindAsync(id);
+            _context.Charity.Remove(charity);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PostExists(int id)
+        private bool CharityExists(int id)
         {
-            return _context.Post.Any(e => e.Id == id);
+            return _context.Charity.Any(e => e.Id == id);
         }
-
     }
 }

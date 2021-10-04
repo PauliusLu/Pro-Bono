@@ -72,8 +72,11 @@ namespace Karma
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            // Create "PostImages" directory if it does not exist.
+            // Create necessary directories if they do not exist.
             System.IO.Directory.CreateDirectory(env.WebRootPath + "\\PostImages");
+            System.IO.Directory.CreateDirectory(env.WebRootPath + "\\CharityImages");
+            System.IO.Directory.CreateDirectory(env.ContentRootPath + "\\Charities\\ItemTypes");
+            System.IO.Directory.CreateDirectory(env.ContentRootPath + "\\Charities\\Address");
         }
     }
 }

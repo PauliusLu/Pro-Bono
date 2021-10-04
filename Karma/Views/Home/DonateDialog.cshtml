@@ -33,7 +33,8 @@
                 </div>
                 @*TODO: redirect to page with charity requests*@
                 <div class="col-6 btn-image">
-                    <button type="button" class="btn btn-success">
+                    <button type="button" class="btn btn-success"
+                            onclick="@("window.location.href='" + @Url.Action("SelectCategory", "Home", new {actionType = Enums.ActionType.Donate}) + "'");">
                         <div class="row">
                             <h4 class="col-12 text-center btn-title">
                                 @localizer["charity"]
@@ -53,10 +54,10 @@
                 </div>
             </div>
             <div class="row">
-                <button type="button" class="btn btn-light col">
+                <button type="button" class="btn btn-light col" onclick="@("window.location.href='" + @Url.Action("Donate", "Posts") + "'");">
                     <div class="row align-items-center">
                         <div class="col-12 text-center font-weight-bold">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="Donate">@localizer["createPost"]</a>
+                            @localizer["createPost"]
                         </div>
                     </div>
                 </button>
