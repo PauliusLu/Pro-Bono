@@ -11,69 +11,29 @@
     <a asp-action="CreateRequest">Create Request</a>
 </p>
 
-<style>
-    table thead th {
-        background-color: #54585d;
-        color: #ffffff;
-        font-weight: bold;
-        font-size: 13px;
-        border: 1px solid #54585d;
-    }
-
-    table tbody td {
-        color: #494747;
-        border: 1px solid #dddfe1;
-        background-color: #E2DEDD
-    }
-</style>
 <html>
 <body>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Users Id</th>
-                <th>Post type</th>
-                <th>Posting date</th>
-                <th>Title</th>
-                <th>Item type</th>
-                <th>Description</th>
-                <th>Image</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="container-fluid content-row post-cards">
+        <div class="row">
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IsDonation)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ItemType)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ImagePath)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                <div class="col-sm-12 col-lg-4">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="" alt="">
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">@Html.DisplayFor(modelItem => item.Date)</small>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
 </body>
 </html>
