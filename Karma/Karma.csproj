@@ -23,6 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\data\DefaultPostImages\books.png" />
+    <None Include="wwwroot\data\DefaultPostImages\clothes.png" />
+    <None Include="wwwroot\data\DefaultPostImages\crafts.png" />
+    <None Include="wwwroot\data\DefaultPostImages\furniture.png" />
+    <None Include="wwwroot\data\DefaultPostImages\tools.png" />
     <None Include="wwwroot\data\person.png" />
   </ItemGroup>
 

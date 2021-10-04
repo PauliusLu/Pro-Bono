@@ -11,8 +11,9 @@ namespace Karma.Models
 
         int id;
         string name;
+        string imagePath;
 
-        public ItemType(string name, int id = -1)
+        public ItemType(string name, string imagePath, int id = -1)
         {
             if (id == -1)
             {
@@ -24,10 +25,13 @@ namespace Karma.Models
                 this.id = id;
             }
             this.name = name;
+            this.imagePath = imagePath;
         }
 
         public int Id { get => id; set => id = value; }
         public string Name { get => name; set => name = value; }
+
+        public string ImagePath { get => imagePath; set => name = value; }
 
         /// <summary>
         /// Returns ItemType by id.
@@ -48,9 +52,9 @@ namespace Karma.Models
             return Types.First(type => type.Value.Name == name).Value;
         }
 
-        public static void CreateType(string name, int id = -1)
+        public static void CreateType(string name, string imagePath, int id = -1)
         {
-            Types.Add(id, new ItemType(name, id));
+            Types.Add(id, new ItemType(name, imagePath, id));
         }
     }
 }
