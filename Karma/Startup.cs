@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Karma.Data;
+using Newtonsoft.Json;
 
 namespace Karma
 {
@@ -18,6 +19,19 @@ namespace Karma
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            LoadItemTypes(@"Data/ItemTypes.txt");
+        }
+
+        private void LoadItemTypes(string path)
+        {
+            string types = System.IO.File.ReadAllText(path);
+            Models.ItemType.Types = JsonConvert.DeserializeObject<Dictionary<int, Models.ItemType>>(types);
+        }
+
+        private void SaveItemTypes(string path)
+        {
+            string types = JsonConvert.SerializeObject(Models.ItemType.Types);
+            System.IO.File.WriteAllText(path, types);
         }
 
         public IConfiguration Configuration { get; }
