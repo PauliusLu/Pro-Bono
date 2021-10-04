@@ -12,9 +12,17 @@ namespace Karma.Models
         int id;
         string name;
 
-        public ItemType(int id, string name)
+        public ItemType(string name, int id = -1)
         {
-            this.id = id;
+            if (id == -1)
+            {
+                int max = Types.Max(it => it.Value.id);
+                this.id = max + 1;
+            }
+            else
+            {
+                this.id = id;
+            }
             this.name = name;
         }
 
@@ -40,9 +48,9 @@ namespace Karma.Models
             return Types.First(type => type.Value.Name == name).Value;
         }
 
-        public static void CreateType(int id, string name)
+        public static void CreateType(string name, int id = -1)
         {
-            Types.Add(id, new ItemType(id, name));
+            Types.Add(id, new ItemType(name, id));
         }
     }
 }
