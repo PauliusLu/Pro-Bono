@@ -32,5 +32,7 @@ namespace Karma.Data
                 entity.Property(e => e.IsVisible).IsRequired();
             });
         }
+
+        public DbSet<Karma.Models.Charity> Charity { get; set; }
     }
 }

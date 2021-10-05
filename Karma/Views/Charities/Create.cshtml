@@ -1,0 +1,50 @@
+﻿@model Karma.Models.CreateCharityViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Charity</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ItemTypes" class="control-label">Category</label>
+                <select asp-for="ItemTypes" id="multi-select" class="form-control" multiple
+                        asp-items="@new SelectList(Enum.GetValues(typeof(Enums.Category)))">
+                </select>
+                <span asp-validation-for="ItemTypes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImagePath" class="control-label">Upload charity logo</label>
+                <input type="file" class="form-control-file" accept=".jpg, .jpeg, .png, .bmp" name="file" />
+                <span class="text-danger">@ViewBag.Message</span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -97,7 +97,7 @@ namespace Karma.Controllers
                 if (file != null && file.Length != 0)
                 {
                     var ext = Path.GetExtension(file.FileName);
-                    if (!IsValidExtension(ext))
+                    if (!Utils.IsValidExtension(ext))
                     {
                         ViewBag.Message = "Invalid file type.";
                         return View(post);
@@ -153,17 +153,6 @@ namespace Karma.Controllers
             post.IsVisible = true;
         }
 
-        private bool IsValidExtension(string ext)
-        {
-            var validExtensions = new[] { ".jpg", ".png", ".jpeg", ".bmp" };
-            foreach (string validExt in validExtensions)
-            {
-                if (validExt == ext)
-                    return true;
-            }
-
-            return false;
-        }
 
         // GET: Posts/Edit/5
         public async Task<IActionResult> Edit(int? id)
