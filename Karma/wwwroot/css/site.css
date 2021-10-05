@@ -12,6 +12,11 @@ a {
     color: #0366d6;
 }
 
+.post-cards .col-lg-4 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .nav-item {
     padding: 0px 5px 0px;
 }
