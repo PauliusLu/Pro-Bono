@@ -13,7 +13,13 @@ namespace Karma
             Furniture,
             Crafts,
             Tools,
-            Books
+            Books,
+            Other
+        }
+        public enum ActionType
+        {
+            Donate = 0,
+            Request
         }
     }
 
