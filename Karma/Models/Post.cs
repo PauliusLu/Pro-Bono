@@ -8,7 +8,7 @@ using System.IO;
 namespace Karma.Models
 {
 
-    public class Post
+    public class Post : IComparable<Post>
     {
         public static readonly string ImagesDirName = "PostImages";
 
@@ -42,6 +42,17 @@ namespace Karma.Models
         {
             //Name for which kind of post it is.
             return isDonation ? "Offer" : "Request";
+        }
+
+        // By visibility and by date (decreasing order).
+        public int CompareTo(Post other)
+        {
+            if (other.IsVisible == false && this.IsVisible == true)
+                return 1;
+            else if (other.IsVisible == true && this.IsVisible == false)
+                return -1;
+            else
+                return this.Date.CompareTo(other.Date);
         }
     }
 }
