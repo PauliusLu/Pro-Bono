@@ -14,8 +14,6 @@ namespace Karma.Models
         public string Name { get; set; }
         [Required]
         public string Surname { get; set; }
-        [Required]
-        public int NationalId { get; set; }
         public string IpAddress { get; set; }
         public string Description { get; set; }
         public string ImagePath { get; set; }
