@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Karma.Data;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
+using System.IO;
 
 namespace Karma
 {
@@ -96,11 +97,18 @@ namespace Karma
                 endpoints.MapRazorPages();
             });
 
+            AddDirectories(env);
+
+        }
+
+        private void AddDirectories(IWebHostEnvironment env)
+        {
+
             // Create necessary directories if they do not exist.
-            System.IO.Directory.CreateDirectory(env.WebRootPath + "\\PostImages");
-            System.IO.Directory.CreateDirectory(env.WebRootPath + "\\CharityImages");
-            System.IO.Directory.CreateDirectory(env.ContentRootPath + "\\Charities\\ItemTypes");
-            System.IO.Directory.CreateDirectory(env.ContentRootPath + "\\Charities\\Address");
+            System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Post.ImagesDirName));
+            System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Charity.ImagesDirName));
+            System.IO.Directory.CreateDirectory(Path.Combine(env.ContentRootPath, Karma.Models.Charity.ItemTypesDirName));
+            System.IO.Directory.CreateDirectory(Path.Combine(env.ContentRootPath, Karma.Models.Charity.AdressDirName));
         }
     }
 }

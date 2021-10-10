@@ -10,6 +10,8 @@ namespace Karma.Models
 
     public class Post
     {
+        public static readonly string ImagesDirName = "PostImages";
+
         [Key]
         public int Id { get; set; }
         [Required]
@@ -26,6 +28,7 @@ namespace Karma.Models
         [Required]
         [MaxLength(120)]
         public string Description { get; set; }
+        // Should be combined with ImagesDirName
         public string ImagePath { get; set; }
         [Required]
         public bool IsVisible { get; set; }
@@ -39,11 +42,6 @@ namespace Karma.Models
         {
             //Name for which kind of post it is.
             return isDonation ? "Offer" : "Request";
-        }
-
-        public string GetImageName()
-        {
-            return Path.GetFileName(ImagePath);
         }
     }
 }

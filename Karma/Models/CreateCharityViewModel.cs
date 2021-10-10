@@ -22,29 +22,33 @@ namespace Karma.Models
         public string Address { get; set; }
 
 
-        public string CreateFilePath(IWebHostEnvironment webHostEnvironment, string fileName, string prop)
+        public string CreateFilePath(IWebHostEnvironment webHostEnvironment, string fileName, string dir)
         {
             StringBuilder content = new();
-            switch (prop)
+
+            if (dir == Charity.ItemTypesDirName)
             {
-                case "ItemTypes":
-                    foreach (var e in ItemTypes)
-                    {
-                        content.AppendLine(e.ToString());
-                    }
-                    break;
-                case "Address":
-                    content.AppendLine(Address);
-                    break;
-                default:
-                    break;
+                foreach (var e in ItemTypes)
+                {
+                    content.AppendLine(e.ToString());
+                }
             }
-            string path = Path.Combine(webHostEnvironment.ContentRootPath,
-                "Charities", prop, fileName + ".txt");
+            else if (dir == Charity.AdressDirName)
+            {
+                content.AppendLine(Address);
+            }
+            else
+            {
+                return "";
+            }
+
+
+            string relativePath = Path.Combine(dir, fileName + ".txt");
+            string path = Path.Combine(webHostEnvironment.ContentRootPath, relativePath);
 
             File.WriteAllText(path, content.ToString());
 
-            return path;
+            return relativePath;
         }
     }
 
