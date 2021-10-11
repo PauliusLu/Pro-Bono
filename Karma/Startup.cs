@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Karma.Data;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace Karma
 {
@@ -45,10 +46,22 @@ namespace Karma
                 .AddDataAnnotationsLocalization();
             
             services.AddControllersWithViews();
+            services.AddRazorPages();
 
             // Adding database context with sqlite option
             services.AddDbContext<KarmaContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
+            // Adding identity
+            services.AddIdentity<Karma.Models.User, Karma.Models.UserRole>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<KarmaContext>();
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._+";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +82,7 @@ namespace Karma
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             // Supported cultures for localization
@@ -84,6 +98,7 @@ namespace Karma
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
 
             // Create necessary directories if they do not exist.
