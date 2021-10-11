@@ -12,22 +12,18 @@
 
 <h1>@ViewBag.Header</h1>
 
-<p>
-    <a asp-action="Donate">Create Donation</a>
-    <a asp-action="CreateRequest">Create Request</a>
-</p>
-
 <html>
 <body>
-    <div class="container-fluid content-row post-cards">
+    <div class="post-cards container-fluid content-row">
         <div class="row">
             @foreach (var item in Model)
             {
-                <div class="col-sm-12 col-lg-4">
+                <div class="col col-sm-12 col-lg-3">
                     <div class="card h-100">
-                        <img class="card-img-top" src="" alt="">
+                        <img class="card-img-top ratio ratio-4x3" src=@item.ImagePath>
                         <div class="card-body">
                             <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+                            <h6 class="card-text">@Html.DisplayFor(modelItem => item.ItemType)</h6>
                             <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
                         </div>
                         <div class="card-footer">

@@ -9,6 +9,7 @@ using Karma.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using System.Collections;
 
 namespace Karma.Controllers
 {
@@ -40,6 +41,20 @@ namespace Karma.Controllers
             {
                 posts = await _context.Post.Where(p => p.IsDonation == isDonation).ToListAsync();
                 ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
+            }
+
+            // Sets default image for post by itemtype if there's no image given
+            foreach (Post post in posts)
+            {
+                if (post.ImagePath == null)
+                {
+                    int itemTypeId = (int)post.ItemType;
+                    if (ItemType.Types.ContainsKey(itemTypeId))
+                    {
+                        ItemType itemType = ItemType.Types[itemTypeId];
+                        post.ImagePath = itemType.ImagePath;
+                    }
+                }
             }
 
             return View(posts);
