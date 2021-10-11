@@ -66,6 +66,10 @@ namespace Karma.Controllers
         // GET: Posts/Donate
         public IActionResult Donate()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
             return View();
         }
 
@@ -112,6 +116,10 @@ namespace Karma.Controllers
         // GET: Posts/CreateRequest
         public IActionResult CreateRequest()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
             return View();
         }
 
