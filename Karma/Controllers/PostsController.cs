@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Karma.Data;
 using Karma.Models;
@@ -77,32 +76,33 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Donate([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post, IFormFile file)
         {
-            if (ModelState.IsValid)
+            post.UserId = User.Identity.Name;
+            //if (ModelState.IsValid)
+            //{
+            if (file != null && file.Length != 0)
             {
-                if (file != null && file.Length != 0)
+                var ext = Path.GetExtension(file.FileName);
+                if (!Utils.IsValidExtension(ext))
                 {
-                    var ext = Path.GetExtension(file.FileName);
-                    if (!Utils.IsValidExtension(ext))
-                    {
-                        ViewBag.Message = "Invalid file type.";
-                        return View(post);
-                    }
-
-                    // Copying file to /PostImages
-                    var path = Path.Combine(_iWebHostEnv.WebRootPath, "PostImages", post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
-                    var stream = new FileStream(path, FileMode.Create);
-                    _ = file.CopyToAsync(stream);
-
-                    post.ImagePath = stream.Name;
+                    ViewBag.Message = "Invalid file type.";
+                    return View(post);
                 }
 
-                FillPostFields(post, true);
-                _context.Add(post);
-                await _context.SaveChangesAsync();
+                // Copying file to /PostImages
+                var path = Path.Combine(_iWebHostEnv.WebRootPath, "PostImages", post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
+                var stream = new FileStream(path, FileMode.Create);
+                _ = file.CopyToAsync(stream);
 
-                return RedirectToAction(nameof(Index));
+                post.ImagePath = stream.Name;
             }
-            return View(post);
+
+            FillPostFields(post, true);
+            _context.Add(post);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+            //}
+            //return View(post);
         }
 
         // GET: Posts/CreateRequest
@@ -146,13 +146,21 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
-
-            var post = await _context.Post.FindAsync(id);
-            if (post == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                var post = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == post.UserId))
+                {
+                    //return NoAccess();
+                    return NotFound();
+                }
+                if (post == null)
+                {
+                    return NotFound();
+                }
+                return View(post);
             }
-            return View(post);
+            return RedirectToAction("Login", "Account");
         }
 
         // POST: Posts/Edit/5
@@ -166,7 +174,20 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
+            if (User.Identity.IsAuthenticated)
+            {
+                var real_post = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == real_post.UserId))
+                {
+                    //return NoAccess();
+                    return NotFound();
+                }
 
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -198,6 +219,20 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
+            if (User.Identity.IsAuthenticated)
+            {
+                var real_post = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == real_post.UserId))
+                {
+                    //return NoAccess();
+                    return NotFound();
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var post = await _context.Post
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
@@ -213,6 +248,20 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                var real_post = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == real_post.UserId))
+                {
+                    //return NoAccess();
+                    return NotFound();
+                }
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
             var post = await _context.Post.FindAsync(id);
             _context.Post.Remove(post);
             await _context.SaveChangesAsync();
