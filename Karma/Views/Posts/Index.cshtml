@@ -10,15 +10,50 @@
     ViewData["Title"] = "All posts";
 }
 
-<h1>@ViewBag.Header</h1>
+<h1>
+    @ViewBag.Header
+<meta charset="UTF-8">
+<link rel="stylesheet" href="~/css/search.css" type="text/css" />
+<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $(".defaultOption").click(function () {
+                $(".dropdown ul").addClass("active");
+            });
 
-<p>
-    <a asp-action="Donate">Create Donation</a>
-    <a asp-action="CreateRequest">Create Request</a>
-</p>
+            $(".dropdown ul li").click(function () {
+                var text = $(this).text();
+                $(".defaultOption").text(text);
+                $(".dropdown ul").removeClass("active");
+            });
+        });
+</script>
+</h1>
 
 <html>
 <body>
+    <div class="wrapper">
+        <div class="searchBox">
+            <div class="dropdown">
+                <div class="defaultOption">All</div>
+                <ul>
+                    <li>All</li>
+                    <li>Recent</li>
+                    <li>Clothes</li>
+                    <li>Furniture</li>
+                    <li>Crafts</li>
+                    <li>Tools</li>
+                    <li>Books</li>
+                    <li>Other</li>
+                </ul>
+            </div>
+            <div class="searchField">
+                <input type="text" class="input" placeholder="Search">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </div>
     <div class="container-fluid content-row post-cards">
         <div class="row">
             @foreach (var item in Model)

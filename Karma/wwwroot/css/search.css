@@ -1,0 +1,117 @@
+﻿@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    list-style: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.wrapper {
+    position: relative;
+    left: 105%;
+    transform: translate(-50%,-50%);
+    z-index: 100;
+}
+
+    .wrapper .searchBox {
+        width: 500px;
+        background: #fff;
+        border-radius: 5px;
+        height: 65px;
+        display: flex;
+        padding: 10px;
+        box-shadow: 0 8px 6px -10px #b3c6ff;
+        z-index: 100;
+    }
+
+        .wrapper .searchBox .dropdown {
+            width: 140px;
+            border-right: 2px solid #dde2f1;
+            color: #9fa3b1;
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+            .wrapper .searchBox .dropdown .defaultOption {
+                text-transform: uppercase;
+                padding: 13px 15px;
+                font-size: 14px;
+            }
+
+            .wrapper .searchBox .dropdown ul {
+                position: relative;
+                top: 10px;
+                left: -10px;
+                background: #fff;
+                width: 150px;
+                border-radius: 5px;
+                padding: 20px;
+                display: none;
+                box-shadow: 8px 8px 6px -10px #b3c6ff;
+            }
+
+                .wrapper .searchBox .dropdown ul.active {
+                    display: block;
+                }
+
+                .wrapper .searchBox .dropdown ul li {
+                    padding-bottom: 20px;
+                }
+
+                    .wrapper .searchBox .dropdown ul li:last-child {
+                        padding-bottom: 0;
+                    }
+
+                    .wrapper .searchBox .dropdown ul li:hover {
+                        color: #6f768d;
+                    }
+
+            .wrapper .searchBox .dropdown:before {
+                content: "";
+                position: absolute;
+                top: 18px;
+                right: 20px;
+                border: 8px solid;
+                border-color: #5078ef transparent transparent transparent;
+            }
+
+        .wrapper .searchBox .searchField {
+            width: 350px;
+            height: 100%;
+            position: relative;
+        }
+
+            .wrapper .searchBox .searchField .input {
+                width: 100%;
+                height: 100%;
+                border: 0px;
+                font-size: 16px;
+                padding-left: 20px;
+                padding-right: 38px;
+                color: #6f768d;
+            }
+
+            .wrapper .searchBox .searchField .fas {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                font-size: 22px;
+                color: #5078ef;
+                cursor: pointer;
+
+            }
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: #9fa3b1;
+}
+::-moz-placeholder { /* Firefox 19+ */
+    color: #9fa3b1;
+}
+:-ms-input-placeholder { /* IE 10+ */
+    color: #9fa3b1;
+}
