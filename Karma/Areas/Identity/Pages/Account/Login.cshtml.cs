@@ -79,7 +79,7 @@ namespace Karma.Areas.Identity.Pages.Account
             bool isLoginWithEmail = false;
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
+        
             // Determining whether user logins with username or email
             if (Input.UserNameOrEmail.IndexOf('@') > -1)
             {

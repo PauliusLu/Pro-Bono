@@ -10,6 +10,11 @@ namespace Karma.Models
 {
     public class Charity
     {
+        public static readonly string ImagesDirName = "CharityImages";
+        public static readonly string AdressDirName = Path.Combine("Charities", "Address");
+        public static readonly string ItemTypesDirName = Path.Combine("Charities", "ItemTypes");
+
+
         [Key]
         public int Id { get; set; }
         [Required]
@@ -18,7 +23,6 @@ namespace Karma.Models
         public string AddressesPath { get; set; }
         [Required]
         public string ItemTypePath { get; set; }
-        // Path to charity logo.
         public string ImagePath { get; set; }
         [Required]
         [MaxLength(120)]
@@ -26,22 +30,26 @@ namespace Karma.Models
         [NotMapped]
         public List<Enums.Category> ItemTypes { get; set; }
 
+        public Charity()
+        {
+            ItemTypes = new List<Enums.Category>();
+        }
+
         public void LoadItemTypes()
         {
-           if (File.Exists(ItemTypePath))
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), ItemTypePath);
+            if (File.Exists(filePath))
             {
+
                 StreamReader sr = new StreamReader(ItemTypePath);
                 ItemTypes = ItemTypes ?? new();
                 string line;
+
                 while ((line = sr.ReadLine()) != null)
                 {
                     ItemTypes.Add(Enum.Parse<Enums.Category>(line));
                 }
             }
-        }
-        public string GetImageName()
-        {
-            return Path.GetFileName(ImagePath);
         }
     }
 

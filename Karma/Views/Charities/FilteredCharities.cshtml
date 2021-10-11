@@ -14,7 +14,7 @@ else
         <div class="card" style="width: 18rem;">
             @if (item.ImagePath != null && item.ImagePath != "")
             {
-                <img src="/CharityImages/@item.GetImageName()" asp-append-version="true"
+                <img src="/@Charity.ImagesDirName/@item.ImagePath" asp-append-version="true"
                      class="card-img-top" alt="">
             }
             <div class="card-body">

@@ -96,13 +96,18 @@ namespace Karma.Controllers
                     return View(post);
                 }
 
-                // Copying file to /PostImages
-                var path = Path.Combine(_iWebHostEnv.WebRootPath, "PostImages", post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
-                var stream = new FileStream(path, FileMode.Create);
-                _ = file.CopyToAsync(stream);
+                    
+                    // post.UserId is always 0, should be configured in the future
+                    string fileName = post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext;
 
-                post.ImagePath = stream.Name;
-            }
+                    string path = Path.Combine(_iWebHostEnv.WebRootPath, Post.ImagesDirName, fileName);
+
+                    // Copying file to wwwroot/PostImages
+                    FileStream stream = new FileStream(path, FileMode.Create);
+                    _ = file.CopyToAsync(stream);
+
+                    post.ImagePath = fileName;
+                }
 
             FillPostFields(post, true);
             _context.Add(post);
