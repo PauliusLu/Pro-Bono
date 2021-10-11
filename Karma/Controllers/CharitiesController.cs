@@ -39,15 +39,17 @@ namespace Karma.Controllers
 
             ViewBag.ItemType = itemType.ToString();
 
-            foreach (Charity c in charities)
+            if (charities != null)
             {
-                c.LoadItemTypes();
-                if (c.ItemTypes.Contains(itemType))
+                foreach (Charity c in charities)
                 {
-                    filtered.Add(c);
+                    c.LoadItemTypes();
+                    if (c.ItemTypes.Contains(itemType))
+                    {
+                        filtered.Add(c);
+                    }
                 }
-            }
-
+            }   
             return View(filtered);
         }
 
@@ -97,10 +99,14 @@ namespace Karma.Controllers
                         return View(charityForm);
                     }
 
-                    string path = Path.Combine(_iWebHostEnv.WebRootPath, "CharityImages", charity.Id.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext);
+                    // Generating a file name.
+                    string fileName = "x" + DateTime.Now.Ticks.ToString() + ext;
+
+                    string path = Path.Combine(_iWebHostEnv.WebRootPath, Charity.ImagesDirName, fileName);
                     FileStream stream = new FileStream(path, FileMode.Create);
                     _ = file.CopyToAsync(stream);
-                    charity.ImagePath = stream.Name;                    
+
+                    charity.ImagePath = fileName;               
                 }
 
                 FillCharityDetails(charity, charityForm);
@@ -115,8 +121,8 @@ namespace Karma.Controllers
         {
             charity.Description = charityForm.Description;
             charity.Name = charityForm.Name;
-            charity.ItemTypePath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, "ItemTypes");
-            charity.AddressesPath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, "Address");
+            charity.ItemTypePath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, Charity.ItemTypesDirName);
+            charity.AddressesPath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, Charity.AdressDirName);
         }
 
         // GET: Charities/Edit/5

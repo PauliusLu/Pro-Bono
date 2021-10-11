@@ -14,7 +14,7 @@
     <br />
     @if (Model.ImagePath != null && Model.ImagePath != "")
     {
-        <img src="/PostImages/@Model.GetImageName()" asp-append-version="true"
+        <img src="/@Post.ImagesDirName/@Model.ImagePath" asp-append-version="true"
              alt="Item image" class="img-fluid" style="max-width:400px;" />
     }
 </div>
