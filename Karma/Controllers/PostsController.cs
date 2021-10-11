@@ -78,7 +78,7 @@ namespace Karma.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             post.UserId = User.Identity.Name;
             //if (ModelState.IsValid)
@@ -124,7 +124,7 @@ namespace Karma.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             post.UserId = User.Identity.Name;
             if (ModelState.IsValid)
@@ -169,7 +169,7 @@ namespace Karma.Controllers
                 }
                 return View(post);
             }
-            return RedirectToAction("Login", "Account");
+            return RedirectToPage("/Account/Login", new { area = "Identity" });
         }
 
         // POST: Posts/Edit/5
@@ -195,7 +195,7 @@ namespace Karma.Controllers
             }
             else
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             if (ModelState.IsValid)
             {
@@ -239,7 +239,7 @@ namespace Karma.Controllers
             }
             else
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
             var post = await _context.Post
@@ -269,7 +269,7 @@ namespace Karma.Controllers
             }
             else
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             var post = await _context.Post.FindAsync(id);
             _context.Post.Remove(post);
