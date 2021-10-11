@@ -85,6 +85,7 @@ namespace Karma.Controllers
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             post.UserId = User.Identity.Name;
+            //Checking disabled due to change of userID from int to string.
             //if (ModelState.IsValid)
             //{
             if (file != null && file.Length != 0)
