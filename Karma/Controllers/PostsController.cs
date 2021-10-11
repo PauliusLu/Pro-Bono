@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Karma.Data;
 using Karma.Models;
@@ -67,6 +66,10 @@ namespace Karma.Controllers
         // GET: Posts/Donate
         public IActionResult Donate()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
             return View();
         }
 
@@ -77,16 +80,22 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Donate([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post, IFormFile file)
         {
-            if (ModelState.IsValid)
+            if (!User.Identity.IsAuthenticated)
             {
-                if (file != null && file.Length != 0)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            post.UserId = User.Identity.Name;
+            //Checking disabled due to change of userID from int to string.
+            //if (ModelState.IsValid)
+            //{
+            if (file != null && file.Length != 0)
+            {
+                var ext = Path.GetExtension(file.FileName);
+                if (!Utils.IsValidExtension(ext))
                 {
-                    var ext = Path.GetExtension(file.FileName);
-                    if (!Utils.IsValidExtension(ext))
-                    {
-                        ViewBag.Message = "Invalid file type.";
-                        return View(post);
-                    }
+                    ViewBag.Message = "Invalid file type.";
+                    return View(post);
+                }
 
                     
                     // post.UserId is always 0, should be configured in the future
@@ -101,18 +110,22 @@ namespace Karma.Controllers
                     post.ImagePath = fileName;
                 }
 
-                FillPostFields(post, true);
-                _context.Add(post);
-                await _context.SaveChangesAsync();
+            FillPostFields(post, true);
+            _context.Add(post);
+            await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
-            }
-            return View(post);
+            return RedirectToAction(nameof(Index));
+            //}
+            //return View(post);
         }
 
         // GET: Posts/CreateRequest
         public IActionResult CreateRequest()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
             return View();
         }
 
@@ -123,6 +136,11 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRequest([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            post.UserId = User.Identity.Name;
             if (ModelState.IsValid)
             {
                 FillPostFields(post, false);
@@ -151,13 +169,21 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
-
-            var post = await _context.Post.FindAsync(id);
-            if (post == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                var post = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == post.UserId))
+                {
+                    //return NoAccess();
+                    return NotFound();
+                }
+                if (post == null)
+                {
+                    return NotFound();
+                }
+                return View(post);
             }
-            return View(post);
+            return RedirectToPage("/Account/Login", new { area = "Identity" });
         }
 
         // POST: Posts/Edit/5
@@ -171,7 +197,20 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
+            if (User.Identity.IsAuthenticated)
+            {
+                var real_post = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == real_post.UserId))
+                {
+                    //return NoAccess();
+                    return NotFound();
+                }
 
+            }
+            else
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -203,6 +242,20 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
+            if (User.Identity.IsAuthenticated)
+            {
+                var real_post = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == real_post.UserId))
+                {
+                    //return NoAccess();
+                    return NotFound();
+                }
+            }
+            else
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
             var post = await _context.Post
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
@@ -218,6 +271,20 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                var real_post = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == real_post.UserId))
+                {
+                    //return NoAccess();
+                    return NotFound();
+                }
+
+            }
+            else
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
             var post = await _context.Post.FindAsync(id);
             _context.Post.Remove(post);
             await _context.SaveChangesAsync();
