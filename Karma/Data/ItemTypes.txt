@@ -1,1 +1,1 @@
-﻿{"0":{"Id":0,"Name":"Clothes"},"1":{"Id":1,"Name":"Furniture"},"2":{"Id":2,"Name":"Crafts"},"3":{"Id":3,"Name":"Tools"},"4":{"Id":4,"Name":"Book"}}
+﻿{"0":{"Id":0,"Name":"Clothes"},"1":{"Id":1,"Name":"Furniture"},"2":{"Id":2,"Name":"Crafts"},"3":{"Id":3,"Name":"Tools"},"4":{"Id":4,"Name":"Book"}, "5":{"Id":5,"Name":"Other"}}

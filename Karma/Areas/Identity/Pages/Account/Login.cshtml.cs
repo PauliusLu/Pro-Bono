@@ -79,7 +79,7 @@ namespace Karma.Areas.Identity.Pages.Account
             bool isLoginWithEmail = false;
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
+        
             // Determining whether user logins with username or email
             if (Input.UserNameOrEmail.IndexOf('@') > -1)
             {
@@ -130,7 +130,6 @@ namespace Karma.Areas.Identity.Pages.Account
 
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(userName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

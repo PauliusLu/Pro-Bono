@@ -8,8 +8,10 @@ using System.IO;
 namespace Karma.Models
 {
 
-    public class Post
+    public class Post : IComparable<Post>
     {
+        public static readonly string ImagesDirName = "PostImages";
+
         [Key]
         public int Id { get; set; }
         [Required]
@@ -26,6 +28,7 @@ namespace Karma.Models
         [Required]
         [MaxLength(120)]
         public string Description { get; set; }
+        // Should be combined with ImagesDirName
         public string ImagePath { get; set; }
         [Required]
         public bool IsVisible { get; set; }
@@ -41,9 +44,15 @@ namespace Karma.Models
             return isDonation ? "Offer" : "Request";
         }
 
-        public string GetImageName()
+        // By visibility and by date (decreasing order).
+        public int CompareTo(Post other)
         {
-            return Path.GetFileName(ImagePath);
+            if (other.IsVisible == false && this.IsVisible == true)
+                return 1;
+            else if (other.IsVisible == true && this.IsVisible == false)
+                return -1;
+            else
+                return this.Date.CompareTo(other.Date);
         }
     }
 }
