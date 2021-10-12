@@ -11,8 +11,8 @@ namespace Karma.Models
     public class Charity
     {
         public static readonly string ImagesDirName = Path.Combine("data", "CharityImages");
-        public static readonly string AdressDirName = Path.Combine("Charities", "Address");
-        public static readonly string ItemTypesDirName = Path.Combine("Charities", "ItemTypes");
+        public static readonly string AdressDirName = Path.Combine("Data", "Charities", "Address");
+        public static readonly string ItemTypesDirName = Path.Combine("Data", "Charities", "ItemTypes");
 
 
         [Key]
