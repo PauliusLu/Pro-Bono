@@ -10,8 +10,8 @@ namespace Karma.Models
 
     public class Post : IComparable<Post>
     {
-        public static readonly string ImagesDirName = "data\\PostImages";
-        public static readonly string DefaultImagesDirName = "data\\DefaultPostImages";
+        public static readonly string ImagesDirName = Path.Combine("data", "PostImages");
+        public static readonly string DefaultImagesDirName = Path.Combine("data", "DefaultPostImages");
 
         [Key]
         public int Id { get; set; }
