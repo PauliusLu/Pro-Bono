@@ -110,7 +110,7 @@ namespace Karma.Controllers
             if (file != null && file.Length != 0)
             {
                 var ext = Path.GetExtension(file.FileName);
-                if (!Utils.IsValidExtension(ext))
+                if (!ext.IsValidExtension())
                 {
                     ViewBag.Message = "Invalid file type.";
                     return View(post);
