@@ -17,7 +17,7 @@ namespace Karma.Models
         public string Description { get; set; }
         public string ImagePath { get; set; }
         [Required]
-        public List<Enums.Category> ItemTypes { get; set; }
+        public List<ItemType> ItemTypes { get; set; }
         [Required]
         public string Address { get; set; }
 
@@ -30,7 +30,7 @@ namespace Karma.Models
             {
                 foreach (var e in ItemTypes)
                 {
-                    content.AppendLine(e.ToString());
+                    content.AppendLine(e.Name);
                 }
             }
             else if (dir == Charity.AdressDirName)

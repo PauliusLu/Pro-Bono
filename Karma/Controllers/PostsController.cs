@@ -48,7 +48,7 @@ namespace Karma.Controllers
             {
                 if (post.ImagePath == null)
                 {
-                    int itemTypeId = (int)post.ItemType;
+                    int itemTypeId = post.ItemType;
                     if (ItemType.Types.ContainsKey(itemTypeId))
                     {
                         ItemType itemType = ItemType.Types[itemTypeId];

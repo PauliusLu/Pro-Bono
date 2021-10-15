@@ -25,7 +25,7 @@ namespace Karma.Models
         [MaxLength(30)]
         public string Title { get; set; }
         [Required]
-        public Enums.Category ItemType { get; set; }
+        public int ItemType { get; set; }
         [Required]
         [MaxLength(120)]
         public string Description { get; set; }
