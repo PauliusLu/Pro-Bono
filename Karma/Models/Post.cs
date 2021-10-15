@@ -45,15 +45,15 @@ namespace Karma.Models
             return isDonation ? "Offer" : "Request";
         }
 
-        // By visibility and by date (decreasing order).
+        // By visibility and by date (descending order).
         public int CompareTo(Post other)
         {
             if (other.IsVisible == false && this.IsVisible == true)
-                return 1;
-            else if (other.IsVisible == true && this.IsVisible == false)
                 return -1;
+            else if (other.IsVisible == true && this.IsVisible == false)
+                return 1;
             else
-                return this.Date.CompareTo(other.Date);
+                return other.Date.CompareTo(this.Date);
         }
     }
 }

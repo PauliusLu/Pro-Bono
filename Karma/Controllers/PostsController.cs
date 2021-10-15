@@ -61,6 +61,7 @@ namespace Karma.Controllers
                 }
             }
 
+            posts.Sort();
             return View(posts);
         }
 
