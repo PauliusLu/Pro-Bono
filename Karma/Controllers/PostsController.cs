@@ -218,10 +218,11 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
+            var realPost = await _context.Post.FindAsync(id);
             if (User.Identity.IsAuthenticated)
             {
-                var real_post = await _context.Post.FindAsync(id);
-                if (!(User.Identity.Name == real_post.UserId) || !real_post.IsVisible)
+                
+                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
                 {
                     //return NoAccess();
                     return NotFound();
@@ -265,8 +266,8 @@ namespace Karma.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
-                var real_post = await _context.Post.FindAsync(id);
-                if (!(User.Identity.Name == real_post.UserId) || !real_post.IsVisible)
+                var realPost = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
                 {
                     //return NoAccess();
                     return NotFound();
@@ -294,8 +295,8 @@ namespace Karma.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                var real_post = await _context.Post.FindAsync(id);
-                if (!(User.Identity.Name == real_post.UserId) || !real_post.IsVisible)
+                var realPost = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
                 {
                     //return NoAccess();
                     return NotFound();
