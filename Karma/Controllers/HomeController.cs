@@ -54,7 +54,7 @@ namespace Karma.Controllers
         public IActionResult SelectCategory(Enums.ActionType actionType)
         {
             // ItemType = -1 to prevent from the field from having an arbitraty valid value.
-            SelectCategoryViewModel model = new() { ActionType = actionType, ItemType = (Enums.Category)(-1)};
+            SelectCategoryViewModel model = new() { ActionType = actionType, ItemType = null};
             return View(model);
         }
         [HttpPost]
@@ -62,14 +62,17 @@ namespace Karma.Controllers
         //[Route("Home/SelectCategory")]
         public async Task<IActionResult> SelectCategory(SelectCategoryViewModel model)
         {
-            switch (model.ActionType)
+            if (ModelState.IsValid)
             {
-                case Enums.ActionType.Donate:
-                    return RedirectToAction("FilteredCharities", "Charities", new {itemType = model.ItemType });
-                case Enums.ActionType.Request:
-                    break;
-                default:
-                    break;
+                switch (model.ActionType)
+                {
+                    case Enums.ActionType.Donate:
+                        return RedirectToAction("FilteredCharities", "Charities", new { itemTypeId = model.ItemType });
+                    case Enums.ActionType.Request:
+                        break;
+                    default:
+                        break;
+                }
             }
             return View(model);
         }

@@ -7,15 +7,6 @@ namespace Karma
 {
     public class Enums
     {
-        public enum Category
-        {
-            Clothes = 0,
-            Furniture,
-            Crafts,
-            Tools,
-            Books,
-            Other
-        }
         public enum ActionType
         {
             Donate = 0,
