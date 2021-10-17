@@ -35,11 +35,13 @@ namespace Karma.Controllers
             if (isDonation == null)
             {
                 ViewBag.Header = "All posts";
-                posts = await _context.Post.ToListAsync();
+                posts = await _context.Post.
+                    Where(p => p.IsVisible).ToListAsync();
             }
             else
             {
-                posts = await _context.Post.Where(p => p.IsDonation == isDonation).ToListAsync();
+                posts = await _context.Post.
+                    Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
                 ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
             }
 
@@ -192,13 +194,13 @@ namespace Karma.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var post = await _context.Post.FindAsync(id);
+                if (post == null || !post.IsVisible)
+                {
+                    return NotFound();
+                }
                 if (!(User.Identity.Name == post.UserId))
                 {
                     //return NoAccess();
-                    return NotFound();
-                }
-                if (post == null)
-                {
                     return NotFound();
                 }
                 return View(post);
@@ -217,10 +219,11 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
+            var realPost = await _context.Post.FindAsync(id);
             if (User.Identity.IsAuthenticated)
             {
-                var real_post = await _context.Post.FindAsync(id);
-                if (!(User.Identity.Name == real_post.UserId))
+                
+                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
                 {
                     //return NoAccess();
                     return NotFound();
@@ -235,7 +238,7 @@ namespace Karma.Controllers
             {
                 try
                 {
-                    _context.Update(post);
+                    _context.Update(realPost);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -264,8 +267,8 @@ namespace Karma.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
-                var real_post = await _context.Post.FindAsync(id);
-                if (!(User.Identity.Name == real_post.UserId))
+                var realPost = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
                 {
                     //return NoAccess();
                     return NotFound();
@@ -293,8 +296,8 @@ namespace Karma.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                var real_post = await _context.Post.FindAsync(id);
-                if (!(User.Identity.Name == real_post.UserId))
+                var realPost = await _context.Post.FindAsync(id);
+                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
                 {
                     //return NoAccess();
                     return NotFound();
@@ -306,8 +309,11 @@ namespace Karma.Controllers
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             var post = await _context.Post.FindAsync(id);
-            _context.Post.Remove(post);
+            post.IsVisible = false;
+
+            _context.Post.Update(post);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
