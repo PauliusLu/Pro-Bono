@@ -212,7 +212,7 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
-            if (IsUserHavePermission(out IActionResult act, postId: id) != null)
+            if (IsUserHavePermission(out IActionResult act, postUserId: post.UserId) != null)
                 return act;
 
             if (ModelState.IsValid)
