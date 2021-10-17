@@ -219,11 +219,11 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
-            var realPost = await _context.Post.FindAsync(id);
+
             if (User.Identity.IsAuthenticated)
             {
                 
-                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
+                if (!(User.Identity.Name == post.UserId) || !post.IsVisible)
                 {
                     //return NoAccess();
                     return NotFound();
@@ -238,7 +238,7 @@ namespace Karma.Controllers
             {
                 try
                 {
-                    _context.Update(realPost);
+                    _context.Update(post);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
