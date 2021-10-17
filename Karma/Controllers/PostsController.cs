@@ -237,7 +237,7 @@ namespace Karma.Controllers
             {
                 try
                 {
-                    _context.Update(post);
+                    _context.Update(realPost);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
