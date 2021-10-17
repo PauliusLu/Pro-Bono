@@ -25,6 +25,7 @@ namespace Karma.Models
         [MaxLength(30)]
         public string Title { get; set; }
         [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Please select a category")]
         public int ItemType { get; set; }
         [Required]
         [MaxLength(120)]
