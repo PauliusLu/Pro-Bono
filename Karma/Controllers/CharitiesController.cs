@@ -31,13 +31,14 @@ namespace Karma.Controllers
         {
             return View(await _context.Charity.ToListAsync());
         }
-        public async Task<IActionResult> FilteredCharities(Enums.Category itemType)
+        public async Task<IActionResult> FilteredCharities(int itemTypeId)
         {
             List<Charity> charities = await _context.Charity.ToListAsync();
 
             List<Charity> filtered = new List<Charity>();
+            ItemType itemType = ItemType.GetItemType(itemTypeId);
 
-            ViewBag.ItemType = itemType.ToString();
+            ViewBag.ItemType = itemType.Name;
 
             if (charities != null)
             {
@@ -93,7 +94,7 @@ namespace Karma.Controllers
                 if (file != null && file.Length != 0)
                 {
                     var ext = Path.GetExtension(file.FileName);
-                    if (!Utils.IsValidExtension(ext))
+                    if (!ext.IsValidExtension())
                     {
                         ViewBag.Message = "Invalid file type.";
                         return View(charityForm);

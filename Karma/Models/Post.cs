@@ -25,7 +25,8 @@ namespace Karma.Models
         [MaxLength(30)]
         public string Title { get; set; }
         [Required]
-        public Enums.Category ItemType { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Please select a category")]
+        public int ItemType { get; set; }
         [Required]
         [MaxLength(120)]
         public string Description { get; set; }
@@ -45,15 +46,15 @@ namespace Karma.Models
             return isDonation ? "Offer" : "Request";
         }
 
-        // By visibility and by date (decreasing order).
+        // By visibility and by date (descending order).
         public int CompareTo(Post other)
         {
             if (other.IsVisible == false && this.IsVisible == true)
-                return 1;
-            else if (other.IsVisible == true && this.IsVisible == false)
                 return -1;
+            else if (other.IsVisible == true && this.IsVisible == false)
+                return 1;
             else
-                return this.Date.CompareTo(other.Date);
+                return other.Date.CompareTo(this.Date);
         }
     }
 }

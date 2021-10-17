@@ -48,7 +48,7 @@ namespace Karma.Controllers
             {
                 if (post.ImagePath == null)
                 {
-                    int itemTypeId = (int)post.ItemType;
+                    int itemTypeId = post.ItemType;
                     if (ItemType.Types.ContainsKey(itemTypeId))
                     {
                         ItemType itemType = ItemType.Types[itemTypeId];
@@ -61,6 +61,7 @@ namespace Karma.Controllers
                 }
             }
 
+            posts.Sort();
             return View(posts);
         }
 
@@ -110,7 +111,7 @@ namespace Karma.Controllers
             if (file != null && file.Length != 0)
             {
                 var ext = Path.GetExtension(file.FileName);
-                if (!Utils.IsValidExtension(ext))
+                if (!ext.IsValidExtension())
                 {
                     ViewBag.Message = "Invalid file type.";
                     return View(post);

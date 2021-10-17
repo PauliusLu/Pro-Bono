@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,29 +10,28 @@ namespace Karma.Models
     {
         public static Dictionary<int, ItemType> Types = new Dictionary<int, ItemType>();
 
-        int id;
-        string name;
-        string imagePath;
+        int _id;
+        string _name;
+        string _imagePath;
 
+        public override string ToString()
+        {
+            return Name;
+        }
         public ItemType(string name, string imagePath, int id = -1)
         {
-            if (id == -1)
-            {
-                int max = Types.Max(it => it.Value.id);
-                this.id = max + 1;
-            }
-            else
-            {
-                this.id = id;
-            }
-            this.name = name;
-            this.imagePath = imagePath;
+            Id = id;
+            Name = name;
+            ImagePath = imagePath;
         }
 
-        public int Id { get => id; set => id = value; }
-        public string Name { get => name; set => name = value; }
+        public int Id { get => _id;
+                        private set => _id = (value == -1) ? Types.Max(it => it.Value._id) + 1 : _id = value; }
+        public string Name { get => _name;
+                             private set => _name = value; }
 
-        public string ImagePath { get => imagePath; set => name = value; }
+        public string ImagePath { get => _imagePath;
+                                  private set => _imagePath = value; }
 
         /// <summary>
         /// Returns ItemType by id.

@@ -28,11 +28,11 @@ namespace Karma.Models
         [MaxLength(120)]
         public string Description { get; set; }
         [NotMapped]
-        public List<Enums.Category> ItemTypes { get; set; }
+        public List<ItemType> ItemTypes { get; set; }
 
         public Charity()
         {
-            ItemTypes = new List<Enums.Category>();
+            ItemTypes = new List<ItemType>();
         }
 
         public void LoadItemTypes()
@@ -47,7 +47,7 @@ namespace Karma.Models
 
                 while ((line = sr.ReadLine()) != null)
                 {
-                    ItemTypes.Add(Enum.Parse<Enums.Category>(line));
+                    ItemTypes.Add(ItemType.GetItemType(line));
                 }
             }
         }
