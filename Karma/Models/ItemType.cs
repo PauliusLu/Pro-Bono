@@ -8,7 +8,7 @@ namespace Karma.Models
 {
     public class ItemType
     {
-        public static Dictionary<int, ItemType> Types = new Dictionary<int, ItemType>();
+        public static ItemTypes Types = new ItemTypes();
 
         int _id;
         string _name;
@@ -26,7 +26,7 @@ namespace Karma.Models
         }
 
         public int Id { get => _id;
-                        private set => _id = (value == -1) ? Types.Max(it => it.Value._id) + 1 : _id = value; }
+                        private set => _id = (value == -1) ? ItemTypes.Types.Max(it => it.Value._id) + 1 : _id = value; }
         public string Name { get => _name;
                              private set => _name = value; }
 
@@ -49,12 +49,12 @@ namespace Karma.Models
         /// <returns></returns>
         public static ItemType GetItemType(string name)
         {
-            return Types.First(type => type.Value.Name == name).Value;
+            return ItemTypes.Types.First(type => type.Value.Name == name).Value;
         }
 
         public static void CreateType(string name, string imagePath, int id = -1)
         {
-            Types.Add(id, new ItemType(name, imagePath, id));
+            ItemTypes.Types.Add(id, new ItemType(name, imagePath, id));
         }
     }
 }

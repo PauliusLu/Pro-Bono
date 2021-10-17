@@ -27,12 +27,12 @@ namespace Karma
         private void LoadItemTypes(string path)
         {
             string types = System.IO.File.ReadAllText(path);
-            Models.ItemType.Types = JsonConvert.DeserializeObject<Dictionary<int, Models.ItemType>>(types);
+            Models.ItemTypes.Types = JsonConvert.DeserializeObject<Dictionary<int, Models.ItemType>>(types);
         }
 
         private void SaveItemTypes(string path)
         {
-            string types = JsonConvert.SerializeObject(Models.ItemType.Types);
+            string types = JsonConvert.SerializeObject(Models.ItemTypes.Types);
             System.IO.File.WriteAllText(path, types);
         }
 
