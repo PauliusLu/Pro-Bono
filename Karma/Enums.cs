@@ -12,6 +12,14 @@ namespace Karma
             Donate = 0,
             Request
         }
+
+        public enum ReviewState
+        {
+            Waiting = 0,
+            InReview,
+            Approved,
+            Declined
+        }
     }
 
 }

@@ -85,10 +85,8 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Address,ItemTypes,ImagePath,Description")] CreateCharityViewModel charityForm, IFormFile file)
         {
-            Console.WriteLine("Was here");
             if (ModelState.IsValid)
             {
-                Console.WriteLine("Here tii");
                 Charity charity = new();
 
                 if (file != null && file.Length != 0)
@@ -124,6 +122,8 @@ namespace Karma.Controllers
             charity.Name = charityForm.Name;
             charity.ItemTypePath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, Charity.ItemTypesDirName);
             charity.AddressesPath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, Charity.AdressDirName);
+            charity.DateCreated = DateTime.UtcNow;
+            charity.ReviewState = Enums.ReviewState.Waiting;
         }
 
         // GET: Charities/Edit/5

@@ -29,6 +29,10 @@ namespace Karma.Models
         public string Description { get; set; }
         [NotMapped]
         public List<ItemType> ItemTypes { get; set; }
+        [Required]
+        public DateTime DateCreated { get; set; }
+        [Required]
+        public Enums.ReviewState ReviewState { get; set; }
 
         public Charity()
         {
