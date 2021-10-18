@@ -35,22 +35,11 @@ namespace Karma.Controllers
         {
             List<Charity> charities = await _context.Charity.ToListAsync();
 
-            List<Charity> filtered = new List<Charity>();
             ItemType itemType = new ItemTypes()[itemTypeId];
-
             ViewBag.ItemType = itemType.Name;
 
-            if (charities != null)
-            {
-                foreach (Charity c in charities)
-                {
-                    c.LoadItemTypes();
-                    if (c.ItemTypes.Contains(itemType))
-                    {
-                        filtered.Add(c);
-                    }
-                }
-            }   
+            var filtered = Charity.FilteredCharities(charities, itemType);
+
             return View(filtered);
         }
 
