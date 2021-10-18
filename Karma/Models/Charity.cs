@@ -72,7 +72,7 @@ namespace Karma.Models
             
             while ((line = sr.ReadLine()) != null)
             {
-                ItemTypes.Add(ItemType.GetItemType(line));
+                ItemTypes.Add(Karma.Models.ItemTypes.GetItemType(line));
             }
         }
     }

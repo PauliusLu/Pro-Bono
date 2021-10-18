@@ -28,7 +28,7 @@
             <div class="form-group">
                 <label asp-for="ItemTypes" class="control-label">Category</label>
                 <select asp-for="ItemTypes" id="multi-select" class="form-control" multiple
-                        asp-items='@new SelectList(ItemType.Types, "Key", "Value")'>
+                        asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
                 </select>
                 <span asp-validation-for="ItemTypes" class="text-danger"></span>
             </div>

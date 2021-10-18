@@ -51,9 +51,9 @@ namespace Karma.Controllers
                 if (post.ImagePath == null)
                 {
                     int itemTypeId = post.ItemType;
-                    if (ItemType.Types.ContainsKey(itemTypeId))
+                    if (ItemTypes.Types.ContainsKey(itemTypeId))
                     {
-                        ItemType itemType = ItemType.Types[itemTypeId];
+                        ItemType itemType = new ItemTypes()[itemTypeId];
                         post.ImagePath = Path.Combine(Post.DefaultImagesDirName, itemType.ImagePath);
                     }
                 }

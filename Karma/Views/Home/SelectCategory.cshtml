@@ -6,7 +6,7 @@
 
         <label asp-for="ItemType" class="control-label">Category</label>
         <select asp-for="ItemType" class="form-control"
-                asp-items='@new SelectList(ItemType.Types, "Key", "Value")'>
+                asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
             <option selected value="-1">Select...</option>
         </select>
 

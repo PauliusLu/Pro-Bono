@@ -26,7 +26,7 @@
                         } 
                         <div class="card-body">
                             <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                            <h6 class="card-text">@Html.DisplayFor(modelItem => ItemType.GetItemType(item.ItemType).Name)</h6>
+                            <h6 class="card-text">@Html.DisplayFor(modelItem => ItemTypes.GetItemType(item.ItemType).Name)</h6>
                             <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
                         </div>
                         <div class="card-footer">
