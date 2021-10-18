@@ -102,10 +102,9 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Donate([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post, IFormFile file)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
+            if (IsUserHavePermission(out IActionResult act) != null)
+                return act;
+
             post.UserId = User.Identity.Name;
             //Checking disabled due to change of userID from int to string.
             //if (ModelState.IsValid)
@@ -141,13 +140,12 @@ namespace Karma.Controllers
             //return View(post);
         }
 
+
         // GET: Posts/CreateRequest
         public IActionResult CreateRequest()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
+            if (IsUserHavePermission(out IActionResult act) != null)
+                return act;
             return View();
         }
 
@@ -158,10 +156,9 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRequest([Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
+            if (IsUserHavePermission(out IActionResult act) != null)
+                return act;
+
             post.UserId = User.Identity.Name;
             if (ModelState.IsValid)
             {
@@ -191,21 +188,16 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
-            if (User.Identity.IsAuthenticated)
+            var post = await _context.Post.FindAsync(id);
+
+            if (IsUserHavePermission(out IActionResult act, post: post) != null)
+                return act;
+
+            if (post == null || !post.IsVisible)
             {
-                var post = await _context.Post.FindAsync(id);
-                if (post == null || !post.IsVisible)
-                {
-                    return NotFound();
-                }
-                if (!(User.Identity.Name == post.UserId))
-                {
-                    //return NoAccess();
-                    return NotFound();
-                }
-                return View(post);
+                return NotFound();
             }
-            return RedirectToPage("/Account/Login", new { area = "Identity" });
+            return View(post);
         }
 
         // POST: Posts/Edit/5
@@ -215,25 +207,14 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post)
         {
-            if (id != post.Id)
+            if (id != post.Id || !post.IsVisible)
             {
                 return NotFound();
             }
 
-            if (User.Identity.IsAuthenticated)
-            {
-                
-                if (!(User.Identity.Name == post.UserId) || !post.IsVisible)
-                {
-                    //return NoAccess();
-                    return NotFound();
-                }
+            if (IsUserHavePermission(out IActionResult act, postUserId: post.UserId) != null)
+                return act;
 
-            }
-            else
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
             if (ModelState.IsValid)
             {
                 try
@@ -265,23 +246,12 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
-            if (User.Identity.IsAuthenticated)
-            {
-                var realPost = await _context.Post.FindAsync(id);
-                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
-                {
-                    //return NoAccess();
-                    return NotFound();
-                }
-            }
-            else
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
+            if (IsUserHavePermission(out IActionResult act, postId: id) != null)
+                return act;
 
             var post = await _context.Post
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (post == null)
+            if (post == null || !post.IsVisible)
             {
                 return NotFound();
             }
@@ -294,21 +264,12 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                var realPost = await _context.Post.FindAsync(id);
-                if (!(User.Identity.Name == realPost.UserId) || !realPost.IsVisible)
-                {
-                    //return NoAccess();
-                    return NotFound();
-                }
+            if (IsUserHavePermission(out IActionResult act, postId: id) != null)
+                return act;
 
-            }
-            else
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
             var post = await _context.Post.FindAsync(id);
+            if (!post.IsVisible)
+                return NotFound();
             post.IsVisible = false;
 
             _context.Post.Update(post);
@@ -322,5 +283,58 @@ namespace Karma.Controllers
             return _context.Post.Any(e => e.Id == id);
         }
 
+        private object IsUserHavePermission(out IActionResult act, int? postId = null, string userId = null, Post post = null, string postUserId = null)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                act = RedirectToPage("/Account/Login", new { area = "Identity" });
+                return act;
+            }
+            //If check is done by userID
+            if (userId != null)
+            {
+                if (User.Identity.Name != userId)
+                {
+                    //return NoAccess();
+                    act = NotFound();
+                    return act;
+                }
+            }
+            //if check is done by postID
+            if (postId != null)
+            {
+                var real_post = _context.Post.Find(postId);
+                if (User.Identity.Name != real_post.UserId)
+                {
+                    //return NoAccess();
+                    act = NotFound();
+                    return act;
+                }
+            }
+            //if check is done by post
+            if (post != null)
+            {
+                if (User.Identity.Name != post.UserId)
+                {
+                    //return NoAccess();
+                    act = NotFound();
+                    return act;
+                }
+            }
+            //if check is done by postUserId
+            if (postUserId != null)
+            {
+                if (User.Identity.Name != postUserId)
+                {
+                    //return NoAccess();
+                    act = NotFound();
+                    return act;
+                }
+            }
+
+            //If user has Permission
+            act = null;
+            return null;
+        }
     }
 }
