@@ -8,7 +8,7 @@ using System.IO;
 namespace Karma.Models
 {
 
-    public class Post : IComparable<Post>
+    public class Post : IComparable<Post>, IEquatable<Post>
     {
         public static readonly string ImagesDirName = Path.Combine("data", "PostImages");
         public static readonly string DefaultImagesDirName = Path.Combine("data", "DefaultPostImages");
@@ -55,6 +55,23 @@ namespace Karma.Models
                 return 1;
             else
                 return other.Date.CompareTo(this.Date);
+        }
+
+        public bool Equals(Post other)
+        {
+            if (Id == other.Id &&
+                UserId == other.UserId &&
+                IsDonation == other.IsDonation &&
+                Date == other.Date &&
+                Title == other.Title &&
+                ItemType == other.ItemType &&
+                Description == other.Description &&
+                ImagePath == other.ImagePath &&
+                IsVisible == other.IsVisible)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

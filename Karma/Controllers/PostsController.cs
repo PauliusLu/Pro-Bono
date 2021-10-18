@@ -106,19 +106,20 @@ namespace Karma.Controllers
                 return act;
 
             post.UserId = User.Identity.Name;
-            //Checking disabled due to change of userID from int to string.
-            //if (ModelState.IsValid)
-            //{
-            if (file != null && file.Length != 0)
-            {
-                var ext = Path.GetExtension(file.FileName);
-                if (!ext.IsValidExtension())
-                {
-                    ViewBag.Message = "Invalid file type.";
-                    return View(post);
-                }
+            
 
-                    
+            if (ModelState.IsValid)
+            {
+                if (file != null && file.Length != 0)
+                {
+                    var ext = Path.GetExtension(file.FileName);
+                    if (!ext.IsValidExtension())
+                    {
+                        ViewBag.Message = "Invalid file type.";
+                        return View(post);
+                    }
+
+
                     // post.UserId is always 0, should be configured in the future
                     string fileName = post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext;
 
@@ -130,6 +131,7 @@ namespace Karma.Controllers
 
                     post.ImagePath = fileName;
                 }
+            }
 
             FillPostFields(post, true);
             _context.Add(post);
@@ -159,6 +161,7 @@ namespace Karma.Controllers
             if (IsUserHavePermission(out IActionResult act) != null)
                 return act;
 
+
             post.UserId = User.Identity.Name;
             if (ModelState.IsValid)
             {
@@ -168,6 +171,7 @@ namespace Karma.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+
             return View(post);
         }
 
@@ -217,6 +221,12 @@ namespace Karma.Controllers
 
             if (ModelState.IsValid)
             {
+                // If the edited post is identical to the old one, return to the index page.
+                var real_post = _context.Post.Find(id);
+                if (post.Equals(real_post))
+                    return RedirectToAction(nameof(Index));
+                _context.Entry(real_post).State = EntityState.Detached;
+
                 try
                 {
                     _context.Update(post);
