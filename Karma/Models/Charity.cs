@@ -35,22 +35,45 @@ namespace Karma.Models
             ItemTypes = new List<ItemType>();
         }
 
-        public void LoadItemTypes()
+        public static List<Charity> FilteredCharities(List<Charity> charities, ItemType itemType) 
+        {
+            List<Charity> filtered = new List<Charity>();
+            if (charities == null)
+                return filtered;
+
+
+            foreach (Charity c in charities)
+            {
+                if (c.HasItemTypesFile())
+                {
+                    c.LoadItemTypes();
+                }
+
+                if (c.ItemTypes.Contains(itemType))
+                {
+                    filtered.Add(c);
+                }
+            }
+
+            return filtered;
+        }
+
+        public bool HasItemTypesFile()
         {
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), ItemTypePath);
-            if (File.Exists(filePath))
+            return File.Exists(filePath);
+        }
+
+        public void LoadItemTypes()
+        {
+            StreamReader sr = new StreamReader(ItemTypePath);
+            ItemTypes = ItemTypes ?? new();
+            string line;
+            
+            while ((line = sr.ReadLine()) != null)
             {
-
-                StreamReader sr = new StreamReader(ItemTypePath);
-                ItemTypes = ItemTypes ?? new();
-                string line;
-
-                while ((line = sr.ReadLine()) != null)
-                {
-                    ItemTypes.Add(ItemType.GetItemType(line));
-                }
+                ItemTypes.Add(ItemType.GetItemType(line));
             }
         }
     }
-
 }
