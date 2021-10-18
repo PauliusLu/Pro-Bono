@@ -35,13 +35,13 @@ namespace Karma.Controllers
             if (isDonation == null)
             {
                 ViewBag.Header = "All posts";
-                posts = await _context.Post.
-                    Where(p => p.IsVisible).ToListAsync();
+                posts = await _context.Post
+                    .Where(p => p.IsVisible).ToListAsync();
             }
             else
             {
-                posts = await _context.Post.
-                    Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
+                posts = await _context.Post
+                    .Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
                 ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
             }
 

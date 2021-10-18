@@ -54,6 +54,45 @@ namespace Karma.Controllers
             return View(filtered);
         }
 
+        public async Task<IActionResult> ReviewCharities()
+        {
+            List<Charity> charities = await _context.Charity
+                .Where(c => c.ReviewState == Enums.ReviewState.Waiting)
+                .OrderBy(c => c.DateCreated)
+                .ToListAsync();
+
+            return View(charities);
+        }
+
+        public async Task<IActionResult> Review(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var charity = await _context.Charity
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (charity == null)
+            {
+                return NotFound();
+            }
+
+            return View(charity);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Review(int id, [Bind("Id,ReviewState")] Charity charity)
+        {
+            var dbCharity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == id);
+            dbCharity.ReviewState = charity.ReviewState;
+
+            _context.Update(dbCharity);
+            await _context.SaveChangesAsync();
+            return View(dbCharity);
+        }
+
         // GET: Charities/Details/5
         public async Task<IActionResult> Details(int? id)
         {

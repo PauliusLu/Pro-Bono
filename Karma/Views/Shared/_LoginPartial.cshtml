@@ -15,10 +15,11 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a id="manage" class="dropdown-item text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Account</a>
+                <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="Charities" asp-action="ReviewCharities">Administration</a>
                 <div class="dropdown-divider"></div>
                 <form id="logoutForm" class="form-inline dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                     <button id="logout" type="submit" class="nav-link btn btn-link text-dark" style="padding: 0px 0px 0px">@localizer["logout"]</button>
-        </form>
+                </form>
             </div>
     </li>
 }
