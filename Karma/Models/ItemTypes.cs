@@ -24,5 +24,30 @@ namespace Karma.Models
         }
 
         public static Dictionary<int, ItemType> Types { get => _types; set => _types = value; }
+
+        /// <summary>
+        /// Returns ItemType by name. It's resource heavy operation. If possible, use id.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static ItemType GetItemType(string name)
+        {
+            return _types.First(type => type.Value.Name == name).Value;
+        }
+
+        /// <summary>
+        /// Returns ItemType by id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static ItemType GetItemType(int id)
+        {
+            return Types[id];
+        }
+
+        public static void CreateType(string name, string imagePath, int id = -1)
+        {
+            ItemTypes.Types.Add(id, new ItemType(name, imagePath, id));
+        }
     }
 }

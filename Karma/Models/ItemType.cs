@@ -33,28 +33,5 @@ namespace Karma.Models
         public string ImagePath { get => _imagePath;
                                   private set => _imagePath = value; }
 
-        /// <summary>
-        /// Returns ItemType by id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static ItemType GetItemType(int id)
-        {
-            return Types[id];
-        }
-        /// <summary>
-        /// Returns ItemType by name. It's resource heavy operation. If possible, use id.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static ItemType GetItemType(string name)
-        {
-            return ItemTypes.Types.First(type => type.Value.Name == name).Value;
-        }
-
-        public static void CreateType(string name, string imagePath, int id = -1)
-        {
-            ItemTypes.Types.Add(id, new ItemType(name, imagePath, id));
-        }
     }
 }
