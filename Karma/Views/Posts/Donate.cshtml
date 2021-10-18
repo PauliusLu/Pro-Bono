@@ -34,6 +34,7 @@
                 <input type="file" class="form-control-file" accept=".jpg, .jpeg, .png, .bmp" name="file" />
                 <span class="text-danger">@ViewBag.Message</span>
             </div>
+            <input asp-for="UserId" type="hidden" value="@User.Identity.Name" class="form-control" />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
