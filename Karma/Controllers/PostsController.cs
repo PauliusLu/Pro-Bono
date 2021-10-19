@@ -19,7 +19,6 @@ namespace Karma.Controllers
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
-
         // Passes an object of type IWebHostEnvironment that carries information about our host environment.
         public PostsController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
         {
@@ -31,12 +30,17 @@ namespace Karma.Controllers
         public async Task<IActionResult> Index(bool? isDonation)
         {
             List<Post> posts;
-
+            List<User> users;
+            users = await _context.User.ToListAsync();
             if (isDonation == null)
             {
                 ViewBag.Header = "All posts";
-                posts = await _context.Post
-                    .Where(p => p.IsVisible).ToListAsync();
+
+                posts = await _context.Post.
+                    Where(p => p.IsVisible).ToListAsync();
+
+                PostsData pd = new PostsData();
+                pd.PostAverage(posts.Count(), posts[0].Date);
             }
             else
             {
@@ -44,7 +48,6 @@ namespace Karma.Controllers
                     .Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
                 ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
             }
-
             // Sets default image for post by itemtype if there's no image given
             foreach (Post post in posts)
             {
@@ -63,6 +66,14 @@ namespace Karma.Controllers
                 }
             }
 
+
+            if (isDonation == null)
+            {
+                foreach (Advert ad in Advert.Samples)
+                    posts.Add(ad);
+            }
+
+            Post.GetLists(posts, users);
             posts.Sort();
             return View(posts);
         }

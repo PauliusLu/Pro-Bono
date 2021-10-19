@@ -111,6 +111,7 @@ namespace Karma
 
             // Create necessary directories if they do not exist.
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Post.ImagesDirName));
+            System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Advert.ImagesDirName));
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Charity.ImagesDirName));
             System.IO.Directory.CreateDirectory(Path.Combine(env.ContentRootPath, Karma.Models.Charity.ItemTypesDirName));
             System.IO.Directory.CreateDirectory(Path.Combine(env.ContentRootPath, Karma.Models.Charity.AdressDirName));

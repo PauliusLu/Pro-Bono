@@ -40,6 +40,20 @@ namespace Karma.Models
 
         }
 
+        protected Post(int id, string userId, bool isDonation, DateTime date, string title, 
+            int itemType, string description, string imagePath, bool isVisible)
+        {
+            Id = id;
+            UserId = userId;
+            IsDonation = isDonation;
+            Date = date;
+            Title = title;
+            ItemType = ItemType;
+            Description = description;
+            ImagePath = imagePath;
+            IsVisible = isVisible;
+        }
+
         public static string GetPostTypeName(bool isDonation)
         {
             //Name for which kind of post it is.
@@ -72,6 +86,30 @@ namespace Karma.Models
                 return true;
             }
             return false;
+        }
+        static List<Post> posts;
+        static List<User> users;
+
+        public static void GetLists(List<Post> p, List<User> u)
+        {
+            posts = p;
+            users = u;
+        }
+        public static string CompareQuerie(Post rPost)
+        {
+            string text = "User";
+            var query = from user in users
+                        join post in posts on user.UserName equals post.UserId into gj
+                        select new { PostOwnerName = user.Name, PostOwnerSurname = user.Surname, Posts = gj };
+            foreach (var v in query)
+            {
+                foreach (Post po in v.Posts)
+                    if (po.Id == rPost.Id)
+                    {
+                        text = v.PostOwnerName + " " + v.PostOwnerSurname;
+                    }
+            }
+            return text;
         }
     }
 }
