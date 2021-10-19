@@ -19,7 +19,6 @@ namespace Karma.Controllers
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
-
         // Passes an object of type IWebHostEnvironment that carries information about our host environment.
         public PostsController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
         {
@@ -46,6 +45,10 @@ namespace Karma.Controllers
                     Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
                 ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
             }
+                Advert ad = new Advert();
+                ad.Id = posts.Count()+1;
+                Post advertPost = ad;
+                posts.Add(advertPost);  
 
             // Sets default image for post by itemtype if there's no image given
             foreach (Post post in posts)
