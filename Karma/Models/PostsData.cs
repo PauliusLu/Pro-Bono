@@ -24,7 +24,7 @@ namespace Karma.Models
         {
             string text;
             if (AvarageInt() == 0)
-                text = "Less than one";
+                text = "Less than 1";
             else
                 text = AvarageInt() + "+";
             return text;

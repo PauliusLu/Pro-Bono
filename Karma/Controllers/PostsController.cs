@@ -45,11 +45,6 @@ namespace Karma.Controllers
                     Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
                 ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
             }
-                Advert ad = new Advert();
-                ad.Id = posts.Count()+1;
-                Post advertPost = ad;
-                posts.Add(advertPost);  
-
             // Sets default image for post by itemtype if there's no image given
             foreach (Post post in posts)
             {
@@ -67,6 +62,14 @@ namespace Karma.Controllers
                     post.ImagePath = Path.Combine(Post.ImagesDirName, post.ImagePath);
                 }
             }
+
+
+            if (isDonation == null)
+            {
+                foreach (Advert ad in Advert.Samples)
+                    posts.Add(ad);
+            }
+
 
             posts.Sort();
             return View(posts);

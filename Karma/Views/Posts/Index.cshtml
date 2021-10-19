@@ -19,16 +19,23 @@
             @foreach (var item in Model)
             {
                 <div class="col col-12 col-sm-6 col-md-4 col-lg-3">
-                    <div class="card h-100">
+                    <div class="@((item is not Advert) ? "card h-100" : "card text-white bg-info mb-3 h-100")">
                         @if (@item.ImagePath != null && item.ImagePath != "")
                         {
                             <img class="card-img-top ratio ratio-4x3" src=@item.ImagePath>
                         } 
                         <div class="card-body">
                             <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                            <h6 class="card-text">@Html.DisplayFor(modelItem => ItemTypes.GetItemType(item.ItemType).Name)</h6>
+                            @if (item is not Advert)
+                            {
+                                <h6 class="card-text">@Html.DisplayFor(modelItem => ItemTypes.GetItemType(item.ItemType).Name)</h6>
+                            }
                             <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+
                         </div>
+
+                        @if (item is not Advert)
+                        {
                         <div class="card-footer">
                             <small class="text-muted">@Html.DisplayFor(modelItem => item.Date)</small>
                             <a asp-action="Details" asp-route-id="@item.Id">Details </a>
@@ -38,6 +45,12 @@
                                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                             }
                         </div>
+                        }
+                        else {
+                            <div class="card-footer">
+                                <p>@(((Advert)item).EmphasizedMessage)</p>
+                            </div>
+                        } 
                     </div>
                 </div>
             }

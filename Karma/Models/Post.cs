@@ -40,6 +40,20 @@ namespace Karma.Models
 
         }
 
+        protected Post(int id, string userId, bool isDonation, DateTime date, string title, 
+            int itemType, string description, string imagePath, bool isVisible)
+        {
+            Id = id;
+            UserId = userId;
+            IsDonation = isDonation;
+            Date = date;
+            Title = title;
+            ItemType = ItemType;
+            Description = description;
+            ImagePath = imagePath;
+            IsVisible = isVisible;
+        }
+
         public static string GetPostTypeName(bool isDonation)
         {
             //Name for which kind of post it is.
