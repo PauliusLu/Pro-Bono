@@ -1,0 +1,4 @@
+Clothes
+Furniture
+Crafts
+Books
