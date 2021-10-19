@@ -19,11 +19,14 @@ namespace Karma.Controllers
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
+        private PeakRearQueue<Charity> _reviewCharitiesQueue;
+
         // Passes an object of type IWebHostEnvironment that carries information about our host environment.
         public CharitiesController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _iWebHostEnv = webHostEnvironment;
+            _reviewCharitiesQueue = GetReviewCharitiesQueue().Result;
         }
 
         // GET: Charities
@@ -56,27 +59,33 @@ namespace Karma.Controllers
 
         public async Task<IActionResult> ReviewCharities()
         {
-            List<Charity> charities = await _context.Charity
-                .Where(c => c.ReviewState == Enums.ReviewState.Waiting)
-                .OrderBy(c => c.DateCreated)
-                .ToListAsync();
+            if (!_reviewCharitiesQueue.isEmpty())
+            {
+                var charity = _reviewCharitiesQueue.PeakFront();
+                return Redirect("Review/" + charity.Id);
+            }
 
-            return View(charities);
+            return Redirect("Review");
         }
 
         public async Task<IActionResult> Review(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return View();
             }
 
-            var charity = await _context.Charity
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (charity == null)
-            {
-                return NotFound();
-            }
+            DateTime oldReviewRequestDate = _reviewCharitiesQueue.PeakFront().DateCreated;
+            string oldReviewRequestMessage = string.Concat("Oldest review request made: ",
+                oldReviewRequestDate.ToString("yyyy-MM-dd"));
+            ViewBag.oldReview = oldReviewRequestMessage;
+
+            DateTime newReviewRequestDate = _reviewCharitiesQueue.PeakRear().DateCreated;
+            string newReviewRequestMessage = string.Concat("Newest review request made: ",
+                newReviewRequestDate.ToString("yyyy-MM-dd"));
+            ViewBag.newReview = newReviewRequestMessage;
+
+            var charity = _reviewCharitiesQueue.Dequeue();
 
             return View(charity);
         }
@@ -90,7 +99,7 @@ namespace Karma.Controllers
 
             _context.Update(dbCharity);
             await _context.SaveChangesAsync();
-            return View(dbCharity);
+            return RedirectToAction("ReviewCharities");
         }
 
         // GET: Charities/Details/5
@@ -248,6 +257,27 @@ namespace Karma.Controllers
         private bool CharityExists(int id)
         {
             return _context.Charity.Any(e => e.Id == id);
+        }
+
+        public async Task<PeakRearQueue<Charity>> GetReviewCharitiesQueue()
+        {
+            var charitiesList = await _context.Charity.ToListAsync();
+
+            IEnumerable<Charity> charityQuery =
+                from charity in charitiesList
+                where charity.ReviewState == Enums.ReviewState.InReview
+                    || charity.ReviewState == Enums.ReviewState.Waiting
+                orderby charity.DateCreated
+                select charity;
+
+            var charitiesQueue = new PeakRearQueue<Charity>();
+
+            foreach(Charity c in charityQuery)
+            {
+                charitiesQueue.Enqueue(c);
+            }
+
+            return charitiesQueue;
         }
     }
 }
