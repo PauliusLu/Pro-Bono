@@ -90,7 +90,7 @@ namespace Karma.Models
         static List<Post> posts;
         static List<User> users;
 
-        public static void Querie(List<Post> p, List<User> u)
+        public static void GetLists(List<Post> p, List<User> u)
         {
             posts = p;
             users = u;

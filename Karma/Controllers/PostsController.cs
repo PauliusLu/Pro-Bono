@@ -71,7 +71,7 @@ namespace Karma.Controllers
                     posts.Add(ad);
             }
 
-            Post.Querie(posts, users);
+            Post.GetLists(posts, users);
             posts.Sort();
             return View(posts);
         }
