@@ -20,5 +20,14 @@ namespace Karma.Models
             int AvarageInt = (int)AvaragePost;
             return AvarageInt;
         }
+        public static string AvarageText()
+        {
+            string text;
+            if (AvarageInt() == 0)
+                text = "Less than one";
+            else
+                text = AvarageInt() + "+";
+            return text;
+        }
     }
 }
