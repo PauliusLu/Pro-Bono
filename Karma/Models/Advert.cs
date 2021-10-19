@@ -7,7 +7,6 @@ namespace Karma.Models
 {
     public class Advert : Post
     {
-        //ToDo - 
         public bool NoAdverts = true;
         public Advert()
         {
