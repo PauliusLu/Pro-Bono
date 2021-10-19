@@ -37,6 +37,8 @@ namespace Karma.Controllers
                 ViewBag.Header = "All posts";
                 posts = await _context.Post.
                     Where(p => p.IsVisible).ToListAsync();
+                PostsData pd = new PostsData();
+                pd.PostAvarage(posts.Count(), posts[0].Date);
             }
             else
             {
