@@ -7,26 +7,26 @@ namespace Karma.Models
 {
     public class PostsData
     {
-        public static double AvaragePost;
-        public void PostAvarage(int PostCount, DateTime FirstPost)
+        public static double AveragePost;
+        public void PostAverage(int PostCount, DateTime FirstPost)
         {
             DateTime currentTime = DateTime.UtcNow;
             double totalDays = (currentTime - FirstPost).TotalDays;
-            AvaragePost = PostCount / totalDays;
-            Console.WriteLine(AvaragePost);
+            AveragePost = PostCount / totalDays;
+            Console.WriteLine(AveragePost);
         }
-        public static int AvarageInt()
+        public static int AverageInt()
         {
-            int AvarageInt = (int)AvaragePost;
-            return AvarageInt;
+            int AverageInt = (int)AveragePost;
+            return AverageInt;
         }
-        public static string AvarageText()
+        public static string AverageText()
         {
             string text;
-            if (AvarageInt() == 0)
+            if (AverageInt() == 0)
                 text = "Less than 1";
             else
-                text = AvarageInt() + "+";
+                text = AverageInt() + "+";
             return text;
         }
     }

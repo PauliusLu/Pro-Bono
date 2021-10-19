@@ -30,14 +30,15 @@ namespace Karma.Controllers
         public async Task<IActionResult> Index(bool? isDonation)
         {
             List<Post> posts;
-
+            List<User> users;
+            users = await _context.User.ToListAsync();
             if (isDonation == null)
             {
                 ViewBag.Header = "All posts";
                 posts = await _context.Post.
                     Where(p => p.IsVisible).ToListAsync();
                 PostsData pd = new PostsData();
-                pd.PostAvarage(posts.Count(), posts[0].Date);
+                pd.PostAverage(posts.Count(), posts[0].Date);
             }
             else
             {
@@ -70,7 +71,7 @@ namespace Karma.Controllers
                     posts.Add(ad);
             }
 
-
+            Post.Querie(posts, users);
             posts.Sort();
             return View(posts);
         }

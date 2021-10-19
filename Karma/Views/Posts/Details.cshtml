@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = Html.DisplayFor(model => model.Title);
 }
-<h4>User @Post.GetPostTypeName(Model.IsDonation)s</h4>
+<h4>@Post.CompareQuerie(Model) @Post.GetPostTypeName(Model.IsDonation)s</h4>
 <h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
 
 <div>
