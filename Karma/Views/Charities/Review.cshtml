@@ -1,0 +1,93 @@
+﻿@model Karma.Models.Charity
+
+@{
+    ViewData["Title"] = "Review";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model == null)
+{
+    <h3>You have currently reviewed all the charity reviewal requests.</h3>
+}
+else
+{
+    <div class="container">
+        <div class="row justify-content-end">
+            <div class="col-4">
+                <p>@ViewBag.oldReview</p>
+                <p>@ViewBag.newReview</p>
+            </div>
+        </div>
+    </div>
+    
+
+    <h1>Review</h1>
+
+    <div>
+        <h4>Charity reviewal requests</h4>
+        <hr />
+        <form asp-action="Review">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.AddressesPath)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.AddressesPath)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ItemTypePath)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ItemTypePath)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ImagePath)
+                </dt>
+                <dd class="col-sm-10">
+                    @if (Model.ImagePath != null && Model.ImagePath != "")
+                    {
+                        <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
+                             alt="Item image" class="img-fluid" style="max-width:400px;" />
+                    }
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.DateCreated)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.DateCreated)
+                </dd>
+            </dl>
+            <div class="form-group">
+                <label asp-for="ReviewState" class="control-label">Review state</label>
+                <select asp-for="ReviewState" class="form-control"
+                        asp-items="Html.GetEnumSelectList<Enums.ReviewState>()">
+                    <option>Select...</option>
+                </select>
+                <span asp-validation-for="ReviewState" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

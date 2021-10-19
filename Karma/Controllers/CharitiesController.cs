@@ -19,11 +19,14 @@ namespace Karma.Controllers
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
+        private PeakRearQueue<Charity> _reviewCharitiesQueue;
+
         // Passes an object of type IWebHostEnvironment that carries information about our host environment.
         public CharitiesController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _iWebHostEnv = webHostEnvironment;
+            _reviewCharitiesQueue = GetReviewCharitiesQueue().Result;
         }
 
         // GET: Charities
@@ -41,6 +44,51 @@ namespace Karma.Controllers
             var filtered = Charity.FilteredCharities(charities, itemType);
 
             return View(filtered);
+        }
+
+        public async Task<IActionResult> ReviewCharities()
+        {
+            if (!_reviewCharitiesQueue.isEmpty())
+            {
+                var charity = _reviewCharitiesQueue.PeakFront();
+                return Redirect("Review/" + charity.Id);
+            }
+
+            return Redirect("Review");
+        }
+
+        public async Task<IActionResult> Review(int? id)
+        {
+            if (id == null)
+            {
+                return View();
+            }
+
+            DateTime oldReviewRequestDate = _reviewCharitiesQueue.PeakFront().DateCreated;
+            string oldReviewRequestMessage = string.Concat("Oldest review request made: ",
+                oldReviewRequestDate.ToString("yyyy-MM-dd"));
+            ViewBag.oldReview = oldReviewRequestMessage;
+
+            DateTime newReviewRequestDate = _reviewCharitiesQueue.PeakRear().DateCreated;
+            string newReviewRequestMessage = string.Concat("Newest review request made: ",
+                newReviewRequestDate.ToString("yyyy-MM-dd"));
+            ViewBag.newReview = newReviewRequestMessage;
+
+            var charity = _reviewCharitiesQueue.Dequeue();
+
+            return View(charity);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Review(int id, [Bind("Id,ReviewState")] Charity charity)
+        {
+            var dbCharity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == id);
+            dbCharity.ReviewState = charity.ReviewState;
+
+            _context.Update(dbCharity);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("ReviewCharities");
         }
 
         // GET: Charities/Details/5
@@ -74,10 +122,8 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Address,ItemTypes,ImagePath,Description")] CreateCharityViewModel charityForm, IFormFile file)
         {
-            Console.WriteLine("Was here");
             if (ModelState.IsValid)
             {
-                Console.WriteLine("Here tii");
                 Charity charity = new();
 
                 if (file != null && file.Length != 0)
@@ -113,6 +159,8 @@ namespace Karma.Controllers
             charity.Name = charityForm.Name;
             charity.ItemTypePath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, Charity.ItemTypesDirName);
             charity.AddressesPath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, Charity.AdressDirName);
+            charity.DateCreated = DateTime.UtcNow;
+            charity.ReviewState = Enums.ReviewState.Waiting;
         }
 
         // GET: Charities/Edit/5
@@ -198,6 +246,27 @@ namespace Karma.Controllers
         private bool CharityExists(int id)
         {
             return _context.Charity.Any(e => e.Id == id);
+        }
+
+        public async Task<PeakRearQueue<Charity>> GetReviewCharitiesQueue()
+        {
+            var charitiesList = await _context.Charity.ToListAsync();
+
+            IEnumerable<Charity> charityQuery =
+                from charity in charitiesList
+                where charity.ReviewState == Enums.ReviewState.InReview
+                    || charity.ReviewState == Enums.ReviewState.Waiting
+                orderby charity.DateCreated
+                select charity;
+
+            var charitiesQueue = new PeakRearQueue<Charity>();
+
+            foreach(Charity c in charityQuery)
+            {
+                charitiesQueue.Enqueue(c);
+            }
+
+            return charitiesQueue;
         }
     }
 }

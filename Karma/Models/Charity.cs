@@ -20,15 +20,25 @@ namespace Karma.Models
         [Required]
         public string Name { get; set; }
         [Required]
+        [Display(Name = "Path to addresses")]
         public string AddressesPath { get; set; }
         [Required]
+        [Display(Name = "Path to item types")]
         public string ItemTypePath { get; set; }
+        [Display(Name = "Image")]
         public string ImagePath { get; set; }
         [Required]
         [MaxLength(120)]
         public string Description { get; set; }
         [NotMapped]
+        [Display(Name = "Item types")]
         public List<ItemType> ItemTypes { get; set; }
+        [Required]
+        [Display(Name = "Request date")]
+        public DateTime DateCreated { get; set; }
+        [Required]
+        [Display(Name = "Review state")]
+        public Enums.ReviewState ReviewState { get; set; }
 
         public Charity()
         {
