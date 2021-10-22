@@ -6,8 +6,6 @@
     var userId = ViewBag.userId;
 }
 
-<h1>ManageUserRoles</h1>
-
 <form asp-action="ManageUserRoles">
     <div class="card">
         <div class="card-header">
@@ -30,7 +28,7 @@
         <div class="card-footer">
             <div class="form-group">
                 <input type="submit" value="Update" class="btn btn-primary" />
-                <a asp-action="UserList" asp-route-id="@userId"
+                <a asp-action="UserList" asp-route-userId="@userId"
                    class="btn btn-primary">
                     Cancel
                 </a>

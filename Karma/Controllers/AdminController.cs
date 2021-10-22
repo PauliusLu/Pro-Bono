@@ -3,6 +3,7 @@ using Karma.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,17 @@ namespace Karma.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly KarmaContext _context;
 
-        private readonly UserManager<User> userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        private readonly UserManager<User> _userManager;
+
+        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
-            this.roleManager = roleManager;
-            this.userManager = userManager;
+            _context = context;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -33,16 +37,21 @@ namespace Karma.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRole(Role role)
+        public async Task<IActionResult> CreateRole(IdentityRole role)
         {
-            var roleExists = await roleManager.RoleExistsAsync(role.Name);
+            var roleExists = await _roleManager.RoleExistsAsync(role.Name);
 
             if (!roleExists)
             {
-                var result = await roleManager.CreateAsync(new IdentityRole(role.Name));
+                var result = await _roleManager.CreateAsync(new IdentityRole(role.Name));
             }
 
             return View();
+        }
+
+        public async Task<IActionResult> UserList()
+        {
+            return View(await _context.User.ToListAsync());
         }
 
         [HttpGet]
@@ -50,7 +59,7 @@ namespace Karma.Controllers
         {
             ViewBag.userId = userId;
 
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
             {
@@ -60,7 +69,7 @@ namespace Karma.Controllers
 
             var model = new List<UserRolesViewModel>();
 
-            foreach(var role in roleManager.Roles)
+            foreach(var role in _roleManager.Roles)
             {
                 var userRolesViewModel = new UserRolesViewModel
                 {
@@ -68,7 +77,7 @@ namespace Karma.Controllers
                     RoleName = role.Name
                 };
                 
-                if (await userManager.IsInRoleAsync(user, role.Name))
+                if (await _userManager.IsInRoleAsync(user, role.Name))
                 {
                     userRolesViewModel.IsSelected = true;
                 }
@@ -86,7 +95,7 @@ namespace Karma.Controllers
         [HttpPost]
         public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
         {
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
             {
@@ -94,8 +103,8 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
-            var userRoles = await userManager.GetRolesAsync(user);
-            var result = await userManager.RemoveFromRolesAsync(user, userRoles);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var result = await _userManager.RemoveFromRolesAsync(user, userRoles);
 
             if (!result.Succeeded)
             {
@@ -103,7 +112,7 @@ namespace Karma.Controllers
                 return View(model);
             }
 
-            result = await userManager.AddToRolesAsync(user, 
+            result = await _userManager.AddToRolesAsync(user, 
                 model.Where(r => r.IsSelected).Select(r => r.RoleName));
 
             if (!result.Succeeded)

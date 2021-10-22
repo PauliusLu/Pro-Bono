@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Karma.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Karma.Data
 {
@@ -24,6 +25,6 @@ namespace Karma.Data
 
         public DbSet<Karma.Models.UserRole> UserRole { get; set; }
 
-        public DbSet<Karma.Models.Role> Role { get; set; }
+        public DbSet<IdentityRole> Role { get; set; }
     }
 }

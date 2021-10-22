@@ -13,6 +13,7 @@ using Karma.Data;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Karma
 {
@@ -45,7 +46,7 @@ namespace Karma
             services.AddLocalization(option => { option.ResourcesPath = "Resources"; });
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization();
-            
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -54,14 +55,32 @@ namespace Karma
                     options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             // Adding identity
-            services.AddIdentity<Karma.Models.User, Karma.Models.UserRole>()
+            services.AddIdentity<Karma.Models.User, IdentityRole>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<KarmaContext>();
+
             services.Configure<IdentityOptions>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._+";
+            });
+
+            // Adding authorization
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminAccess", policy => policy.RequireRole("Admin"));
+
+                options.AddPolicy("CharityManagerAccess", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.IsInRole("Admin")
+                        || context.User.IsInRole("Charity manager")));
+
+                options.AddPolicy("UserAccess", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.IsInRole("User")
+                        || context.User.IsInRole("Admin")
+                        || context.User.IsInRole("Charity manager")));
             });
         }
 
