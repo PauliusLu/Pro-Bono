@@ -23,5 +23,7 @@ namespace Karma.Data
         public DbSet<Karma.Models.User> User { get; set; }
 
         public DbSet<Karma.Models.UserRole> UserRole { get; set; }
+
+        public DbSet<Karma.Models.Role> Role { get; set; }
     }
 }
