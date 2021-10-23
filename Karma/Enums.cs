@@ -28,6 +28,12 @@ namespace Karma
             [Display(Name = "Declined")]
             Declined
         }
+
+        public enum AdminTab
+        {
+            Users,
+            CharityReview
+        }
     }
 
 }

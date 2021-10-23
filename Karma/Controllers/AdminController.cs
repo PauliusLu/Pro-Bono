@@ -26,9 +26,31 @@ namespace Karma.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(AdminIndexTabViewModel tabViewModel)
         {
-            return View();
+            tabViewModel ??= new AdminIndexTabViewModel(Enums.AdminTab.Users);
+            
+            return View(tabViewModel);
+        }
+
+        public IActionResult SwitchToTabs(Karma.Enums.AdminTab adminTab)
+        {
+            var tabViewModel = new AdminIndexTabViewModel();
+
+            switch(adminTab)
+            {
+                case Karma.Enums.AdminTab.Users:
+                    tabViewModel.ActiveTab = Enums.AdminTab.Users;
+                    break;
+                case Karma.Enums.AdminTab.CharityReview:
+                    tabViewModel.ActiveTab = Enums.AdminTab.CharityReview;
+                    break;
+                default:
+                    tabViewModel.ActiveTab = Enums.AdminTab.Users;
+                    break;
+            }
+
+            return RedirectToAction(nameof(AdminController.Index), tabViewModel);
         }
 
         public IActionResult CreateRole()
@@ -60,6 +82,7 @@ namespace Karma.Controllers
             ViewBag.userId = userId;
 
             var user = await _userManager.FindByIdAsync(userId);
+            ViewBag.username = user.UserName;
 
             if (user == null)
             {
@@ -122,6 +145,38 @@ namespace Karma.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CharityReview(int? charityId)
+        {
+            if (charityId == null)
+            {
+                return View();
+            }
+
+            var charity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == charityId);
+
+            if (charity == null)
+            {
+                ViewBag.errorMessage = $"Charity with Id = {charityId} cannot be found";
+                return NotFound();
+            }
+
+            return View(charity);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CharityReview(int id, [Bind("Id,ReviewState")] Charity charity)
+        {
+            var dbCharity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == id);
+            dbCharity.ReviewState = charity.ReviewState;
+
+            _context.Update(dbCharity);
+            await _context.SaveChangesAsync();
+
+            return View(dbCharity);
         }
     }
 }

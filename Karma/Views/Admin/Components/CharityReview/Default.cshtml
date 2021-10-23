@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Karma.Models.Charity>
+
+@{
+    ViewData["Title"] = "Review";
+}
+
+@if (Model == null)
+{
+    <h3>You have currently reviewed all the charity reviewal requests.</h3>
+}
+else
+{
+    <h1>Charities</h1>
+
+    <div class="post-cards container-fluid content-row">
+        <div class="row">
+            @foreach (var charity in Model)
+            {
+                <div class="col col-12 col-lg-4">
+                    <div class="card h-100">
+                        @if (charity.ImagePath != null && charity.ImagePath != "")
+                        {
+                            <img class="card-img-top ratio ratio-4x3" src="/@Karma.Models.Charity.ImagesDirName/@charity.ImagePath" asp-append-version="true" alt="">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(m => charity.Name)</h5>
+                            <p class="card-text">@Html.DisplayFor(model => charity.ReviewState)</p>
+                            <a asp-controller="Admin" asp-action="CharityReview" asp-route-charityId=@charity.Id class="btn btn-primary">Review charity</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
