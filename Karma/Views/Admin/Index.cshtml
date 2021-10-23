@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<ul class="nav nav-pills">
+<ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link @(Model.ActiveTab == Enums.AdminTab.Users ? "active" : string.Empty)"
            asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.Users">Users</a>
