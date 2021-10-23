@@ -17,7 +17,7 @@ namespace Karma.Models
         public string Description { get; set; }
         public string ImagePath { get; set; }
         [Required]
-        public List<ItemType> ItemTypes { get; set; }
+        public List<int> ItemTypes { get; set; }
         [Required]
         public string Address { get; set; }
 
@@ -28,9 +28,9 @@ namespace Karma.Models
 
             if (dir == Charity.ItemTypesDirName)
             {
-                foreach (var e in ItemTypes)
+                foreach (int e in ItemTypes)
                 {
-                    content.AppendLine(e.Name);
+                    content.AppendLine(Karma.Models.ItemTypes.GetItemType(e).Name);
                 }
             }
             else if (dir == Charity.AdressDirName)
