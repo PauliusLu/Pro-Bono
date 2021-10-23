@@ -38,7 +38,7 @@ namespace Karma.Controllers
             var tabViewModel = new AdminIndexTabViewModel();
 
             switch(adminTab)
-            {
+        {
                 case Karma.Enums.AdminTab.Users:
                     tabViewModel.ActiveTab = Enums.AdminTab.Users;
                     break;
