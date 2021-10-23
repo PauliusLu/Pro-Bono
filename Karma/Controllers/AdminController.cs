@@ -82,7 +82,6 @@ namespace Karma.Controllers
             ViewBag.userId = userId;
 
             var user = await _userManager.FindByIdAsync(userId);
-            ViewBag.username = user.UserName;
 
             if (user == null)
             {
@@ -90,6 +89,7 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
+            ViewBag.username = user.UserName;
             var model = new List<UserRolesViewModel>();
 
             foreach(var role in _roleManager.Roles)
@@ -126,6 +126,7 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
+            ViewBag.username = user.UserName;
             var userRoles = await _userManager.GetRolesAsync(user);
             var result = await _userManager.RemoveFromRolesAsync(user, userRoles);
 
