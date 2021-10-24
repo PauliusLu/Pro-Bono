@@ -27,27 +27,78 @@ namespace Karma.Controllers
         }
 
         // GET: Posts
-        public async Task<IActionResult> Index(bool? isDonation)
+        public async Task<IActionResult> Index(bool? isDonation, string searchString, int categories)
         {
             List<Post> posts;
             List<User> users;
+            
+
             users = await _context.User.ToListAsync();
-            if (isDonation == null)
-            {
-                ViewBag.Header = "All posts";
+            Console.WriteLine(categories);
 
-                posts = await _context.Post.
-                    Where(p => p.IsVisible).ToListAsync();
+                if (isDonation == null)
+                {
+                    ViewBag.Header = "All posts filtered by - " + searchString;
+                    if (!String.IsNullOrEmpty(searchString) && categories!= 0)
+                    {
+                        posts = await _context.Post.
+                        Where(p => p.IsVisible).
+                        Where(p => p.Title.Contains(searchString)).
+                        Where(p => p.ItemType == categories).ToListAsync();
+                    }
+                    else if(categories!= 0)
+                    {
+                        posts = await _context.Post.
+                        Where(p => p.IsVisible).
+                        Where(p => p.ItemType == categories).ToListAsync();
+                }
+                    else if (!String.IsNullOrEmpty(searchString))
+                    {
+                        posts = await _context.Post.
+                        Where(p => p.IsVisible).
+                        Where(p => p.Title.Contains(searchString)).ToListAsync();
+                    }
+                    else
+                    {
+                        posts = await _context.Post.
+                        Where(p => p.IsVisible).ToListAsync();
+                        ViewBag.Header = "All posts";
+                }
+                    PostsData pd = new PostsData();
+                   // pd.PostAverage(posts.Count(), posts[0].Date);
+                }
+                else
+                {
+                ViewBag.Header = (bool)isDonation ? "All donations" : "All requests";
+                if (!String.IsNullOrEmpty(searchString) && categories != 0)
+                {
+                    posts = await _context.Post
+                    .Where(p => p.IsVisible && p.IsDonation == isDonation).
+                    Where(p => p.Title == searchString).
+                    Where(p => p.ItemType == categories).ToListAsync();
+                }
+                else if (categories != 0)
+                {
+                    posts = await _context.Post
+                    .Where(p => p.IsVisible && p.IsDonation == isDonation).
+                    Where(p => p.Title == searchString).
+                    Where(p => p.ItemType == categories).ToListAsync();
 
-                PostsData pd = new PostsData();
-                pd.PostAverage(posts.Count(), posts[0].Date);
-            }
-            else
-            {
-                posts = await _context.Post
-                    .Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
-                ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
-            }
+                }
+                else if (!String.IsNullOrEmpty(searchString))
+                {
+                    posts = await _context.Post.
+                    Where(p => p.IsVisible && p.IsDonation == isDonation).
+                    Where(p => p.Title.Contains(searchString)).ToListAsync();
+                }
+                else
+                {
+                    posts = await _context.Post
+                   .Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
+
+                }
+                }
+
             // Sets default image for post by itemtype if there's no image given
             foreach (Post post in posts)
             {
@@ -105,6 +156,7 @@ namespace Karma.Controllers
             }
             return View();
         }
+
 
         // POST: Posts/Donate
         // To protect from overposting attacks, enable the specific properties you want to bind to.
