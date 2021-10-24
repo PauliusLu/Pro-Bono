@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Collections;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Karma.Controllers
 {
@@ -38,15 +40,15 @@ namespace Karma.Controllers
 
                 if (isDonation == null)
                 {
-                    ViewBag.Header = "All posts filtered by - " + searchString;
-                    if (!String.IsNullOrEmpty(searchString) && categories!= 0)
+                ViewBag.Header = "All posts";
+                if (!String.IsNullOrEmpty(searchString) && categories!= 6)
                     {
                         posts = await _context.Post.
                         Where(p => p.IsVisible).
                         Where(p => p.Title.Contains(searchString)).
                         Where(p => p.ItemType == categories).ToListAsync();
                     }
-                    else if(categories!= 0)
+                    else if(categories!= 6)
                     {
                         posts = await _context.Post.
                         Where(p => p.IsVisible).
@@ -62,7 +64,6 @@ namespace Karma.Controllers
                     {
                         posts = await _context.Post.
                         Where(p => p.IsVisible).ToListAsync();
-                        ViewBag.Header = "All posts";
                 }
                     PostsData pd = new PostsData();
                    // pd.PostAverage(posts.Count(), posts[0].Date);
@@ -70,14 +71,14 @@ namespace Karma.Controllers
                 else
                 {
                 ViewBag.Header = (bool)isDonation ? "All donations" : "All requests";
-                if (!String.IsNullOrEmpty(searchString) && categories != 0)
+                if (!String.IsNullOrEmpty(searchString) && categories != 6)
                 {
                     posts = await _context.Post
                     .Where(p => p.IsVisible && p.IsDonation == isDonation).
                     Where(p => p.Title == searchString).
                     Where(p => p.ItemType == categories).ToListAsync();
                 }
-                else if (categories != 0)
+                else if (categories != 6)
                 {
                     posts = await _context.Post
                     .Where(p => p.IsVisible && p.IsDonation == isDonation).
@@ -95,7 +96,6 @@ namespace Karma.Controllers
                 {
                     posts = await _context.Post
                    .Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
-
                 }
                 }
 
@@ -124,15 +124,18 @@ namespace Karma.Controllers
                     posts.Add(ad);
             }
 
-            Post.GetLists(posts, users);
             posts.Sort();
-            return View(posts);
+            var postVM = new CollectionDataModel
+            {
+                Categories = new SelectCategoryViewModel(),
+                Posts = posts,
+                State = isDonation,
+                SearchString = searchString
+            };
+            Post.GetLists(posts, users);
+            return View(postVM);
         }
-        [HttpPost]
-        public string Index(string searchString, bool notUsed)
-        {
-            return "From [HttpPost]Index: filter on " + searchString;
-        }
+
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
