@@ -51,19 +51,7 @@ namespace Karma.Controllers
             // Sets default image for post by itemtype if there's no image given
             foreach (Post post in posts)
             {
-                if (post.ImagePath == null)
-                {
-                    int itemTypeId = post.ItemType;
-                    if (ItemTypes.Types.ContainsKey(itemTypeId))
-                    {
-                        ItemType itemType = new ItemTypes()[itemTypeId];
-                        post.ImagePath = Path.Combine(Post.DefaultImagesDirName, itemType.ImagePath);
-                    }
-                }
-                else
-                {
-                    post.ImagePath = Path.Combine(Post.ImagesDirName, post.ImagePath);
-                }
+                post.ImagePath = post.GetFullImagePath();
             }
 
 

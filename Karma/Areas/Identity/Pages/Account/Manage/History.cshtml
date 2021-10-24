@@ -1,0 +1,61 @@
+﻿@model IndexModel
+<head>
+
+    <!-- Bootstrap 5 css -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="row" style="margin-top:10px">
+        <div class="col-md-10">
+
+            <h1>Post history</h1>
+            <ul id="nav-pills" class="nav nav-pills nav-fill">
+                <li class="nav-item">
+                    <button type="button" class="nav-link active" data-bs-toggle="pill" data-bs-target="#pill-bnp-1">All listings</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#pill-bnp-2">Past deals</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#pill-bnp-3">Active posts</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#pill-bnp-4">Active requests</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#pill-bnp-5">Active donations</button>
+                </li>
+            </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="pill-bnp-1" role="tabpanel">
+                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", await Model.UserPosts.Value));}
+                    </div>
+                    <div class="tab-pane fade" id="pill-bnp-2" role="tabpanel">
+                        <h4>SHOWING ONLY DELETED FOR NOW</h4>
+                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => !p.IsVisible)));}
+                    </div>
+                    <div class="tab-pane fade" id="pill-bnp-3" role="tabpanel">
+                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible)));}
+                    </div>
+                    <div class="tab-pane fade" id="pill-bnp-4" role="tabpanel">
+                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible && !p.IsDonation)));}
+                    </div>
+                    <div class="tab-pane fade" id="pill-bnp-5" role="tabpanel">
+                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible && p.IsDonation)));}
+                    </div>
+                </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="../js/bootstrap-nav-paginator.jquery.min.js"></script>
+
+        <script>
+            $("#nav-tabs").BsNavPaginator(5, "nav-link");
+            $("#nav-pills").BsNavPaginator(5, "nav-link");
+        </script>
+    </div>
+    <div style="margin-bottom:30px"></div>
+</body>

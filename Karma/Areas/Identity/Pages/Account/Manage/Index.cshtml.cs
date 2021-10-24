@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Karma.Data;
 using Karma.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Karma.Areas.Identity.Pages.Account.Manage
 {
@@ -14,13 +16,18 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly KarmaContext _context;
+
+        public AsyncLazy<List<Post>> UserPosts { get; set; }
 
         public IndexModel(
             UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+            KarmaContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         public string Username { get; set; }
@@ -60,6 +67,9 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             }
 
             await LoadAsync(user);
+
+            UserPosts = new(() => Post.getUserPosts(_context, user.UserName));
+
             return Page();
         }
 
