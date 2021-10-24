@@ -128,7 +128,11 @@ namespace Karma.Controllers
             posts.Sort();
             return View(posts);
         }
-
+        [HttpPost]
+        public string Index(string searchString, bool notUsed)
+        {
+            return "From [HttpPost]Index: filter on " + searchString;
+        }
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(int? id)
         {

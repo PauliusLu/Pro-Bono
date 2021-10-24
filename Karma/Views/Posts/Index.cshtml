@@ -13,10 +13,10 @@
 
     <html>
     <body>
-        <form asp-controller="Posts" asp-action="Index">
-            <p>   
+        <form asp-controller="Posts" asp-action="Index" method="get">
+            <p>
                 <input type="text" placeholder="Search..." name="SearchString" />
-                <input type= "submit" value="Filter" />
+                <input type="submit" value="Filter" />
             </p>
         </form>
         <div class="post-cards container-fluid content-row">
