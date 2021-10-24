@@ -80,7 +80,7 @@ namespace Karma.Models
                 Title == other.Title &&
                 ItemType == other.ItemType &&
                 Description == other.Description &&
-                ImagePath == other.ImagePath &&
+                //ImagePath == other.ImagePath &&
                 IsVisible == other.IsVisible)
             {
                 return true;

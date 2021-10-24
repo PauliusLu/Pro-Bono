@@ -258,6 +258,7 @@ namespace Karma.Controllers
                 Post real_post = _context.Post.Find(id);
                 if (post.Equals(real_post) && file == null)
                     return RedirectToAction(nameof(Index));
+                post.ImagePath = real_post.ImagePath;
                 _context.Entry(real_post).State = EntityState.Detached;
 
 
