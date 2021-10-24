@@ -34,6 +34,7 @@ namespace Karma.Models
         public string ImagePath { get; set; }
         [Required]
         public bool IsVisible { get; set; }
+        public int State { get; set; }
 
         public Post()
         {
