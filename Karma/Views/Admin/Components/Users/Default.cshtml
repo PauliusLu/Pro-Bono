@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Karma.Models.User>
+
+@{
+    ViewData["Title"] = "UserList";
+}
+
+<div class="post-cards container-fluid content-row">
+    <div class="row">
+        @foreach (var user in Model)
+        {
+            <div class="col col-12">
+                <div class="card h-100">
+                    @if (user.ImagePath != null && user.ImagePath != "")
+                    {
+                        <img class="card-img-top ratio ratio-4x3" src="/@Karma.Models.User.ImagesDirName/@user.ImagePath" asp-append-version="true" alt="">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.DisplayFor(m => user.UserName)</h5>
+                        <p class="card-text">@Html.DisplayFor(model => user.Email)</p>
+                        <a asp-controller="Admin" asp-action="ManageUserRoles" asp-route-userId=@user.Id class="btn btn-primary">Manage roles</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

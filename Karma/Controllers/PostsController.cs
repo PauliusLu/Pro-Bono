@@ -121,36 +121,58 @@ namespace Karma.Controllers
 
             if (ModelState.IsValid)
             {
-                if (file != null && file.Length != 0)
+                if (CopyFileToRoot(post, file) == false)
                 {
-                    var ext = Path.GetExtension(file.FileName);
-                    if (!ext.IsValidExtension())
-                    {
-                        ViewBag.Message = "Invalid file type.";
-                        return View(post);
-                    }
-
-
-                    // post.UserId is always 0, should be configured in the future
-                    string fileName = post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext;
-
-                    string path = Path.Combine(_iWebHostEnv.WebRootPath, Post.ImagesDirName, fileName);
-
-                    // Copying file to wwwroot/PostImages
-                    FileStream stream = new FileStream(path, FileMode.Create);
-                    _ = file.CopyToAsync(stream);
-
-                    post.ImagePath = fileName;
+                    return View(post);
                 }
+
+                FillPostFields(post, true);
+                _context.Add(post);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
             }
+            return View(post);
+        }
 
-            FillPostFields(post, true);
-            _context.Add(post);
-            await _context.SaveChangesAsync();
+        // Returns null if there is no file, false if extension is invalid and true otherwise
+        private bool? IsValidFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return null;
+            }
+            else if (!Path.GetExtension(file.FileName).IsValidExtension())
+            {
+                return false;
+            }
+            return true;
+        }
 
-            return RedirectToAction(nameof(Index));
-            //}
-            //return View(post);
+        // Returns true on success, false on failure
+        private bool CopyFileToRoot(Post post, IFormFile file, string ext = null)
+        {
+            bool? isValidFile = IsValidFile(file);
+            if (isValidFile == false)
+            {
+                ViewBag.Message = "Invalid file type.";
+                return false;
+            }
+            else if (isValidFile == true)
+            {
+                ext = ext ?? Path.GetExtension(file.FileName);
+
+                string fileName = post.UserId.ToString() + "x" + DateTime.Now.Ticks.ToString() + ext;
+
+                string path = Path.Combine(_iWebHostEnv.WebRootPath, Post.ImagesDirName, fileName);
+
+                // Copying file to wwwroot/PostImages
+                FileStream stream = new FileStream(path, FileMode.Create);
+                _ = file.CopyToAsync(stream);
+
+                post.ImagePath = fileName;
+            }
+            return true;
         }
 
 
@@ -220,7 +242,7 @@ namespace Karma.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,IsDonation,Date,Title,ItemType,Description,ImagePath,IsVisible")] Post post, IFormFile file)
         {
             if (id != post.Id || !post.IsVisible)
             {
@@ -233,10 +255,17 @@ namespace Karma.Controllers
             if (ModelState.IsValid)
             {
                 // If the edited post is identical to the old one, return to the index page.
-                var real_post = _context.Post.Find(id);
-                if (post.Equals(real_post))
+                Post real_post = _context.Post.Find(id);
+                if (post.Equals(real_post) && file == null)
                     return RedirectToAction(nameof(Index));
+                post.ImagePath = real_post.ImagePath;
                 _context.Entry(real_post).State = EntityState.Detached;
+
+
+                if (CopyFileToRoot(post, file) == false)
+                {
+                    return View(post);
+                }
 
                 try
                 {
