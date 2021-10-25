@@ -11,6 +11,6 @@ namespace Karma.Models
         public List<Post> Posts { get; set; }
         public int? Category { get; set; }
         public string SearchString { get; set; }
-        public bool? State { get; set; }
+        public bool? isDonation { get; set; }
     }
 }

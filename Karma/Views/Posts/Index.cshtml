@@ -13,22 +13,11 @@
 
 <html>
 <body>
-    @if (Model.State == null)
-    {
+ 
+
         <form asp-controller="Posts" asp-action="Index" method="get">
             <p>
-                <select asp-for="Category" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
-                    <option selected value=-1>All</option>
-                </select>
-                <input type="text" placeholder=@Model.SearchString name="SearchString" />
-                <input type="submit" value="Search" />
-            </p>
-        </form>
-    }
-    else
-    {
-        <form asp-controller="Posts" asp-action="Index" asp-route-isDonation =@Model.State.ToString().ToLower()>
-            <p>
+                <input type="hidden" asp-for="@Model.isDonation">
                 <select asp-for="Category" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
                     <option selected value=-1>All</option>
                 </select>

@@ -127,7 +127,7 @@ namespace Karma.Controllers
             var postVM = new CollectionDataModel
             {
                 Posts = posts,
-                State = isDonation,
+                isDonation = isDonation,
                 SearchString = searchString,
             };
             Post.GetLists(posts, users);
