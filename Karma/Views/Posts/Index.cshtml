@@ -13,8 +13,6 @@
 
 <html>
 <body>
- 
-
         <form asp-controller="Posts" asp-action="Index" method="get">
             <p>
                 <input type="hidden" asp-for="@Model.isDonation">
@@ -25,7 +23,6 @@
                 <input type="submit" value="Search" />
             </p>
         </form>
-
     <div class="post-cards container-fluid content-row">
         <div class="row">
             @foreach (var item in Model.Posts)

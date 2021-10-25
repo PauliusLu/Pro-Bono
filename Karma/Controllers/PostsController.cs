@@ -33,70 +33,36 @@ namespace Karma.Controllers
         {
             List<Post> posts;
             List<User> users;
-            
-
+            ViewBag.Header = "All posts";
+            var visiblePosts = _context.Post.Where(p => p.IsVisible);
             users = await _context.User.ToListAsync();
-            Console.WriteLine(category);
-
-                if (isDonation == null)
-                {
-                ViewBag.Header = "All posts";
+            if (isDonation != null)
+            {
+                ViewBag.Header = (bool)isDonation ? "All donations" : "All requests";
+                visiblePosts = _context.Post.Where(p => p.IsVisible && p.IsDonation == isDonation);
+            }
                 if (!String.IsNullOrEmpty(searchString) && category!= -1)
                     {
-                        posts = await _context.Post.
-                        Where(p => p.IsVisible).
+                        posts = await visiblePosts.
                         Where(p => p.Title.Contains(searchString)).
                         Where(p => p.ItemType == category).ToListAsync();
                     }
                     else if(category!= -1)
                     {
-                        posts = await _context.Post.
-                        Where(p => p.IsVisible).
+                        posts = await visiblePosts.
                         Where(p => p.ItemType == category).ToListAsync();
-                }
+                    }
                     else if (!String.IsNullOrEmpty(searchString))
                     {
-                        posts = await _context.Post.
-                        Where(p => p.IsVisible).
+                        posts = await visiblePosts.
                         Where(p => p.Title.Contains(searchString)).ToListAsync();
                     }
                     else
                     {
-                        posts = await _context.Post.
-                        Where(p => p.IsVisible).ToListAsync();
-                }
+                        posts = await visiblePosts.ToListAsync();
+                    }
                     PostsData pd = new PostsData();
-                   // pd.PostAverage(posts.Count(), posts[0].Date);
-                }
-                else
-                {
-                ViewBag.Header = (bool)isDonation ? "All donations" : "All requests";
-                if (!String.IsNullOrEmpty(searchString) && category != -1)
-                {
-                    posts = await _context.Post.
-                    Where(p => p.IsVisible && p.IsDonation == isDonation).
-                    Where(p => p.Title.Contains(searchString)).
-                    Where(p => p.ItemType == category).ToListAsync();
-                }
-                else if (category != -1)
-                {
-                    posts = await _context.Post.
-                    Where(p => p.IsVisible && p.IsDonation == isDonation).
-                    Where(p => p.ItemType == category).ToListAsync();
 
-                }
-                else if (!String.IsNullOrEmpty(searchString))
-                {
-                    posts = await _context.Post.
-                    Where(p => p.IsVisible && p.IsDonation == isDonation).
-                    Where(p => p.Title.Contains(searchString)).ToListAsync();
-                }
-                else
-                {
-                    posts = await _context.Post
-                   .Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
-                }
-                }
 
             // Sets default image for post by itemtype if there's no image given
             foreach (Post post in posts)
