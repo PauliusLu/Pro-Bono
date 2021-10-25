@@ -9,8 +9,7 @@ namespace Karma.Models
     public class CollectionDataModel
     {
         public List<Post> Posts { get; set; }
-        public SelectCategoryViewModel Categories { get; set; }
-        public string Category { get; set; }
+        public int? Category { get; set; }
         public string SearchString { get; set; }
         public bool? State { get; set; }
     }

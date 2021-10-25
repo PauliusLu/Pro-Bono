@@ -29,30 +29,30 @@ namespace Karma.Controllers
         }
 
         // GET: Posts
-        public async Task<IActionResult> Index(bool? isDonation, string searchString, int categories)
+        public async Task<IActionResult> Index(bool? isDonation, string searchString, int category=-1)
         {
             List<Post> posts;
             List<User> users;
             
 
             users = await _context.User.ToListAsync();
-            Console.WriteLine(categories);
+            Console.WriteLine(category);
 
                 if (isDonation == null)
                 {
                 ViewBag.Header = "All posts";
-                if (!String.IsNullOrEmpty(searchString) && categories!= 6)
+                if (!String.IsNullOrEmpty(searchString) && category!= -1)
                     {
                         posts = await _context.Post.
                         Where(p => p.IsVisible).
                         Where(p => p.Title.Contains(searchString)).
-                        Where(p => p.ItemType == categories).ToListAsync();
+                        Where(p => p.ItemType == category).ToListAsync();
                     }
-                    else if(categories!= 6)
+                    else if(category!= -1)
                     {
                         posts = await _context.Post.
                         Where(p => p.IsVisible).
-                        Where(p => p.ItemType == categories).ToListAsync();
+                        Where(p => p.ItemType == category).ToListAsync();
                 }
                     else if (!String.IsNullOrEmpty(searchString))
                     {
@@ -71,19 +71,18 @@ namespace Karma.Controllers
                 else
                 {
                 ViewBag.Header = (bool)isDonation ? "All donations" : "All requests";
-                if (!String.IsNullOrEmpty(searchString) && categories != 6)
+                if (!String.IsNullOrEmpty(searchString) && category != -1)
                 {
-                    posts = await _context.Post
-                    .Where(p => p.IsVisible && p.IsDonation == isDonation).
-                    Where(p => p.Title == searchString).
-                    Where(p => p.ItemType == categories).ToListAsync();
+                    posts = await _context.Post.
+                    Where(p => p.IsVisible && p.IsDonation == isDonation).
+                    Where(p => p.Title.Contains(searchString)).
+                    Where(p => p.ItemType == category).ToListAsync();
                 }
-                else if (categories != 6)
+                else if (category != -1)
                 {
-                    posts = await _context.Post
-                    .Where(p => p.IsVisible && p.IsDonation == isDonation).
-                    Where(p => p.Title == searchString).
-                    Where(p => p.ItemType == categories).ToListAsync();
+                    posts = await _context.Post.
+                    Where(p => p.IsVisible && p.IsDonation == isDonation).
+                    Where(p => p.ItemType == category).ToListAsync();
 
                 }
                 else if (!String.IsNullOrEmpty(searchString))
@@ -127,7 +126,6 @@ namespace Karma.Controllers
             posts.Sort();
             var postVM = new CollectionDataModel
             {
-                Categories = new SelectCategoryViewModel(),
                 Posts = posts,
                 State = isDonation,
                 SearchString = searchString,
