@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
+using Karma.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Karma.Models
 {
@@ -60,6 +62,28 @@ namespace Karma.Models
             return isDonation ? "Offer" : "Request";
         }
 
+        public string GetFullImagePath()
+        {
+            if (ImagePath == null)
+            {
+                return GetDefaultImage();
+            }
+            else
+            {
+                return Path.Combine(Post.ImagesDirName, ImagePath);
+            }
+        }
+
+        public string GetDefaultImage()
+        {
+            if (ItemTypes.Types.ContainsKey(ItemType))
+            {
+                ItemType itemType = new ItemTypes()[ItemType];
+                return Path.Combine(Post.DefaultImagesDirName, itemType.ImagePath);
+            }
+            return null;
+        }
+
         // By visibility and by date (descending order).
         public int CompareTo(Post other)
         {
@@ -110,6 +134,13 @@ namespace Karma.Models
                     }
             }
             return text;
+        }
+
+        public static async Task<List<Post>> getUserPosts(KarmaContext context, string userId)
+        {
+            List<Post> posts = await context.Post.ToListAsync();
+
+            return posts.Where((p) => p.UserId == userId).ToList();
         }
     }
 }
