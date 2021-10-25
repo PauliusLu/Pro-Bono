@@ -18,7 +18,10 @@
              alt="Item image" class="img-fluid" style="max-width:400px;" />
     }
 </div>
+
+<button class="btn btn-success" data-toggle="modal" data-target="#dialog">Reserve this item.</button>
 <br />
+
 <div>
     Posted at @Html.DisplayFor(model => model.Date)
 </div>
@@ -26,3 +29,15 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script>
+        $(() => {
+            $('#dialog').on('show.bs.modal', function (event) {
+                if (event.relatedTarget.innerHTML == 'Reserve this item.') {
+                    $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts")' + "?postId=" + "@Model.Id");
+                }
+            });
+        });
+</script>
+
+

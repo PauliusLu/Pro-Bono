@@ -328,6 +328,39 @@ namespace Karma.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST: Posts/ReserveItem
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [Route("Posts/ReserveItem/{postId:int}")]
+        public async Task<IActionResult> ReserveItem(int postId)
+        {
+            if (IsUserHavePermission(out IActionResult act, postId:postId) != null)
+                return act;
+
+
+            var post = await _context.Post.FindAsync(postId);
+            if (post != null)
+            {
+                post.State = 1;
+                _context.Update(post);
+                await _context.SaveChangesAsync();
+            }
+
+            return View(post);
+        }
+
+        // Returns the YesNoDialog view
+        // Is called from Details.cshtml button Reserve This Item.
+        public IActionResult YesNoDialog(int postId)
+        {
+            var post = _context.Post
+                .FirstOrDefault(m => m.Id == postId);
+            if (post == null)
+                return null;
+            return View(post);
+        }
+
         private bool PostExists(int id)
         {
             return _context.Post.Any(e => e.Id == id);
