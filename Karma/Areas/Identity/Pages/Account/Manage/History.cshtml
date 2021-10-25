@@ -1,61 +1,50 @@
 ﻿@model IndexModel
-<head>
 
-    <!-- Bootstrap 5 css -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
-
-</head>
-<body>
     <div class="row" style="margin-top:10px">
         <div class="col-md-10">
 
+
+
             <h1>Post history</h1>
-            <ul id="nav-pills" class="nav nav-pills nav-fill">
+
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                 <li class="nav-item">
-                    <button type="button" class="nav-link active" data-bs-toggle="pill" data-bs-target="#pill-bnp-1">All listings</button>
+                    <a class="nav-link active" id="pills-a-tab" data-toggle="pill" href="#pills-a" role="tab" aria-controls="pills-a" aria-selected="true">All listings</a>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#pill-bnp-2">Past deals</button>
+                    <a class="nav-link" id="pills-b-tab" data-toggle="pill" href="#pills-b" role="tab" aria-controls="pills-b" aria-selected="false">Past deals</a>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#pill-bnp-3">Active posts</button>
+                    <a class="nav-link" id="pills-c-tab" data-toggle="pill" href="#pills-c" role="tab" aria-controls="pills-c" aria-selected="false">Active posts</a>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#pill-bnp-4">Active requests</button>
+                    <a class="nav-link" id="pills-d-tab" data-toggle="pill" href="#pills-d" role="tab" aria-controls="pills-d" aria-selected="false">Active requests</a>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link" data-bs-toggle="pill" data-bs-target="#pill-bnp-5">Active donations</button>
+                    <a class="nav-link" id="pills-e-tab" data-toggle="pill" href="#pills-e" role="tab" aria-controls="pills-e" aria-selected="false">Active donations</a>
                 </li>
             </ul>
 
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="pill-bnp-1" role="tabpanel">
-                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", await Model.UserPosts.Value));}
-                    </div>
-                    <div class="tab-pane fade" id="pill-bnp-2" role="tabpanel">
-                        <h4>SHOWING ONLY DELETED FOR NOW</h4>
-                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => !p.IsVisible)));}
-                    </div>
-                    <div class="tab-pane fade" id="pill-bnp-3" role="tabpanel">
-                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible)));}
-                    </div>
-                    <div class="tab-pane fade" id="pill-bnp-4" role="tabpanel">
-                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible && !p.IsDonation)));}
-                    </div>
-                    <div class="tab-pane fade" id="pill-bnp-5" role="tabpanel">
-                        @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible && p.IsDonation)));}
-                    </div>
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-a" role="tabpanel" aria-labelledby="pills-a-tab">
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", await Model.UserPosts.Value));}
                 </div>
+                <div class="tab-pane fade" id="pills-b" role="tabpanel" aria-labelledby="pills-b-tab">
+                    <h4>SHOWING ONLY DELETED FOR NOW</h4>
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => !p.IsVisible)));}
+                </div>
+                <div class="tab-pane fade" id="pills-c" role="tabpanel" aria-labelledby="pills-c-tab">
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible)));}
+                </div>
+                <div class="tab-pane fade" id="pills-d" role="tabpanel" aria-labelledby="pills-d-tab">
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible && !p.IsDonation)));}
+                </div>
+                <div class="tab-pane fade" id="pills-e" role="tabpanel" aria-labelledby="pills-e-tab">
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.IsVisible && p.IsDonation)));}
+                </div>
+            </div>
+
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="../js/bootstrap-nav-paginator.jquery.min.js"></script>
-
-        <script>
-            $("#nav-tabs").BsNavPaginator(5, "nav-link");
-            $("#nav-pills").BsNavPaginator(5, "nav-link");
-        </script>
     </div>
     <div style="margin-bottom:30px"></div>
-</body>
