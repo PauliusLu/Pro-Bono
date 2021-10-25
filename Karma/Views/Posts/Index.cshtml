@@ -5,72 +5,82 @@
 @inject UserManager<User> UserManager
 @model CollectionDataModel
 
-    @{
-        ViewData["Title"] = "All posts";
-       
+@{
+    ViewData["Title"] = "All posts";
+}
+
+<h1>@ViewBag.Header</h1>
+
+<html>
+<body>
+    @if (Model.State == null)
+    {
+        <form asp-controller="Posts" asp-action="Index" method="get">
+            <p>
+                <select asp-for="Categories" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
+                    <option selected value=6>All</option>
+                </select>
+                <input type="text" placeholder=@Model.SearchString name="SearchString" />
+                <input type="submit" value="Search" />
+            </p>
+        </form>
+    }
+    else
+    {
+        <form asp-controller="Posts" asp-action="Index" asp-route-isDonation =@Model.State.ToString().ToLower()>
+            <p>
+                <select asp-for="Categories" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
+                    <option selected value=6>All</option>
+                </select>
+                <input type="text" placeholder=@Model.SearchString name="SearchString" />
+                <input type="submit" value="Search" />
+            </p>
+        </form>
     }
 
-    <h1>@ViewBag.Header</h1>
-
-    <html>
-    <body>
-        @if (Model.State == null)
-        {
-            <form asp-controller="Posts" asp-action="Index" method="get">
-                <p>
-                    <select asp-for="Categories" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
-                        <option selected value=6>All</option>  
-                    </select>
-                    Title:
-                    <input type="text" placeholder=@Model.SearchString name="SearchString" />
-                    <input type="submit" value="Filter" />
-                </p>
-            </form>
-        }
-        
-        <div class="post-cards container-fluid content-row">
-            <div class="row">
-                @foreach (var item in Model.Posts)
-                {
-                    <div class="col col-12 col-sm-6 col-md-4 col-lg-3">
-                        <div class="@((item is not Advert) ? "card h-100" : "card text-white bg-info mb-3 h-100")">
-                            @if (@item.ImagePath != null && item.ImagePath != "")
-                            {
-                                <img class="card-img-top ratio ratio-4x3" src=@item.ImagePath>
-                            }
-                            <div class="card-body">
-                                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                                @if (item is not Advert)
-                                {
-                                    <h6 class="card-text">@Html.DisplayFor(modelItem => ItemTypes.GetItemType(item.ItemType).Name)</h6>
-                                }
-                                <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
-
-                            </div>
-
+    <div class="post-cards container-fluid content-row">
+        <div class="row">
+            @foreach (var item in Model.Posts)
+            {
+                <div class="col col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="@((item is not Advert) ? "card h-100" : "card text-white bg-info mb-3 h-100")">
+                        @if (@item.ImagePath != null && item.ImagePath != "")
+                        {
+                            <img class="card-img-top ratio ratio-4x3" src=@item.ImagePath>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
                             @if (item is not Advert)
                             {
-                                <div class="card-footer">
-                                    <small class="text-muted">@Html.DisplayFor(modelItem => item.Date)</small>
-                                    <a asp-action="Details" asp-route-id="@item.Id">Details </a>
-                                    <p>@Post.CompareQuerie(item)</p>
-                                    @if (SignInManager.IsSignedIn(User) && User.Identity.Name == item.UserId)
-                                    {
-                                        <a asp-action="Edit" asp-route-id="@item.Id">Edit </a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                                    }
-                                </div>
+                                <h6 class="card-text">@Html.DisplayFor(modelItem => ItemTypes.GetItemType(item.ItemType).Name)</h6>
                             }
-                            else
-                            {
-                                <div class="card-footer">
-                                    <p>@(((Advert)item).EmphasizedMessage)</p>
-                                </div>
-                            }
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+
                         </div>
+
+                        @if (item is not Advert)
+                        {
+                            <div class="card-footer">
+                                <small class="text-muted">@Html.DisplayFor(modelItem => item.Date)</small>
+                                <a asp-action="Details" asp-route-id="@item.Id">Details </a>
+                                <p>@Post.CompareQuerie(item)</p>
+                                @if (SignInManager.IsSignedIn(User) && User.Identity.Name == item.UserId)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id">Edit </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="card-footer">
+                                <p>@(((Advert)item).EmphasizedMessage)</p>
+                            </div>
+                        }
                     </div>
-                }
-            </div>
+                </div>
+            }
         </div>
-    </body>
-    </html>
+    </div>
+</body>
+</html>

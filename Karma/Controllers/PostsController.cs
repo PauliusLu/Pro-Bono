@@ -130,7 +130,7 @@ namespace Karma.Controllers
                 Categories = new SelectCategoryViewModel(),
                 Posts = posts,
                 State = isDonation,
-                SearchString = searchString
+                SearchString = searchString,
             };
             Post.GetLists(posts, users);
             return View(postVM);
