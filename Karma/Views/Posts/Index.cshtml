@@ -3,8 +3,7 @@
 
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
-
-@model IEnumerable<Karma.Models.Post>
+@model CollectionDataModel
 
 @{
     ViewData["Title"] = "All posts";
@@ -14,16 +13,26 @@
 
 <html>
 <body>
+        <form asp-controller="Posts" asp-action="Index" method="get">
+            <p>
+                <input type="hidden" asp-for="@Model.isDonation">
+                <select asp-for="Category" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
+                    <option selected value=-1>All</option>
+                </select>
+                <input type="text" placeholder=@Model.SearchString name="SearchString" />
+                <input type="submit" value="Search" />
+            </p>
+        </form>
     <div class="post-cards container-fluid content-row">
         <div class="row">
-            @foreach (var item in Model)
+            @foreach (var item in Model.Posts)
             {
                 <div class="col col-12 col-sm-6 col-md-4 col-lg-3">
                     <div class="@((item is not Advert) ? "card h-100" : "card text-white bg-info mb-3 h-100")">
                         @if (@item.ImagePath != null && item.ImagePath != "")
                         {
                             <img class="card-img-top ratio ratio-4x3" src=@item.ImagePath>
-                        } 
+                        }
                         <div class="card-body">
                             <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
                             @if (item is not Advert)
@@ -47,11 +56,12 @@
                         }
                     </div>
                         }
-                        else {
+                        else
+                        {
                             <div class="card-footer">
                                 <p>@(((Advert)item).EmphasizedMessage)</p>
                             </div>
-                        } 
+                        }
                     </div>
                 </div>
             }

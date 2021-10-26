@@ -13,7 +13,6 @@ namespace Karma.Models
             DateTime currentTime = DateTime.UtcNow;
             double totalDays = (currentTime - FirstPost).TotalDays;
             AveragePost = PostCount / totalDays;
-            Console.WriteLine(AveragePost);
         }
         public static int AverageInt()
         {

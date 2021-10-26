@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Collections;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Karma.Controllers
 {
@@ -27,33 +29,46 @@ namespace Karma.Controllers
         }
 
         // GET: Posts
-        public async Task<IActionResult> Index(bool? isDonation)
+        public async Task<IActionResult> Index(bool? isDonation, string searchString, int category=-1)
         {
             List<Post> posts;
             List<User> users;
+            ViewBag.Header = "All posts";
+            var visiblePosts = _context.Post.Where(p => p.IsVisible);
             users = await _context.User.ToListAsync();
-            if (isDonation == null)
+            if (isDonation != null)
             {
-                ViewBag.Header = "All posts";
-
-                posts = await _context.Post.
-                    Where(p => p.IsVisible).ToListAsync();
-
-                PostsData pd = new PostsData();
-                pd.PostAverage(posts.Count(), posts[0].Date);
+                ViewBag.Header = (bool)isDonation ? "All donations" : "All requests";
+                visiblePosts = _context.Post.Where(p => p.IsVisible && p.IsDonation == isDonation);
             }
-            else
-            {
-                posts = await _context.Post
-                    .Where(p => p.IsVisible && p.IsDonation == isDonation).ToListAsync();
-                ViewBag.Header = (bool) isDonation ? "All donations" : "All requests";
-            }
+                if (!String.IsNullOrEmpty(searchString) && category!= -1)
+                    {
+                        posts = await visiblePosts.
+                        Where(p => p.Title.ToLower().Contains(searchString.ToLower())).
+                        Where(p => p.ItemType == category).ToListAsync();
+                    }
+                    else if(category!= -1)
+                    {
+                        posts = await visiblePosts.
+                        Where(p => p.ItemType == category).ToListAsync();
+                    }
+                    else if (!String.IsNullOrEmpty(searchString))
+                    {
+                        posts = await visiblePosts.
+                        Where(p => p.Title.ToLower().Contains(searchString.ToLower())).ToListAsync();
+                    }
+                    else
+                    {
+                        posts = await visiblePosts.ToListAsync();
+                    }
+                    PostsData pd = new PostsData();
+
+
             // Sets default image for post by itemtype if there's no image given
             foreach (Post post in posts)
             {
                 post.ImagePath = post.GetFullImagePath();
             }
-
 
             if (isDonation == null)
             {
@@ -61,9 +76,15 @@ namespace Karma.Controllers
                     posts.Add(ad);
             }
 
-            Post.GetLists(posts, users);
             posts.Sort();
-            return View(posts);
+            var postVM = new CollectionDataModel
+            {
+                Posts = posts,
+                isDonation = isDonation,
+                SearchString = searchString,
+            };
+            Post.GetLists(posts, users);
+            return View(postVM);
         }
 
         // GET: Posts/Details/5
@@ -93,6 +114,7 @@ namespace Karma.Controllers
             }
             return View();
         }
+
 
         // POST: Posts/Donate
         // To protect from overposting attacks, enable the specific properties you want to bind to.
