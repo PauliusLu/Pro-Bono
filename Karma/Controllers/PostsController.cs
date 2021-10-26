@@ -44,7 +44,7 @@ namespace Karma.Controllers
                 if (!String.IsNullOrEmpty(searchString) && category!= -1)
                     {
                         posts = await visiblePosts.
-                        Where(p => p.Title.Contains(searchString)).
+                        Where(p => p.Title.ToLower().Contains(searchString.ToLower())).
                         Where(p => p.ItemType == category).ToListAsync();
                     }
                     else if(category!= -1)
@@ -55,7 +55,7 @@ namespace Karma.Controllers
                     else if (!String.IsNullOrEmpty(searchString))
                     {
                         posts = await visiblePosts.
-                        Where(p => p.Title.Contains(searchString)).ToListAsync();
+                        Where(p => p.Title.ToLower().Contains(searchString.ToLower())).ToListAsync();
                     }
                     else
                     {
@@ -81,7 +81,6 @@ namespace Karma.Controllers
                     post.ImagePath = Path.Combine(Post.ImagesDirName, post.ImagePath);
                 }
             }
-
 
             if (isDonation == null)
             {
