@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Karma.Models
 {
-    public class UserRole : IdentityRole
+    public class UserRole : IdentityUserRole<string>
     {
-
+        public int CharityId { get; set; }
     }
 }

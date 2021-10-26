@@ -1,0 +1,40 @@
+﻿@model List<UserRolesViewModel> 
+
+@{
+    ViewData["Title"] = "ManageUserRoles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = ViewBag.userId;
+    var username = ViewBag.username;
+}
+
+<form asp-action="ManageUserRoles">
+    <div class="card">
+        <div class="card-header">
+            <h2>Manage user roles</h2>
+            <h4>@username</h4>
+        </div>
+        <div class="card-body">
+            <input type="hidden" asp-for="@userId" />
+            @for (int i = 0; i < Model.Count; ++i)
+            {
+                <div class="form-check">
+                    <input type="hidden" asp-for="@Model[i].RoleId" />
+                    <input type="hidden" asp-for="@Model[i].RoleName" />
+                    <input asp-for="@Model[i].IsSelected" class="form-check-input" />
+                    <label class="form-check-label" asp-for="@Model[i].IsSelected">
+                        @Model[i].RoleName
+                    </label>
+                </div>
+            }
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
+                <a asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.Users"
+                   class="btn btn-primary">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Karma.Models.Post>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Uploader</th>
+                <th>Type</th>
+                <th>Posting date</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+
+                    <img src="~/@item.GetFullImagePath()" asp-append-version="true"
+                                alt="" class="img-fluid" style="height:50px;width:50px;min-width:50px;max-width:50px;" />
+                </td>
+                <td>
+                    @item.UserId
+                </td>
+                <td>
+                    @((item.IsDonation) ? "Donation" : "Request")
+                </td>
+                <td>
+                    @item.Date.ToShortDateString()
+                </td>
+                <td>
+                    @item.Title
+                </td>
+                <td>
+                    @ItemTypes.GetItemType(item.ItemType)
+                </td>
+                <td>
+                    <a asp-controller="Posts" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+ </div>
