@@ -18,9 +18,22 @@
              alt="Item image" class="img-fluid" style="max-width:400px;" />
     }
 </div>
+@{
+    if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
+    {
+        if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
+        {
+            <button class="btn btn-success" data-toggle="modal" data-target="#dialog">Mark as reserved.</button>
+            <br />
+        }
+        else if (Model.State == (int)Post.PostState.Reserved)
+        {
+            <button class="btn btn-warning" data-toggle="modal" data-target="#dialog">Cancel reservation.</button>
+            <br />
+        }
+    }
+}
 
-<button class="btn btn-success" data-toggle="modal" data-target="#dialog">Reserve this item.</button>
-<br />
 
 <div>
     Posted at @Html.DisplayFor(model => model.Date)
@@ -29,15 +42,24 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+@if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
+{
 <script>
         $(() => {
             $('#dialog').on('show.bs.modal', function (event) {
-                if (event.relatedTarget.innerHTML == 'Reserve this item.') {
+                if (event.relatedTarget.innerHTML == 'Mark as reserved.') {
                     $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts")' + "?postId=" + "@Model.Id");
+                }
+                else if (event.relatedTarget.innerHTML == 'Cancel reservation.') {
+                    $.post('@Url.Action("ReserveItem", "Posts")' + '/' + @Model.Id,
+                        { postId: @Model.Id}, function (data) {
+                        $("#dialog").click();
+                        window.location.reload();
+                    });
+                    
                 }
             });
         });
 </script>
-
+}
 

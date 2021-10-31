@@ -15,8 +15,10 @@
     <script>
         function PostToServer(id) {
             $.post('@Url.Action("ReserveItem", "Posts")' + '/' + @Model.Id,
-                { postId: id}, function (data) {
-                alert("Success " + data.success);
+                { postId: id }, function (data) {
+                    setTimeout(200, () => {
+                        window.location.reload();
+                    });
             });
         }
         function CloseDialog() {

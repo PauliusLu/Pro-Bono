@@ -342,12 +342,16 @@ namespace Karma.Controllers
             var post = await _context.Post.FindAsync(postId);
             if (post != null)
             {
-                post.State = 1;
+                if (post.State == (int)Post.PostState.Reserved)
+                    post.State = (int)Post.PostState.Open;
+                else if (post.State == (int)Post.PostState.NotSet || post.State == (int)Post.PostState.Open)
+                    post.State = (int)Post.PostState.Reserved;
+
                 _context.Update(post);
                 await _context.SaveChangesAsync();
             }
-
-            return RedirectToPage(nameof(Details), postId);
+            
+            return RedirectToAction("Details", new { id = postId });
         }
 
         // Returns the YesNoDialog view

@@ -14,6 +14,7 @@ namespace Karma.Models
         {
             NotSet = 0,
             Reserved,
+            Open,
             Traded, //Not specified whether Donated or Received
             Donated,
             Received,
