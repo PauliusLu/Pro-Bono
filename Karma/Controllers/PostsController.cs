@@ -347,7 +347,7 @@ namespace Karma.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return View(post);
+            return RedirectToPage(nameof(Details), postId);
         }
 
         // Returns the YesNoDialog view

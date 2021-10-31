@@ -19,6 +19,10 @@
                 alert("Success " + data.success);
             });
         }
+        function CloseDialog() {
+            $("#dialog").click();
+            window.location.reload();
+        }
     </script>
 </head>
 <body>
@@ -31,10 +35,11 @@
             </div>
 
             <div class="row">
-                <button type="button" class="btn btn-success" onclick="@("PostToServer(" + @Model.Id + ")")">
+                <button type="button" class="btn btn-success" onclick="@("PostToServer(" + @Model.Id + ");" +
+                                                                         "CloseDialog();")">
                     Reserve
                 </button>
-                <button type="button" class="btn btn-danger col" onclick="//To do: close this window.">
+                <button type="button" class="btn btn-danger col" onclick="CloseDialog();">
                     <div class="row align-items-center">
                         <div class="col-12 text-center font-weight-bold">
                             Cancel
