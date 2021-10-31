@@ -38,7 +38,14 @@
                         {
                     <div class="card-footer">
                         <small class="text-muted">@Html.DisplayFor(modelItem => item.Date)</small>
-                        <p>@Post.CompareQuerie(item)</p>
+                        <div class="mb-1">@Post.CompareQuerie(item)</div>
+                        @if (item.State == (int)Post.PostState.Reserved)
+                        {
+                            <div class="mb-1 d-inline bg-success rounded-pill p-1 pl-2 pr-2">
+                                Reserved
+                            </div>
+                            <br />
+                        }
                         <a asp-action="Details" asp-route-id="@item.Id">Details  </a>
                         @if (SignInManager.IsSignedIn(User) && User.Identity.Name == item.UserId)
                         {

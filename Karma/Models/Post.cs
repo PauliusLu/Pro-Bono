@@ -10,6 +10,18 @@ namespace Karma.Models
 
     public class Post : IComparable<Post>, IEquatable<Post>
     {
+        public enum PostState
+        {
+            NotSet = 0,
+            Reserved,
+            Traded, //Not specified whether Donated or Received
+            Donated,
+            Received,
+            Hidden, //Settable by user
+            Deleted,
+            Reported
+        }
+
         public static readonly string ImagesDirName = Path.Combine("data", "PostImages");
         public static readonly string DefaultImagesDirName = Path.Combine("data", "DefaultPostImages");
 
