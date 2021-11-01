@@ -51,7 +51,6 @@ namespace Karma.Models
             if (charities == null)
                 return filtered;
 
-
             foreach (Charity c in charities)
             {
                 if (c.HasItemTypesFile())
@@ -59,7 +58,8 @@ namespace Karma.Models
                     c.LoadItemTypes();
                 }
 
-                if (c.ItemTypes.Contains(itemType))
+                if (c.ReviewState == Enums.ReviewState.Approved
+                    && c.ItemTypes.Contains(itemType))
                 {
                     filtered.Add(c);
                 }
