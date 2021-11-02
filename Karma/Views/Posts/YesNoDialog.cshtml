@@ -38,8 +38,7 @@
             </div>
 
             <div class="row">
-                <button type="button" class="btn btn-success" onclick="@("PostToServer(" + @Model.Id + ");" +
-                                                                         "CloseDialog();")">
+                <button type="button" class="btn btn-success" onclick="@("PostToServer(" + @Model.Id + ");")">
                     @ViewData["buttonAffirmText"]
                 </button>
                 <button type="button" class="btn btn-danger col" onclick="CloseDialog();">
