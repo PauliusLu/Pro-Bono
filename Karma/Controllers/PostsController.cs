@@ -354,14 +354,42 @@ namespace Karma.Controllers
             return RedirectToAction("Details", new { id = postId });
         }
 
+        [HttpPost]
+        [Route("Posts/CompleteItem/{postId:int}")]
+        public async Task<IActionResult> CompleteItem(int postId)
+        {
+            if (IsUserHavePermission(out IActionResult act, postId: postId) != null)
+                return act;
+
+
+            var post = await _context.Post.FindAsync(postId);
+            if (post != null)
+            {
+                if (post.State == (int)Post.PostState.Reserved)
+                {
+                    post.State = (int)Post.PostState.Traded;
+                    post.IsVisible = false;
+                }
+
+                _context.Update(post);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index");
+        }
+
         // Returns the YesNoDialog view
         // Is called from Details.cshtml button Reserve This Item.
-        public IActionResult YesNoDialog(int postId)
+        [Route("Posts/YesNoDialog/{postId:int}/{questionText}/{action3}/{buttonAffirmText}")]
+        public IActionResult YesNoDialog(int postId, string questionText, string action3, string buttonAffirmText)
         {
             var post = _context.Post
                 .FirstOrDefault(m => m.Id == postId);
             if (post == null)
                 return null;
+            ViewData["Message"] = questionText;
+            ViewData["MessageAction"] = action3;
+            ViewData["buttonAffirmText"] = buttonAffirmText;
             return View(post);
         }
 

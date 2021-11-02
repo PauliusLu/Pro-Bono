@@ -14,11 +14,12 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <script>
         function PostToServer(id) {
-            $.post('@Url.Action("ReserveItem", "Posts")' + '/' + @Model.Id,
+            $.post('@Url.Action((string)ViewData["MessageAction"], "Posts")' + '/' + @Model.Id,
                 { postId: id }, function (data) {
-                    setTimeout(200, () => {
+                    setTimeout(() => {
                         window.location.reload();
-                    });
+                    }, 200);
+                    //CloseDialog();
             });
         }
         function CloseDialog() {
@@ -32,14 +33,14 @@
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-12 text text-center">
-                    Are you sure you want to reserve this item?
+                    @ViewData["Message"]
                 </div>
             </div>
 
             <div class="row">
                 <button type="button" class="btn btn-success" onclick="@("PostToServer(" + @Model.Id + ");" +
                                                                          "CloseDialog();")">
-                    Reserve
+                    @ViewData["buttonAffirmText"]
                 </button>
                 <button type="button" class="btn btn-danger col" onclick="CloseDialog();">
                     <div class="row align-items-center">

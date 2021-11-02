@@ -24,13 +24,15 @@
         if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
         {
             <button class="btn btn-success" data-toggle="modal" data-target="#dialog">Mark as reserved.</button>
-            <br />
+
         }
         else if (Model.State == (int)Post.PostState.Reserved)
         {
+            <button class="btn btn-info" data-toggle="modal" data-target="#dialog">Mark as Completed.</button>
             <button class="btn btn-warning" data-toggle="modal" data-target="#dialog">Cancel reservation.</button>
-            <br />
+
         }
+        <br />
     }
 }
 
@@ -48,15 +50,13 @@
         $(() => {
             $('#dialog').on('show.bs.modal', function (event) {
                 if (event.relatedTarget.innerHTML == 'Mark as reserved.') {
-                    $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts")' + "?postId=" + "@Model.Id");
+                    $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Are you sure you want to reserve this item?", action3 = "ReserveItem", buttonAffirmText = "Reserve" })');
                 }
                 else if (event.relatedTarget.innerHTML == 'Cancel reservation.') {
-                    $.post('@Url.Action("ReserveItem", "Posts")' + '/' + @Model.Id,
-                        { postId: @Model.Id}, function (data) {
-                        $("#dialog").click();
-                        window.location.reload();
-                    });
-                    
+                    $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Are you sure you want to cancel reservation?", action3 = "ReserveItem", buttonAffirmText = "Cancel Reservation"})');
+                }
+                else if (event.relatedTarget.innerHTML == 'Mark as Completed.') {
+                    $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Did you " + (Model.IsDonation ? "donate" : "receive") + " all items?", action3 = "CompleteItem", buttonAffirmText = "Yes"})');
                 }
             });
         });
