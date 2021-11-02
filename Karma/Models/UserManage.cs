@@ -31,21 +31,6 @@ namespace Karma.Models
             IdentityUserRole<string>, IdentityUserLogin<string>, IdentityUserToken<string>, IdentityRoleClaim<string>>) store;
         }
 
-        public override async Task<IdentityResult> AddToRoleAsync(User user, string roleName)
-        {
-            return await this.AddUserRoleWithCharityId(user, roleName, -1);
-        }
-
-        public override async Task<IdentityResult> AddToRolesAsync(User user, IEnumerable<string> roleNames)
-        {
-            foreach (string name in roleNames)
-            {
-                await this.AddUserRoleWithCharityId(user, name, -1);
-            }
-
-            return await UpdateUserAsync(user);
-        }
-
         public virtual async Task<IdentityResult> AddUserRoleWithCharityId(User user, string roleName, int charityId)
         {
             ThrowIfDisposed();

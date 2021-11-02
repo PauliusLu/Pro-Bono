@@ -101,7 +101,13 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
                 StatusMessage = "Error: Charity with this name has already been created.";
                 return RedirectToPage();
             }
-            
+
+            if (await _userManager.IsInRoleAsync(user, "Charity manager"))
+            {
+                StatusMessage = "Error: You cannot create a charity. Your user is already a manager of some charity.";
+                return RedirectToPage();
+            }
+
             FillCharityDetails(charity);
             _context.Add(charity);
             await _context.SaveChangesAsync();
