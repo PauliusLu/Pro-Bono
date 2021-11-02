@@ -57,6 +57,7 @@ namespace Karma
             // Adding identity
             services.AddIdentity<Karma.Models.User, IdentityRole>()
                 .AddDefaultUI()
+                .AddUserManager<Karma.Models.UserManage>()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<KarmaContext>();
 
