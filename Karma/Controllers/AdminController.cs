@@ -17,9 +17,9 @@ namespace Karma.Controllers
 
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        private readonly UserManager<User> _userManager;
+        private readonly UserManage _userManager;
 
-        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManage userManager)
         {
             _context = context;
             _roleManager = roleManager;
@@ -130,6 +130,7 @@ namespace Karma.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             var result = await _userManager.RemoveFromRolesAsync(user, userRoles);
 
+
             if (!result.Succeeded)
             {
                 ModelState.AddModelError("", "Cannot remove existing user roles");
@@ -157,6 +158,9 @@ namespace Karma.Controllers
             }
 
             var charity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == charityId);
+
+            var user = _userManager.GetUserByCharityId("Charity manager", (int)charityId);
+            ViewBag.User = user;
 
             if (charity == null)
             {

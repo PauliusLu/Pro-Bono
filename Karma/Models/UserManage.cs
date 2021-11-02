@@ -31,25 +31,68 @@ namespace Karma.Models
             IdentityUserRole<string>, IdentityUserLogin<string>, IdentityUserToken<string>, IdentityRoleClaim<string>>) store;
         }
 
-        public virtual async Task<IdentityResult> AddUserRoleWithCharityId(User user, string roleId, int charityId)
+        public override async Task<IdentityResult> AddToRoleAsync(User user, string roleName)
+        {
+            return await this.AddUserRoleWithCharityId(user, roleName, -1);
+        }
+
+        public override async Task<IdentityResult> AddToRolesAsync(User user, IEnumerable<string> roleNames)
+        {
+            foreach (string name in roleNames)
+            {
+                await this.AddUserRoleWithCharityId(user, name, -1);
+            }
+
+            return await UpdateUserAsync(user);
+        }
+
+        public virtual async Task<IdentityResult> AddUserRoleWithCharityId(User user, string roleName, int charityId)
         {
             ThrowIfDisposed();
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            if (string.IsNullOrWhiteSpace(roleId))
-                throw new ArgumentNullException(nameof(roleId));
+            if (string.IsNullOrWhiteSpace(roleName))
+                throw new ArgumentNullException(nameof(roleName));
 
-            var role = _store.Context.Find<IdentityRole>(roleId);
-            var normalizedRoleName = role.NormalizedName;
+            var normalizedRoleName = roleName.ToUpper();
+            var role = _store.Context.Role
+                .Where(r => r.NormalizedName == normalizedRoleName)
+                .FirstOrDefault();
 
             if (await _store.IsInRoleAsync(user, normalizedRoleName))
-                return IdentityResult.Failed(ErrorDescriber.UserAlreadyInRole(roleId));
+                return IdentityResult.Failed(ErrorDescriber.UserAlreadyInRole(roleName));
 
-            _store.Context.Set<IdentityUserRole<string>>().Add(new UserRole { RoleId = roleId, UserId = user.Id, CharityId = charityId });
+            _store.Context.Set<IdentityUserRole<string>>().Add(new UserRole { RoleId = role.Id, UserId = user.Id, CharityId = charityId });
 
             return await UpdateUserAsync(user);
+        }
+
+        public virtual User GetUserByCharityId(string roleName, int charityId)
+        {
+            if (charityId == 0)
+                throw new ArgumentOutOfRangeException(nameof(charityId));
+
+            if (string.IsNullOrWhiteSpace(roleName))
+                throw new ArgumentNullException(nameof(roleName));
+
+            var normalizedRoleName = roleName.ToUpper();
+            var role = _store.Context.Role
+                .Where(r => r.NormalizedName == normalizedRoleName)
+                .FirstOrDefault();
+
+            var userRole = _store.Context.UserRole
+                .Where(r => r.RoleId == role.Id && r.CharityId == charityId)
+                .FirstOrDefault();
+
+            if (userRole == null)
+                return null;
+
+            var userId = userRole.UserId;
+            var user = _store.Context.Find<User>(userId);
+
+            return user;
         }
     }
 }
