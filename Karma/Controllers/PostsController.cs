@@ -339,19 +339,21 @@ namespace Karma.Controllers
                 return act;
 
 
-            var post = await _context.Post.FindAsync(postId);
-            if (post != null)
-            {
-                if (post.State == (int)Post.PostState.Reserved)
-                    post.State = (int)Post.PostState.Open;
-                else if (post.State == (int)Post.PostState.NotSet || post.State == (int)Post.PostState.Open)
-                    post.State = (int)Post.PostState.Reserved;
+            return await findPostAsync(postId, async (post) => {
+                if (post != null)
+                {
+                    if (post.State == (int)Post.PostState.Reserved)
+                        post.State = (int)Post.PostState.Open;
+                    else if (post.State == (int)Post.PostState.NotSet || post.State == (int)Post.PostState.Open)
+                        post.State = (int)Post.PostState.Reserved;
 
-                _context.Update(post);
-                await _context.SaveChangesAsync();
-            }
+                    _context.Update(post);
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("Details", new { id = postId });
+            });
             
-            return RedirectToAction("Details", new { id = postId });
         }
 
         [HttpPost]
@@ -362,20 +364,22 @@ namespace Karma.Controllers
                 return act;
 
 
-            var post = await _context.Post.FindAsync(postId);
-            if (post != null)
+            return await findPostAsync(postId, async (post) =>
             {
-                if (post.State == (int)Post.PostState.Reserved)
+                if (post != null)
                 {
-                    post.State = (int)Post.PostState.Traded;
-                    post.IsVisible = false;
+                    if (post.State == (int)Post.PostState.Reserved)
+                    {
+                        post.State = (int)Post.PostState.Traded;
+                        post.IsVisible = false;
+                    }
+
+                    _context.Update(post);
+                    await _context.SaveChangesAsync();
                 }
 
-                _context.Update(post);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            });
         }
 
         // Returns the YesNoDialog view
@@ -450,6 +454,13 @@ namespace Karma.Controllers
             //If user has Permission
             act = null;
             return null;
+        }
+
+        private delegate Task<IActionResult> findPostCallback(Post post);
+        private async Task<IActionResult> findPostAsync(int postId, findPostCallback cb)
+        {
+            var post = await _context.Post.FindAsync(postId);
+            return await cb(post);
         }
     }
 }
