@@ -1,0 +1,56 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@model Karma.Models.Post
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script>
+        function PostToServer(id) {
+            $.post('@Url.Action((string)ViewData["MessageAction"], "Posts")' + '/' + @Model.Id,
+                { postId: id }, function (data) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 200);
+                    //CloseDialog();
+            });
+        }
+        function CloseDialog() {
+            $("#dialog").click();
+            window.location.reload();
+        }
+    </script>
+</head>
+<body>
+    <div id="yesNoDialog" class="modal-body">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-12 text text-center">
+                    @ViewData["Message"]
+                </div>
+            </div>
+
+            <div class="row">
+                <button type="button" class="btn btn-success" onclick="@("PostToServer(" + @Model.Id + ");")">
+                    @ViewData["buttonAffirmText"]
+                </button>
+                <button type="button" class="btn btn-danger col" onclick="CloseDialog();">
+                    <div class="row align-items-center">
+                        <div class="col-12 text-center font-weight-bold">
+                            Cancel
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

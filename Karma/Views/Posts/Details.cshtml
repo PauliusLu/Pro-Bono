@@ -18,7 +18,25 @@
              alt="Item image" class="img-fluid" style="max-width:400px;" />
     }
 </div>
-<br />
+@{
+    if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
+    {
+        if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
+        {
+            <button class="btn btn-success" data-toggle="modal" data-target="#dialog">Mark as reserved.</button>
+
+        }
+        else if (Model.State == (int)Post.PostState.Reserved)
+        {
+            <button class="btn btn-info" data-toggle="modal" data-target="#dialog">Mark as Completed.</button>
+            <button class="btn btn-warning" data-toggle="modal" data-target="#dialog">Cancel reservation.</button>
+
+        }
+        <br />
+    }
+}
+
+
 <div>
     Posted at @Html.DisplayFor(model => model.Date)
 </div>
@@ -26,3 +44,22 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+@if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
+{
+<script>
+        $(() => {
+            $('#dialog').on('show.bs.modal', function (event) {
+                if (event.relatedTarget.innerHTML == 'Mark as reserved.') {
+                    $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Are you sure you want to reserve this item?", action3 = "ReserveItem", buttonAffirmText = "Reserve" })');
+                }
+                else if (event.relatedTarget.innerHTML == 'Cancel reservation.') {
+                    $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Are you sure you want to cancel reservation?", action3 = "ReserveItem", buttonAffirmText = "Cancel Reservation"})');
+                }
+                else if (event.relatedTarget.innerHTML == 'Mark as Completed.') {
+                    $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Did you " + (Model.IsDonation ? "donate" : "receive") + " all items?", action3 = "CompleteItem", buttonAffirmText = "Yes"})');
+                }
+            });
+        });
+</script>
+}
+

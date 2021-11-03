@@ -8,6 +8,7 @@
     <title>@ViewData["Title"] - Karma</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 <body>
     <header>
@@ -61,7 +62,6 @@
             &copy; 2021 - Karma - Daily posts: @PostsData.AverageText() - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     @*Click event handler for buttons. Loads dialog views to the .modal-body in #dialog*@
     <script>

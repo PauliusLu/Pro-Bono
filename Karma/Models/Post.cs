@@ -12,6 +12,19 @@ namespace Karma.Models
 
     public class Post : IComparable<Post>, IEquatable<Post>
     {
+        public enum PostState
+        {
+            NotSet = 0,
+            Reserved,
+            Open,
+            Traded, //Not specified whether Donated or Received
+            Donated,
+            Received,
+            Hidden, //Settable by user
+            Deleted,
+            Reported
+        }
+
         public static readonly string ImagesDirName = Path.Combine("data", "PostImages");
         public static readonly string DefaultImagesDirName = Path.Combine("data", "DefaultPostImages");
 
@@ -36,6 +49,7 @@ namespace Karma.Models
         public string ImagePath { get; set; }
         [Required]
         public bool IsVisible { get; set; }
+        public int State { get; set; }
 
         public Post()
         {
