@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Karma.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace Karma.Areas.Identity.Pages.Account.Manage
 {
@@ -51,7 +52,7 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             [Required]
             public string Description { get; set; }
             public string ImagePath { get; set; }
-        }
+    }
 
         private async Task LoadAsync(User user)
         {
@@ -74,7 +75,7 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(IFormFile file)
         {
             var charity = new Charity();
             charity.Name = Input.Name;
@@ -105,6 +106,12 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             }
 
             FillCharityDetails(charity);
+
+            if (CopyFileToRoot(charity, file) == false)
+            {
+                return RedirectToPage();
+            }
+
             _context.Add(charity);
             await _context.SaveChangesAsync();
 
@@ -126,5 +133,42 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             charity.ReviewState = Enums.ReviewState.Waiting;
         }
 
+        private bool? IsValidFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return null;
+            }
+            else if (!Path.GetExtension(file.FileName).IsValidExtension())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CopyFileToRoot(Charity charity, IFormFile file, string ext = null)
+        {
+            bool? isValidFile = IsValidFile(file);
+            if (isValidFile == false)
+            {
+                StatusMessage = "Invalid file type";
+                return false;
+            }
+            else if (isValidFile == true)
+            {
+                ext = ext ?? Path.GetExtension(file.FileName);
+
+                string fileName = "x" + DateTime.Now.Ticks.ToString() + ext;
+
+                string path = Path.Combine(_iWebHostEnv.WebRootPath, Charity.ImagesDirName, fileName);
+
+                // Copying file to wwwroot/CharityImages
+                FileStream stream = new FileStream(path, FileMode.Create);
+                _ = file.CopyToAsync(stream);
+
+                charity.ImagePath = fileName;
+            }
+            return true;
+        }
     }
 }
