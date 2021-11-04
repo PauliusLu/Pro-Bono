@@ -26,16 +26,16 @@ namespace Karma.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index(AdminIndexTabViewModel tabViewModel)
+        public IActionResult Index(AdminTabViewModel tabViewModel)
         {
-            tabViewModel ??= new AdminIndexTabViewModel(Enums.AdminTab.Users);
+            tabViewModel ??= new AdminTabViewModel(Enums.AdminTab.Users);
             
             return View(tabViewModel);
         }
 
         public IActionResult SwitchToTabs(Karma.Enums.AdminTab adminTab)
         {
-            var tabViewModel = new AdminIndexTabViewModel();
+            var tabViewModel = new AdminTabViewModel();
 
             switch(adminTab)
         {

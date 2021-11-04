@@ -79,5 +79,22 @@ namespace Karma.Models
 
             return user;
         }
+
+        public virtual Charity GetCharityByUserRole(string roleName, string userId)
+        {
+            var normalizedRoleName = roleName.ToUpper();
+            var role = _store.Context.Role
+                .Where(r => r.NormalizedName == normalizedRoleName)
+                .FirstOrDefault();
+
+            var userRole = _store.Context.UserRole
+                .Where(r => r.RoleId == role.Id && r.UserId == userId)
+                .FirstOrDefault();
+
+            var charityId = userRole.CharityId;
+            var charity = _store.Context.Charity.FindAsync(charityId).Result;
+
+            return charity;
+        }
     }
 }

@@ -3,7 +3,11 @@
 @using Karma.Models
 
 @inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
+@inject UserManage UserManager
+
+@{
+    var charity = User.IsInRole("Charity manager") ? UserManager.GetCharityByUserRole("Charity manager", UserManager.GetUserId(User)) : null;
+}
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 <ul class="navbar-nav">
@@ -17,11 +21,11 @@
                 <a id="manage" class="dropdown-item text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Account</a>
                 @if (User.IsInRole("Admin"))
                 {
-                    <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Manage</a>
+                    <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Manage page</a>
                 }
-                else if (User.IsInRole("Charity manager"))
+                @if (User.IsInRole("Charity manager") && charity.ReviewState == Enums.ReviewState.Approved)
                 {
-                    <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Manage</a>
+                    <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="CharityManager" asp-action="Index">Manage charity</a>
                 }
                 <div class="dropdown-divider"></div>
                 <form id="logoutForm" class="form-inline dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

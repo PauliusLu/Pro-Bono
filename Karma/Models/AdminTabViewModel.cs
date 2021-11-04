@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 
 namespace Karma.Models
 {
-    public class AdminIndexTabViewModel
+    public class AdminTabViewModel
     {
         public Enums.AdminTab ActiveTab { get; set; }
 
-        public AdminIndexTabViewModel()
+        public AdminTabViewModel()
         {
 
         }
 
-        public AdminIndexTabViewModel(Enums.AdminTab activeTab)
+        public AdminTabViewModel(Enums.AdminTab activeTab)
         {
             ActiveTab = activeTab;
         }
