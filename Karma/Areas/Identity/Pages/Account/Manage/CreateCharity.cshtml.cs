@@ -51,10 +51,6 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             [Required]
             public string Description { get; set; }
             public string ImagePath { get; set; }
-            [Required]
-            public List<int> ItemTypes { get; set; }
-            [Required]
-            public string Address { get; set; }
         }
 
         private async Task LoadAsync(User user)
