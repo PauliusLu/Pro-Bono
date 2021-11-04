@@ -28,5 +28,14 @@ namespace Karma.Data
         public DbSet<IdentityRole> Role { get; set; }
 
         public DbSet<Karma.Models.CharityAddress> CharityAddress { get; set; }
+
+        public DbSet<Karma.Models.CharityItemType> CharityItemType { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<CharityItemType>().HasKey(x => new { x.CharityId, x.ItemTypeId });
+        }
     }
 }
