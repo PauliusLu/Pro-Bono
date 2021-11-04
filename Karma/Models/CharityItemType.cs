@@ -14,7 +14,11 @@ namespace Karma.Models
         [Key]
         public int ItemTypeId { get; set; }
         [NotMapped]
-        public ItemType ItemType { get; set; }
+        public ItemType ItemType 
+        { 
+            get { return ItemTypes.GetItemType(ItemTypeId); }
+            set { ItemType = ItemTypes.GetItemType(ItemTypeId); } 
+        }
 
         public CharityItemType()
         {

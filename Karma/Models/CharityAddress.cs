@@ -31,5 +31,10 @@ namespace Karma.Models
         {
 
         }
+
+        public CharityAddress(int charityId)
+        {
+            CharityId = charityId;
+        }
     }
 }
