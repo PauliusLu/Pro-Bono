@@ -4,49 +4,46 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Charity</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-controller="Charities" asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="DateCreated" />
+            <input type="hidden" asp-for="ReviewState" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="AddressesPath" class="control-label"></label>
-                <input asp-for="AddressesPath" class="form-control" />
-                <span asp-validation-for="AddressesPath" class="text-danger"></span>
+            @*<div class="form-group">
+                <label asp-for="CharityAddresses" class="control-label"></label>
+                @{await (Html.PartialAsync("~/Views/CharityAddresses/Index.cshtml", Model.CharityAddresses));}
             </div>
             <div class="form-group">
-                <label asp-for="ItemTypePath" class="control-label"></label>
-                <input asp-for="ItemTypePath" class="form-control" />
-                <span asp-validation-for="ItemTypePath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImagePath" class="control-label"></label>
-                <input asp-for="ImagePath" class="form-control" />
-                <span asp-validation-for="ImagePath" class="text-danger"></span>
-            </div>
+                <label asp-for="CharityItemTypes" class="control-label"></label>
+                @{await (Html.PartialAsync("~/Views/CharityItemTypes/Index.cshtml", Model.CharityItemTypes));}
+            </div>*@
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImagePath" class="control-label">Upload charity logo</label>
+                <input type="file" class="form-control-file" accept=".jpg, .jpeg, .png, .bmp" name="file" />
+                <span class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
+    <div class="col-md-6">
+        <partial name="~/Views/Charities/Details.cshtml" for="@Model" />
+    </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

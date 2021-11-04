@@ -2,21 +2,32 @@
 
 @{
     ViewData["Title"] = "Details";
+    var charityItemTypes = Model.GetItemTypes();
 }
 
+<h4>Review state: @Html.DisplayFor(model => model.ReviewState)</h4>
+<h1>@Model.Name</h1>
+
 <div>
-    <hr />
-    Categories: @ItemTypes.GetItemTypesNames(Model.ItemTypes).ToString();
-    <br />
-    Review state: @Html.DisplayFor(model => model.ReviewState)
+    <hr /> 
+    @if (charityItemTypes != null && !charityItemTypes.Any())
+    {
+        <div>Charity item types:
+            @foreach (var itemType in charityItemTypes)
+            {
+                <span>@itemType.Name </span>
+            }
+        </div>
+        <br />
+    }
     @if (Model.ImagePath != null && Model.ImagePath != "")
     {
         <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
              alt="Item image" class="img-fluid" style="max-width:400px;" />
+        <br />
     }
 </div>
-<br />
+<hr />
 <div>
     Posted at @Html.DisplayFor(model => model.DateCreated)
 </div>
-<hr />

@@ -14,17 +14,10 @@ namespace Karma.Models
         public static readonly string AdressDirName = Path.Combine("Data", "Charities", "Address");
         public static readonly string ItemTypesDirName = Path.Combine("Data", "Charities", "ItemTypes");
 
-
         [Key]
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
-        [Display(Name = "Path to addresses")]
-        public string AddressesPath { get; set; }
-        [Required]
-        [Display(Name = "Path to item types")]
-        public string ItemTypePath { get; set; }
         [Display(Name = "Image")]
         public string ImagePath { get; set; }
         [Required]
@@ -32,7 +25,10 @@ namespace Karma.Models
         public string Description { get; set; }
         [NotMapped]
         [Display(Name = "Item types")]
-        public List<ItemType> ItemTypes { get; set; }
+        public List<CharityAddress> CharityAddresses { get; set; }
+        [NotMapped]
+        [Display(Name = "Item types")]
+        public List<CharityItemType> CharityItemTypes { get; set; }
         [Required]
         [Display(Name = "Request date")]
         public DateTime DateCreated { get; set; }
@@ -42,7 +38,8 @@ namespace Karma.Models
 
         public Charity()
         {
-            ItemTypes = new List<ItemType>();
+            CharityAddresses = new List<CharityAddress>();
+            CharityItemTypes = new List<CharityItemType>();
         }
 
         public static List<Charity> FilteredCharities(List<Charity> charities, ItemType itemType) 
@@ -53,13 +50,10 @@ namespace Karma.Models
 
             foreach (Charity c in charities)
             {
-                if (c.HasItemTypesFile())
-                {
-                    c.LoadItemTypes();
-                }
+                var itemTypes = c.GetItemTypes();
 
                 if (c.ReviewState == Enums.ReviewState.Approved
-                    && c.ItemTypes.Contains(itemType))
+                    && itemTypes.Contains(itemType))
                 {
                     filtered.Add(c);
                 }
@@ -68,22 +62,12 @@ namespace Karma.Models
             return filtered;
         }
 
-        public bool HasItemTypesFile()
+        public List<ItemType> GetItemTypes()
         {
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), ItemTypePath);
-            return File.Exists(filePath);
+            var itemTypes = CharityItemTypes.Select(x => x.ItemType).ToList();
+            
+            return itemTypes.Any() ? itemTypes : null;
         }
 
-        public void LoadItemTypes()
-        {
-            StreamReader sr = new StreamReader(ItemTypePath);
-            ItemTypes = ItemTypes ?? new();
-            string line;
-            
-            while ((line = sr.ReadLine()) != null)
-            {
-                ItemTypes.Add(Karma.Models.ItemTypes.GetItemType(line));
-            }
-        }
     }
 }

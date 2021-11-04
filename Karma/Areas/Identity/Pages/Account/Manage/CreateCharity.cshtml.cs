@@ -126,39 +126,9 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
         {
             charity.Description = Input.Description;
             charity.Name = Input.Name;
-            charity.ItemTypePath = CreateFilePath(_iWebHostEnv, charity.Name, Charity.ItemTypesDirName);
-            charity.AddressesPath = CreateFilePath(_iWebHostEnv, charity.Name, Charity.AdressDirName);
             charity.DateCreated = DateTime.UtcNow;
             charity.ReviewState = Enums.ReviewState.Waiting;
         }
 
-        public string CreateFilePath(IWebHostEnvironment webHostEnvironment, string fileName, string dir)
-        {
-            StringBuilder content = new();
-
-            if (dir == Charity.ItemTypesDirName)
-            {
-                foreach (int e in Input.ItemTypes)
-                {
-                    content.AppendLine(Karma.Models.ItemTypes.GetItemType(e).Name);
-                }
-            }
-            else if (dir == Charity.AdressDirName)
-            {
-                content.AppendLine(Input.Address);
-            }
-            else
-            {
-                return "";
-            }
-
-
-            string relativePath = Path.Combine(dir, fileName + ".txt");
-            string path = Path.Combine(webHostEnvironment.ContentRootPath, relativePath);
-
-            System.IO.File.WriteAllText(path, content.ToString());
-
-            return relativePath;
-        }
     }
 }
