@@ -5,10 +5,6 @@
 @inject SignInManager<User> SignInManager
 @inject UserManage UserManager
 
-@{
-    var charity = User.IsInRole("Charity manager") ? UserManager.GetCharityByUserRole("Charity manager", UserManager.GetUserId(User)) : null;
-}
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
@@ -23,7 +19,7 @@
                 {
                     <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Manage page</a>
                 }
-                @if (User.IsInRole("Charity manager") && charity.ReviewState == Enums.ReviewState.Approved)
+                @if (User.IsInRole("Charity manager"))
                 {
                     <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="CharityManager" asp-action="Index">Manage charity</a>
                 }
