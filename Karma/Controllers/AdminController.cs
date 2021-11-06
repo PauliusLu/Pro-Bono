@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -24,11 +25,14 @@ namespace Karma.Controllers
 
         private readonly UserManage _userManager;
 
-        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManage userManager)
+        private readonly IWebHostEnvironment _iWebHostEnv;
+
+        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManage userManager, IWebHostEnvironment webHostEnv)
         {
             _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
+            _iWebHostEnv = webHostEnv;
         }
 
         public IActionResult Index(AdminTabViewModel tabViewModel)
@@ -181,7 +185,7 @@ namespace Karma.Controllers
         public async Task<IActionResult> CharityReview(int id, [Bind("Id,ReviewState")] Charity charity)
         {
             var dbCharity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == id);
-            dbCharity.CharityStateChanged += CharityStateChanged;
+            dbCharity.CharityStateChanged += EmailCharityStateChanged;
 
             dbCharity.ReviewState = charity.ReviewState;
 
@@ -191,33 +195,40 @@ namespace Karma.Controllers
             return View(dbCharity);
         }
 
-        public async void CharityStateChanged(object sender, CharityStateChangedEventArgs e)
+        public async void EmailCharityStateChanged(object sender, CharityStateChangedEventArgs e)
         {
-            await SendEmail();
+            var user = _userManager.GetUserByCharityId("Charity manager", e.CharityId);
+            var charity = await _context.Charity.FindAsync(e.CharityId);
+
+            var emailModel = new EmailModel.EmailCharityState(user.UserName, charity.Name, e.ReviewState, e.TimeChanged);
+
+            await SendEmail(user, emailModel);
         }
 
-        public async Task SendEmail()
+        public async Task SendEmail(User user, EmailModel.EmailCharityState emailModel)
         {
+            // The emails are currently saved to Karma/Data for testing purposes
             var sender = new SmtpSender(() => new SmtpClient("localhost")
             {
                 EnableSsl = false,
                 DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory,
-                PickupDirectoryLocation = @"C:\TestingEmail"
+                PickupDirectoryLocation = Path.Combine(_iWebHostEnv.ContentRootPath, "Data")
             });
 
+            // Templates should be in DB in the future
             StringBuilder template = new();
             template.AppendLine("Dear @Model.UserName,");
-            template.AppendLine("<p> Charity state changed. </p>");
+            template.AppendLine("<p>Your charity's \"@Model.CharityName\" state has changed to: @Model.ReviewState.</p>");
             template.AppendLine("- The Karma Team");
 
             Email.DefaultSender = sender;
             Email.DefaultRenderer = new RazorRenderer();
 
             var email = await Email
-                .From("info@karma.com")
-                .To("baikauskaitev@gmail.com", "Viktorija")
-                .Subject("Charity state changed")
-                .UsingTemplate(template.ToString(), new { UserName = "szprotas"})
+                .From(EmailModel.SendingEmail)
+                .To(user.Email)
+                .Subject(EmailModel.EmailCharityState.EmailSubject)
+                .UsingTemplate(template.ToString(), emailModel)
                 .SendAsync();
         }
     }
