@@ -19,6 +19,15 @@ else
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <dl class="row">
+                @if (Model.ReviewState != Enums.ReviewState.Approved && ViewBag.User != null)
+                {
+                    <dt class="col-sm-2">
+                        Request made by the user
+                    </dt>
+                    <dd class="col-sm-10">
+                        @ViewBag.User.UserName
+                    </dd>
+                }
                 <dt class="col-sm-2">
                     @Html.DisplayNameFor(model => model.Name)
                 </dt>
@@ -26,26 +35,14 @@ else
                     @Html.DisplayFor(model => model.Name)
                 </dd>
                 <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.AddressesPath)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.AddressesPath)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.ItemTypePath)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.ItemTypePath)
-                </dd>
-                <dt class="col-sm-2">
                     @Html.DisplayNameFor(model => model.ImagePath)
                 </dt>
                 <dd class="col-sm-10">
                     @if (Model.ImagePath != null && Model.ImagePath != "")
-                        {
-                    <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
-                         alt="Item image" class="img-fluid" style="max-width:400px;" />
-                        }
+                    {
+                        <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
+                             alt="Item image" class="img-fluid" style="max-width:400px;" />
+                    }
                 </dd>
                 <dt class="col-sm-2">
                     @Html.DisplayNameFor(model => model.Description)

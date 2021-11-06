@@ -1,0 +1,42 @@
+﻿@page
+@model CreateCharity
+@{
+    ViewData["Title"] = "Create a charity";
+    ViewData["ActivePage"] = ManageNavPages.CreateCharity;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Register a charity for donations and requests.
+            You will be automatically assigned as the manager of the charity and it will be sent out for review.
+        </p>
+        <form id="create-charity-form" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label>Charity manager</label>
+                <input asp-for="Username" class="form-control" disabled />
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Name" class="control-label"></label>
+                <input asp-for="Input.Name" class="form-control" />
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Description" class="control-label">Description</label>
+                <textarea asp-for="Input.Description" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="Input.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.ImagePath" class="control-label">Upload charity logo</label>
+                <input type="file" class="form-control-file" accept=".jpg, .jpeg, .png, .bmp" name="file" />
+                <span class="text-danger">@ViewBag.Message</span>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

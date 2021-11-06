@@ -38,6 +38,11 @@ namespace Karma.Controllers
 
             ItemType itemType = new ItemTypes()[itemTypeId];
             ViewBag.ItemType = itemType.Name;
+            
+            foreach(var charity in charities)
+            {
+                charity.CharityItemTypes = GetCharityItemTypes(charity).Result;
+            }
 
             var filtered = Charity.FilteredCharities(charities, itemType);
 
@@ -79,23 +84,9 @@ namespace Karma.Controllers
             {
                 Charity charity = new();
 
-                if (file != null && file.Length != 0)
+                if (CopyFileToRoot(charity, file) == false)
                 {
-                    var ext = Path.GetExtension(file.FileName);
-                    if (!ext.IsValidExtension())
-                    {
-                        ViewBag.Message = "Invalid file type.";
-                        return View(charityForm);
-                    }
-
-                    // Generating a file name.
-                    string fileName = "x" + DateTime.Now.Ticks.ToString() + ext;
-
-                    string path = Path.Combine(_iWebHostEnv.WebRootPath, Charity.ImagesDirName, fileName);
-                    FileStream stream = new FileStream(path, FileMode.Create);
-                    _ = file.CopyToAsync(stream);
-
-                    charity.ImagePath = fileName;               
+                    return View(charity);
                 }
 
                 FillCharityDetails(charity, charityForm);
@@ -110,8 +101,6 @@ namespace Karma.Controllers
         {
             charity.Description = charityForm.Description;
             charity.Name = charityForm.Name;
-            charity.ItemTypePath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, Charity.ItemTypesDirName);
-            charity.AddressesPath = charityForm.CreateFilePath(_iWebHostEnv, charity.Name, Charity.AdressDirName);
             charity.DateCreated = DateTime.UtcNow;
             charity.ReviewState = Enums.ReviewState.Waiting;
         }
@@ -137,7 +126,7 @@ namespace Karma.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,AddressesPath,ItemTypePath,ImagePath,Description")] Charity charity)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImagePath,Description,DateCreated,ReviewState")] Charity charity, IFormFile file)
         {
             if (id != charity.Id)
             {
@@ -146,6 +135,19 @@ namespace Karma.Controllers
 
             if (ModelState.IsValid)
             {
+                // If the edited charity is identical to the old one
+                var dbCharity =  _context.Charity.Find(charity.Id);
+
+                if(file == null)
+                    charity.ImagePath = dbCharity.ImagePath;
+                
+                _context.Entry(dbCharity).State = EntityState.Detached;
+
+                if (CopyFileToRoot(charity, file) == false)
+                {
+                    return View(charity);
+                }
+
                 try
                 {
                     _context.Update(charity);
@@ -201,5 +203,71 @@ namespace Karma.Controllers
             return _context.Charity.Any(e => e.Id == id);
         }
 
+        public async Task<List<CharityItemType>> GetCharityItemTypes(Charity charity)
+        {
+            var charityItemTypesList = await _context.CharityItemType
+                .Where(x => x.CharityId == charity.Id)
+                .ToListAsync();
+
+            return charityItemTypesList;
+        }
+
+        public async Task<List<ItemType>> GetItemTypes(Charity charity)
+        {
+            var charityItemTypesList = await _context.CharityItemType
+                .Where(x => x.CharityId == charity.Id)
+                .ToListAsync();
+            var itemTypesList = charityItemTypesList.Select(x => x.ItemType).ToList();
+
+            return itemTypesList;
+        }
+
+        public async Task<List<CharityAddress>> GetCharityAddresses(Charity charity)
+        {
+            var charityAddressesList = await _context.CharityAddress
+                .Where(x => x.CharityId == charity.Id)
+                .ToListAsync();
+
+            return charityAddressesList;
+        }
+
+        // Returns null if there is no file, false if extension is invalid and true otherwise
+        private bool? IsValidFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return null;
+            }
+            else if (!Path.GetExtension(file.FileName).IsValidExtension())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CopyFileToRoot(Charity charity, IFormFile file, string ext = null)
+        {
+            bool? isValidFile = IsValidFile(file);
+            if (isValidFile == false)
+            {
+                ViewBag.Message = "Invalid file type.";
+                return false;
+            }
+            else if (isValidFile == true)
+            {
+                ext = ext ?? Path.GetExtension(file.FileName);
+
+                string fileName = "x" + DateTime.Now.Ticks.ToString() + ext;
+
+                string path = Path.Combine(_iWebHostEnv.WebRootPath, Charity.ImagesDirName, fileName);
+
+                // Copying file to wwwroot/CharityImages
+                FileStream stream = new FileStream(path, FileMode.Create);
+                _ = file.CopyToAsync(stream);
+
+                charity.ImagePath = fileName;
+            }
+            return true;
+        }
     }
 }

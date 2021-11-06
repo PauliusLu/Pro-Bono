@@ -3,14 +3,16 @@ using System;
 using Karma.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Karma.Migrations
 {
     [DbContext(typeof(KarmaContext))]
-    partial class KarmaContextModelSnapshot : ModelSnapshot
+    [Migration("20211104094953_CreateCharityItemTypeTable")]
+    partial class CreateCharityItemTypeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,6 +24,10 @@ namespace Karma.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("AddressesPath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("TEXT");
 
@@ -31,6 +37,10 @@ namespace Karma.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ImagePath")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ItemTypePath")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -120,9 +130,6 @@ namespace Karma.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ItemType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("State")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")

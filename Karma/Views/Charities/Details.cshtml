@@ -2,47 +2,32 @@
 
 @{
     ViewData["Title"] = "Details";
+    var charityItemTypes = Model.GetItemTypes();
 }
 
-<h1>Details</h1>
+<h4>Review state: @Html.DisplayFor(model => model.ReviewState)</h4>
+<h1>@Model.Name</h1>
 
 <div>
-    <h4>Charity</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AddressesPath)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AddressesPath)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ItemTypePath)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ItemTypePath)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImagePath)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImagePath)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-    </dl>
+    <hr /> 
+    @if (charityItemTypes != null && !charityItemTypes.Any())
+    {
+        <div>Charity item types:
+            @foreach (var itemType in charityItemTypes)
+            {
+                <span>@itemType.Name </span>
+            }
+        </div>
+        <br />
+    }
+    @if (Model.ImagePath != null && Model.ImagePath != "")
+    {
+        <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
+             alt="Item image" class="img-fluid" style="max-width:400px;" />
+        <br />
+    }
 </div>
+<hr />
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    Posted at @Html.DisplayFor(model => model.DateCreated)
 </div>
