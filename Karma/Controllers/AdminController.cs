@@ -1,4 +1,7 @@
-﻿using Karma.Data;
+﻿using FluentEmail.Core;
+using FluentEmail.Razor;
+using FluentEmail.Smtp;
+using Karma.Data;
 using Karma.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Karma.Controllers
@@ -176,12 +181,44 @@ namespace Karma.Controllers
         public async Task<IActionResult> CharityReview(int id, [Bind("Id,ReviewState")] Charity charity)
         {
             var dbCharity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == id);
+            dbCharity.CharityStateChanged += CharityStateChanged;
+
             dbCharity.ReviewState = charity.ReviewState;
 
             _context.Update(dbCharity);
             await _context.SaveChangesAsync();
 
             return View(dbCharity);
+        }
+
+        public async void CharityStateChanged(object sender, CharityStateChangedEventArgs e)
+        {
+            await SendEmail();
+        }
+
+        public async Task SendEmail()
+        {
+            var sender = new SmtpSender(() => new SmtpClient("localhost")
+            {
+                EnableSsl = false,
+                DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory,
+                PickupDirectoryLocation = @"C:\TestingEmail"
+            });
+
+            StringBuilder template = new();
+            template.AppendLine("Dear @Model.UserName,");
+            template.AppendLine("<p> Charity state changed. </p>");
+            template.AppendLine("- The Karma Team");
+
+            Email.DefaultSender = sender;
+            Email.DefaultRenderer = new RazorRenderer();
+
+            var email = await Email
+                .From("info@karma.com")
+                .To("baikauskaitev@gmail.com", "Viktorija")
+                .Subject("Charity state changed")
+                .UsingTemplate(template.ToString(), new { UserName = "szprotas"})
+                .SendAsync();
         }
     }
 }
