@@ -37,5 +37,7 @@ namespace Karma.Data
 
             builder.Entity<CharityItemType>().HasKey(x => new { x.CharityId, x.ItemTypeId });
         }
+
+        public DbSet<Karma.Models.Report> Report { get; set; }
     }
 }

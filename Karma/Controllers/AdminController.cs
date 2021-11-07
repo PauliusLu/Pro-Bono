@@ -45,6 +45,9 @@ namespace Karma.Controllers
                 case Karma.Enums.AdminTab.CharityReview:
                     tabViewModel.ActiveTab = Enums.AdminTab.CharityReview;
                     break;
+                case Karma.Enums.AdminTab.ReportReview:
+                    tabViewModel.ActiveTab = Enums.AdminTab.ReportReview;
+                    break;
                 default:
                     tabViewModel.ActiveTab = Enums.AdminTab.Users;
                     break;
