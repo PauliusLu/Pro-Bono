@@ -9,7 +9,7 @@ namespace Karma.Models
     {
         public const string SendingEmail = "info@karma.com";
 
-        public class EmailCharityState
+        public class EmailCharityState : EmailModel
         {
             public const string EmailSubject = "Charity state changed";
             public string UserName { get; set; }

@@ -1,14 +1,14 @@
-﻿using Karma.Data;
-using Karma.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Karma.Data;
+using Karma.Models;
 
-namespace Karma.Controllers
+namespace Karma
 {
     public class CharityAddressesController : Controller
     {
@@ -19,80 +19,135 @@ namespace Karma.Controllers
             _context = context;
         }
 
-        // GET: CharityAddressesController
+        // GET: CharityAddresses
         public async Task<IActionResult> Index()
         {
             return View(await _context.CharityAddress.ToListAsync());
         }
 
-        // GET: CharityAddressesController/Details/5
-        public ActionResult Details(int id)
+        // GET: CharityAddresses/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            return View();
-        }
-
-        // GET: CharityAddressesController/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CharityAddressesController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CharityId,Country,City,Street,HouseNumber,PostCode")] CharityAddress charityAddress, IFormCollection collection)
-        {
-            if (ModelState.IsValid)
+            if (id == null)
             {
-                _context.Add(charityAddress);
-                await _context.SaveChangesAsync();
+                return NotFound();
+            }
 
-                return RedirectToAction(nameof(Index));
+            var charityAddress = await _context.CharityAddress
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (charityAddress == null)
+            {
+                return NotFound();
             }
 
             return View(charityAddress);
         }
 
-        // GET: CharityAddressesController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: CharityAddresses/Create
+        public IActionResult Create()
         {
             return View();
         }
 
-        // POST: CharityAddressesController/Edit/5
+        // POST: CharityAddresses/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Create([Bind("Id,CharityId,Country,City,Street,HouseNumber,PostCode")] CharityAddress charityAddress)
         {
-            try
+            if (ModelState.IsValid)
             {
+                _context.Add(charityAddress);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(charityAddress);
         }
 
-        // GET: CharityAddressesController/Delete/5
-        public ActionResult Delete(int id)
+        // GET: CharityAddresses/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var charityAddress = await _context.CharityAddress.FindAsync(id);
+            if (charityAddress == null)
+            {
+                return NotFound();
+            }
+            return View(charityAddress);
         }
 
-        // POST: CharityAddressesController/Delete/5
+        // POST: CharityAddresses/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CharityId,Country,City,Street,HouseNumber,PostCode")] CharityAddress charityAddress)
         {
-            try
+            if (id != charityAddress.Id)
             {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(charityAddress);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CharityAddressExists(charityAddress.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            return View(charityAddress);
+        }
+
+        // GET: CharityAddresses/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
             {
-                return View();
+                return NotFound();
             }
+
+            var charityAddress = await _context.CharityAddress
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (charityAddress == null)
+            {
+                return NotFound();
+            }
+
+            return View(charityAddress);
+        }
+
+        // POST: CharityAddresses/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var charityAddress = await _context.CharityAddress.FindAsync(id);
+            _context.CharityAddress.Remove(charityAddress);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool CharityAddressExists(int id)
+        {
+            return _context.CharityAddress.Any(e => e.Id == id);
         }
     }
 }

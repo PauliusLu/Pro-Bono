@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
@@ -185,7 +186,7 @@ namespace Karma.Controllers
         public async Task<IActionResult> CharityReview(int id, [Bind("Id,ReviewState")] Charity charity)
         {
             var dbCharity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == id);
-            dbCharity.CharityStateChanged += EmailCharityStateChanged;
+            dbCharity.CharityStateChanged += CharityStateChangedEventHandler;
 
             dbCharity.ReviewState = charity.ReviewState;
 
@@ -195,14 +196,16 @@ namespace Karma.Controllers
             return View(dbCharity);
         }
 
-        public async void EmailCharityStateChanged(object sender, CharityStateChangedEventArgs e)
+        public async void CharityStateChangedEventHandler(object sender, CharityStateChangedEventArgs e)
         {
             var user = _userManager.GetUserByCharityId("Charity manager", e.CharityId);
             var charity = await _context.Charity.FindAsync(e.CharityId);
 
-            var emailModel = new EmailModel.EmailCharityState(user.UserName, charity.Name, e.ReviewState, e.TimeChanged);
-
-            await SendEmail(user, emailModel);
+            if (user != null)
+            {
+                var emailModel = new EmailModel.EmailCharityState(user.UserName, charity.Name, e.ReviewState, e.TimeChanged);
+                await SendEmail(user, emailModel);
+            }
         }
 
         public async Task SendEmail(User user, EmailModel.EmailCharityState emailModel)
@@ -223,7 +226,7 @@ namespace Karma.Controllers
 
             Email.DefaultSender = sender;
             Email.DefaultRenderer = new RazorRenderer();
-
+                 
             var email = await Email
                 .From(EmailModel.SendingEmail)
                 .To(user.Email)
