@@ -22,21 +22,8 @@ namespace Karma
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            LoadItemTypes(@"Data/ItemTypes.txt");
         }
-
-        private void LoadItemTypes(string path)
-        {
-            string types = System.IO.File.ReadAllText(path);
-            Models.ItemTypes.Types = JsonConvert.DeserializeObject<Dictionary<int, Models.ItemType>>(types);
-        }
-
-        private void SaveItemTypes(string path)
-        {
-            string types = JsonConvert.SerializeObject(Models.ItemTypes.Types);
-            System.IO.File.WriteAllText(path, types);
-        }
-
+        
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -128,7 +115,6 @@ namespace Karma
 
         private void AddDirectories(IWebHostEnvironment env)
         {
-
             // Create necessary directories if they do not exist.
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Post.ImagesDirName));
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Advert.ImagesDirName));

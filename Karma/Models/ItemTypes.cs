@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,6 +49,18 @@ namespace Karma.Models
         public static void CreateType(string name, string imagePath, int id = -1)
         {
             ItemTypes.Types.Add(id, new ItemType(name, imagePath, id));
+        }
+
+        public static void LoadItemTypes(string path)
+        {
+            string types = System.IO.File.ReadAllText(path);
+            Types = JsonConvert.DeserializeObject<Dictionary<int, ItemType>>(types);
+        }
+
+        public static void SaveItemTypes(string path)
+        {
+            string types = JsonConvert.SerializeObject(Types);
+            System.IO.File.WriteAllText(path, types);
         }
     }
 }
