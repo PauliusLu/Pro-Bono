@@ -88,6 +88,18 @@ namespace Karma.Controllers
 
         }
 
+        public async Task<IActionResult> Create(int chatId = -1)
+        {
+            if (!User.Identity.IsAuthenticated || chatId == -1)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var message = new CreateMessageModel() { ChatId = chatId };
+            return PartialView(message);
+        }
+
+
         // POST: Messages/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -95,6 +107,11 @@ namespace Karma.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateMessageModel m)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
             if (ModelState.IsValid)
             {
                 AddMessage(m);
