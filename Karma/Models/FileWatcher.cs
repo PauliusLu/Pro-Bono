@@ -33,8 +33,7 @@ namespace Karma.Models
                 _watcher.Changed += ItemTypes.OnChangedEventHandler;
                 _watcher.EnableRaisingEvents = true;
             }
-            
-        }
 
+        }
     }
 }

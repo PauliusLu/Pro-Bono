@@ -60,7 +60,7 @@ namespace Karma.Models
             if (e.ChangeType != WatcherChangeTypes.Changed)
                 return;
 
-            Startup.LoadItemTypes(Path.Combine("Data", "ItemTypes.txt"));
+            Startup.LoadItemTypes(Path.Combine(ItemTypesPath, ItemTypesFileName));
         }
     }
 }
