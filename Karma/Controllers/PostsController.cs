@@ -338,6 +338,75 @@ namespace Karma.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST: Posts/ReserveItem
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [Route("Posts/ReserveItem/{postId:int}")]
+        public async Task<IActionResult> ReserveItem(int postId)
+        {
+            if (IsUserHavePermission(out IActionResult act, postId:postId) != null)
+                return act;
+
+
+            return await findPostAsync(postId, async (post) => {
+                if (post != null)
+                {
+                    if (post.State == (int)Post.PostState.Reserved)
+                        post.State = (int)Post.PostState.Open;
+                    else if (post.State == (int)Post.PostState.NotSet || post.State == (int)Post.PostState.Open)
+                        post.State = (int)Post.PostState.Reserved;
+
+                    _context.Update(post);
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("Details", new { id = postId });
+            });
+            
+        }
+
+        [HttpPost]
+        [Route("Posts/CompleteItem/{postId:int}")]
+        public async Task<IActionResult> CompleteItem(int postId)
+        {
+            if (IsUserHavePermission(out IActionResult act, postId: postId) != null)
+                return act;
+
+
+            return await findPostAsync(postId, async (post) =>
+            {
+                if (post != null)
+                {
+                    if (post.State == (int)Post.PostState.Reserved)
+                    {
+                        post.State = (int)Post.PostState.Traded;
+                        post.IsVisible = false;
+                    }
+
+                    _context.Update(post);
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("Index");
+            });
+        }
+
+        // Returns the YesNoDialog view
+        // Is called from Details.cshtml button Reserve This Item.
+        [Route("Posts/YesNoDialog/{postId:int}/{questionText}/{action3}/{buttonAffirmText}")]
+        public IActionResult YesNoDialog(int postId, string questionText, string action3, string buttonAffirmText)
+        {
+            var post = _context.Post
+                .FirstOrDefault(m => m.Id == postId);
+            if (post == null)
+                return null;
+            ViewData["Message"] = questionText;
+            ViewData["MessageAction"] = action3;
+            ViewData["buttonAffirmText"] = buttonAffirmText;
+            return View(post);
+        }
+
         private bool PostExists(int id)
         {
             return _context.Post.Any(e => e.Id == id);
@@ -395,6 +464,13 @@ namespace Karma.Controllers
             //If user has Permission
             act = null;
             return null;
+        }
+
+        private delegate Task<IActionResult> findPostCallback(Post post);
+        private async Task<IActionResult> findPostAsync(int postId, findPostCallback cb)
+        {
+            var post = await _context.Post.FindAsync(postId);
+            return await cb(post);
         }
     }
 }

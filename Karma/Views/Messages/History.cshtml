@@ -1,0 +1,41 @@
+﻿@{Layout = null;}
+@model List<List<Karma.Models.Messaging.Message>>
+@{
+    ViewData["Title"] = "Index";
+}
+@{ string user = User.Identity.Name;
+    List<Karma.Models.Messaging.Message> activeMessages = Model.FirstOrDefault();
+    Karma.Models.Messaging.Message firstMessage = activeMessages?.LastOrDefault();
+    int? currentChatId = firstMessage?.Chat.Id;}
+
+<div class="mesgs">
+    <div class="msg_history" id="scrolldown">
+        @foreach (var m in activeMessages ?? Enumerable.Empty<Karma.Models.Messaging.Message>())
+        {
+
+            bool isReceiver = m.Username != user;
+
+            <div class="@(isReceiver ? "incoming_msg" : "outgoing_msg")">
+                @if (isReceiver)
+                {
+                    <div class="incoming_msg_img"> <img src="~/data/UserImages/Default/default.png" alt=""> </div>
+                }
+                <div class="@(isReceiver ? "received_msg" : "sent_msg")">
+                    @if (isReceiver)
+                    {
+                        <div class="received_withd_msg">
+                            <p>@m.Text</p>
+                            <span class="time_date">@m.Date.ToLocalTime()</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>@m.Text</p>
+                        <span class="time_date">@m.Date.ToLocalTime()</span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div id='mod1'>Chat is loading...</div>
+</div>

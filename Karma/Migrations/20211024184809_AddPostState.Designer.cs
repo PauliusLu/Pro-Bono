@@ -3,24 +3,30 @@ using System;
 using Karma.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Karma.Migrations
 {
     [DbContext(typeof(KarmaContext))]
-    partial class KarmaContextModelSnapshot : ModelSnapshot
+    [Migration("20211024184809_AddPostState")]
+    partial class AddPostState
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.11");
+                .HasAnnotation("ProductVersion", "5.0.10");
 
             modelBuilder.Entity("Karma.Models.Charity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("AddressesPath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("TEXT");
@@ -33,6 +39,10 @@ namespace Karma.Migrations
                     b.Property<string>("ImagePath")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ItemTypePath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -43,57 +53,6 @@ namespace Karma.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Charity");
-                });
-
-            modelBuilder.Entity("Karma.Models.CharityAddress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CharityId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("HouseNumber")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PostCode")
-                        .HasMaxLength(10)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CharityAddress");
-                });
-
-            modelBuilder.Entity("Karma.Models.CharityItemType", b =>
-                {
-                    b.Property<int>("CharityId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ItemTypeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("CharityId", "ItemTypeId");
-
-                    b.ToTable("CharityItemType");
                 });
 
             modelBuilder.Entity("Karma.Models.Post", b =>

@@ -15,6 +15,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a id="manage" class="dropdown-item text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Account</a>
+                <a id="messages" class="dropdown-item text-dark" asp-controller="Messages" asp-action="Index">Messages</a>
                 @if (User.IsInRole("Admin"))
                 {
                     <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Manage page</a>
