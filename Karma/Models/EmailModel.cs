@@ -7,11 +7,11 @@ namespace Karma.Models
 {
     public class EmailModel
     {
-        public const string SendingEmail = "info@karma.com";
+        public readonly string SendingEmail = "info@karma.com";
 
         public class EmailCharityState : EmailModel
         {
-            public const string EmailSubject = "Charity state changed";
+            public readonly string EmailSubject = "Charity state changed";
             public string UserName { get; set; }
             public string CharityName { get; set; }
             public Enums.ReviewState ReviewState { get; set; }

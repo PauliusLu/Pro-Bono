@@ -228,9 +228,9 @@ namespace Karma.Controllers
             Email.DefaultRenderer = new RazorRenderer();
                  
             var email = await Email
-                .From(EmailModel.SendingEmail)
+                .From(emailModel.SendingEmail)
                 .To(user.Email)
-                .Subject(EmailModel.EmailCharityState.EmailSubject)
+                .Subject(emailModel.EmailSubject)
                 .UsingTemplate(template.ToString(), emailModel)
                 .SendAsync();
         }
