@@ -206,35 +206,8 @@ namespace Karma.Controllers
             if (user != null)
             {
                 var emailModel = new EmailModel.EmailCharityState(user.UserName, charity.Name, e.ReviewState, e.TimeChanged);
-                await SendEmail(user, emailModel);
+                await emailModel.SendEmail(_iWebHostEnv, user);
             }
-        }
-
-        public async Task SendEmail(User user, EmailModel.EmailCharityState emailModel)
-        {
-            // The emails are currently saved to Karma/Data for testing purposes
-            var sender = new SmtpSender(() => new SmtpClient("localhost")
-            {
-                EnableSsl = false,
-                DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory,
-                PickupDirectoryLocation = Path.Combine(_iWebHostEnv.ContentRootPath, "Data")
-            });
-
-            // Templates should be in DB in the future
-            StringBuilder template = new();
-            template.AppendLine("Dear @Model.UserName,");
-            template.AppendLine("<p>Your charity's \"@Model.CharityName\" state has changed to: @Model.ReviewState.</p>");
-            template.AppendLine("- The Karma Team");
-
-            Email.DefaultSender = sender;
-            Email.DefaultRenderer = new RazorRenderer();
-                 
-            var email = await Email
-                .From(emailModel.SendingEmail)
-                .To(user.Email)
-                .Subject(emailModel.EmailSubject)
-                .UsingTemplate(template.ToString(), emailModel)
-                .SendAsync();
         }
     }
 }
