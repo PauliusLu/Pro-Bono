@@ -3,6 +3,7 @@ using FluentEmail.Razor;
 using FluentEmail.Smtp;
 using Karma.Data;
 using Karma.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace Karma.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly KarmaContext _context;

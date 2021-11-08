@@ -1,9 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Karma.Models
 
-@inject SignInManager<User> SignInManager
-@inject UserManage UserManager
-
 @{
     ViewData["Title"] = "Index";
 }
@@ -27,8 +24,7 @@
 
         <div class="tab-content" id="navs-tabContent">
             <div class="tab-pane fade show active" id="navs-a" role="tabpanel" aria-labelledby="navs-a-tab">
-                @{await (Html.RenderPartialAsync("~/Views/Charities/Edit.cshtml", 
-                      UserManager.GetCharityByUserRole("Charity manager", UserManager.GetUserId(User))));}
+                @{await (Html.RenderPartialAsync("~/Views/Charities/Edit.cshtml", ViewData["Charity"]));}
             </div>
             @*<div class="tab-pane fade" id="pills-b" role="tabpanel" aria-labelledby="pills-b-tab">
                 @{await (Html.RenderPartialAsync("~/Views/CharityManager/Users.cshtml", Model));}

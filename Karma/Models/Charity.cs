@@ -86,9 +86,10 @@ namespace Karma.Models
 
         public List<ItemType> GetItemTypes()
         {
-            var itemTypes = CharityItemTypes.Select(x => x.ItemType).ToList();
-            
-            return itemTypes.Any() ? itemTypes : null;
+            var itemTypes = new List<ItemType>();
+            itemTypes = CharityItemTypes.Select(x => x.ItemType).ToList();
+
+            return itemTypes;
         }
 
         protected virtual void OnCharityStateChanged(CharityStateChangedEventArgs e)
