@@ -56,6 +56,17 @@ namespace Karma
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CharityId,ItemTypeId")] CharityItemType charityItemType)
         {
+            var charityItemTypeExists = await _context.CharityItemType
+                .Where(m => m.CharityId == charityItemType.CharityId 
+                    && m.ItemTypeId == charityItemType.ItemType.Id)
+                .FirstOrDefaultAsync();
+
+            if (charityItemTypeExists != null)
+            {
+                ModelState.AddModelError("charityItemType.ItemTypeId", "This category has already been added");
+                return View(charityItemType);
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(charityItemType);
@@ -150,5 +161,7 @@ namespace Karma
         {
             return _context.CharityItemType.Any(e => e.CharityId == id);
         }
+
+
     }
 }

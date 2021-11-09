@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +13,7 @@ namespace Karma.Models
         [Key]
         public int CharityId { get; set; }
         [Key]
+        [Remote(action: "VerifyItemType", controller: "CharityItemType", AdditionalFields = nameof(CharityId))]
         public int ItemTypeId { get; set; }
         [NotMapped]
         [Display(Name = "Category")]

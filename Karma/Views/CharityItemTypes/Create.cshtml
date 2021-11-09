@@ -10,12 +10,12 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="CharityId" />
     <div class="form-group">
-        <label asp-for="ItemType" class="control-label">Category</label>
-        <select asp-for="ItemType" class="form-control"
+        <label asp-for="ItemTypeId" class="control-label">Category</label>
+        <select asp-for="ItemTypeId" class="form-control"
                 asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
             <option value="-1">Select...</option>
         </select>
-        <span asp-validation-for="ItemType" class="text-danger"></span>
+        <span asp-validation-for="ItemTypeId" class="text-danger"></span>
     </div>
     <div class="form-group">
         <input type="submit" value="Add" class="btn btn-primary" />
