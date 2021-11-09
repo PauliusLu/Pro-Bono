@@ -60,7 +60,7 @@ namespace Karma
             {
                 _context.Add(charityAddress);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index","CharityManager");
             }
             return View(charityAddress);
         }
@@ -111,7 +111,7 @@ namespace Karma
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "CharityManager");
             }
             return View(charityAddress);
         }
@@ -142,7 +142,7 @@ namespace Karma
             var charityAddress = await _context.CharityAddress.FindAsync(id);
             _context.CharityAddress.Remove(charityAddress);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "CharityManager");
         }
 
         private bool CharityAddressExists(int id)

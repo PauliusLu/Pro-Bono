@@ -23,8 +23,10 @@ namespace Karma.Models
         public string Street { get; set; }
         [Required]
         [MaxLength(10)]
+        [Display(Name = "House number")]
         public string HouseNumber { get; set; }
         [MaxLength(10)]
+        [Display(Name = "Post code")]
         public string PostCode { get; set; }
 
         public CharityAddress()
