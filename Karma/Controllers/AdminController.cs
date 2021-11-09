@@ -1,16 +1,25 @@
-﻿using Karma.Data;
+﻿using FluentEmail.Core;
+using FluentEmail.Razor;
+using FluentEmail.Smtp;
+using Karma.Data;
 using Karma.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Karma.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly KarmaContext _context;
@@ -19,11 +28,14 @@ namespace Karma.Controllers
 
         private readonly UserManage _userManager;
 
-        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManage userManager)
+        private readonly IWebHostEnvironment _iWebHostEnv;
+
+        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManage userManager, IWebHostEnvironment webHostEnv)
         {
             _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
+            _iWebHostEnv = webHostEnv;
         }
 
         public IActionResult Index(AdminTabViewModel tabViewModel)
@@ -176,12 +188,26 @@ namespace Karma.Controllers
         public async Task<IActionResult> CharityReview(int id, [Bind("Id,ReviewState")] Charity charity)
         {
             var dbCharity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == id);
+            dbCharity.CharityStateChanged += CharityStateChangedEventHandler;
+
             dbCharity.ReviewState = charity.ReviewState;
 
             _context.Update(dbCharity);
             await _context.SaveChangesAsync();
 
             return View(dbCharity);
+        }
+
+        public async void CharityStateChangedEventHandler(object sender, CharityStateChangedEventArgs e)
+        {
+            var user = _userManager.GetUserByCharityId("Charity manager", e.CharityId);
+            var charity = await _context.Charity.FindAsync(e.CharityId);
+
+            if (user != null)
+            {
+                var emailModel = new EmailModel.EmailCharityState(user.UserName, charity.Name, e.ReviewState, e.TimeChanged);
+                await emailModel.SendEmail(_iWebHostEnv, user);
+            }
         }
     }
 }
