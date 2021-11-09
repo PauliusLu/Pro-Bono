@@ -13,7 +13,6 @@ namespace Karma.Models
         [Key]
         public int CharityId { get; set; }
         [Key]
-        [Remote(action: "VerifyItemType", controller: "CharityItemType", AdditionalFields = nameof(CharityId))]
         public int ItemTypeId { get; set; }
         [NotMapped]
         [Display(Name = "Category")]

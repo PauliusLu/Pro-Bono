@@ -63,7 +63,7 @@ namespace Karma
 
             if (charityItemTypeExists != null)
             {
-                ModelState.AddModelError("charityItemType.ItemTypeId", "This category has already been added");
+                ModelState.AddModelError("ItemTypeExists", "This category has already been added");
                 return View(charityItemType);
             }
 
@@ -161,7 +161,6 @@ namespace Karma
         {
             return _context.CharityItemType.Any(e => e.CharityId == id);
         }
-
 
     }
 }
