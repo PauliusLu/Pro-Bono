@@ -51,7 +51,7 @@ namespace Karma.Models
                     var args = new CharityStateChangedEventArgs();
                     args.CharityId = this.Id;
                     args.ReviewState = this.ReviewState;
-                    args.TimeChanged = DateTime.Now;
+                    args.TimeChanged = DateTime.UtcNow;
 
                     OnCharityStateChanged(args);
                 }
@@ -92,7 +92,7 @@ namespace Karma.Models
             return itemTypes;
         }
 
-        protected virtual void OnCharityStateChanged(CharityStateChangedEventArgs e)
+        protected void OnCharityStateChanged(CharityStateChangedEventArgs e)
         {
             EventHandler<CharityStateChangedEventArgs> handler = CharityStateChanged;
             handler?.Invoke(this, e);
