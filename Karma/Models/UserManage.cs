@@ -91,6 +91,9 @@ namespace Karma.Models
                 .Where(r => r.RoleId == role.Id && r.UserId == userId)
                 .FirstOrDefault();
 
+            if (userRole == null)
+                return null;
+
             var charityId = userRole.CharityId;
             var charity = _store.Context.Charity.FindAsync(charityId).Result;
 

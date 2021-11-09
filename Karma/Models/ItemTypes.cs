@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,6 +9,9 @@ namespace Karma.Models
 {
     public struct ItemTypes
     {
+        public static readonly string ItemTypesPath = "Data";
+        public static readonly string ItemTypesFileName = "ItemTypes.txt";
+
         private static Dictionary<int, ItemType> _types;
 
         static ItemTypes()
@@ -48,6 +53,14 @@ namespace Karma.Models
         public static void CreateType(string name, string imagePath, int id = -1)
         {
             ItemTypes.Types.Add(id, new ItemType(name, imagePath, id));
+        }
+
+        public static void OnChangedEventHandler(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Changed)
+                return;
+
+            Startup.LoadItemTypes(Path.Combine(ItemTypesPath, ItemTypesFileName));
         }
     }
 }

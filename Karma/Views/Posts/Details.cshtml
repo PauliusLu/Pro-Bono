@@ -55,7 +55,8 @@
 </div>
 @if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
 {
-    <script>
+
+<script>
         $(() => {
             $('#dialog').on('show.bs.modal', function (event) {
                 if (event.relatedTarget.innerHTML == 'Mark as reserved.') {
@@ -69,6 +70,6 @@
                 }
             });
         });
-    </script>
+</script>
 }
 

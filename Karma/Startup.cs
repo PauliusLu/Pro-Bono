@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Karma.Data;
+using Karma.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using System.IO;
@@ -19,19 +20,21 @@ namespace Karma
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
-            LoadItemTypes(@"Data/ItemTypes.txt");
+            LoadItemTypes(Path.Combine(ItemTypes.ItemTypesPath, ItemTypes.ItemTypesFileName));
+
+            var fileWatcher = new FileWatcher(env);
         }
 
-        private void LoadItemTypes(string path)
+        public static void LoadItemTypes(string path)
         {
             string types = System.IO.File.ReadAllText(path);
             Models.ItemTypes.Types = JsonConvert.DeserializeObject<Dictionary<int, Models.ItemType>>(types);
         }
 
-        private void SaveItemTypes(string path)
+        public static void SaveItemTypes(string path)
         {
             string types = JsonConvert.SerializeObject(Models.ItemTypes.Types);
             System.IO.File.WriteAllText(path, types);
@@ -128,7 +131,6 @@ namespace Karma
 
         private void AddDirectories(IWebHostEnvironment env)
         {
-
             // Create necessary directories if they do not exist.
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Post.ImagesDirName));
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Advert.ImagesDirName));

@@ -19,32 +19,29 @@ namespace Karma.Controllers
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
+        private List<Charity> _charities;
+
         // Passes an object of type IWebHostEnvironment that carries information about our host environment.
         public CharitiesController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _iWebHostEnv = webHostEnvironment;
+
+            _charities = GetCharityList().Result;
         }
 
         // GET: Charities
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Charity.ToListAsync());
+            return View(_charities);
         }
 
-        public async Task<IActionResult> FilteredCharities(int itemTypeId)
+        public IActionResult FilteredCharities(int itemTypeId)
         {
-            List<Charity> charities = await _context.Charity.ToListAsync();
-
             ItemType itemType = new ItemTypes()[itemTypeId];
             ViewBag.ItemType = itemType.Name;
-            
-            foreach(var charity in charities)
-            {
-                charity.CharityItemTypes = GetCharityItemTypes(charity).Result;
-            }
 
-            var filtered = Charity.FilteredCharities(charities, itemType);
+            var filtered = Charity.FilteredCharities(_charities, itemType);
 
             return View(filtered);
         }
@@ -203,6 +200,19 @@ namespace Karma.Controllers
             return _context.Charity.Any(e => e.Id == id);
         }
 
+        public async Task<List<Charity>> GetCharityList()
+        {
+            List<Charity> charities = await _context.Charity.ToListAsync();
+
+            foreach (var charity in charities)
+            {
+                charity.CharityItemTypes = GetCharityItemTypes(charity).Result;
+                charity.CharityAddresses = GetCharityAddresses(charity).Result;
+            }
+
+            return charities;
+        }
+
         public async Task<List<CharityItemType>> GetCharityItemTypes(Charity charity)
         {
             var charityItemTypesList = await _context.CharityItemType
@@ -210,16 +220,6 @@ namespace Karma.Controllers
                 .ToListAsync();
 
             return charityItemTypesList;
-        }
-
-        public async Task<List<ItemType>> GetItemTypes(Charity charity)
-        {
-            var charityItemTypesList = await _context.CharityItemType
-                .Where(x => x.CharityId == charity.Id)
-                .ToListAsync();
-            var itemTypesList = charityItemTypesList.Select(x => x.ItemType).ToList();
-
-            return itemTypesList;
         }
 
         public async Task<List<CharityAddress>> GetCharityAddresses(Charity charity)

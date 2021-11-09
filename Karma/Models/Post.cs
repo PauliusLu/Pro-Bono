@@ -52,6 +52,7 @@ namespace Karma.Models
         public int State { get; set; }
         public string ReceiverUserId { get; set; }
 
+
         public Post()
         {
 

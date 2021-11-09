@@ -14,6 +14,8 @@ namespace Karma.Models
         public static readonly string AdressDirName = Path.Combine("Data", "Charities", "Address");
         public static readonly string ItemTypesDirName = Path.Combine("Data", "Charities", "ItemTypes");
 
+        public event EventHandler<CharityStateChangedEventArgs> CharityStateChanged;
+
         [Key]
         public int Id { get; set; }
         [Required]
@@ -34,7 +36,27 @@ namespace Karma.Models
         public DateTime DateCreated { get; set; }
         [Required]
         [Display(Name = "Review state")]
-        public Enums.ReviewState ReviewState { get; set; }
+        private Enums.ReviewState _reviewState;
+        [Required]
+        [Display(Name = "Review state")]
+        public Enums.ReviewState ReviewState
+        {
+            get => _reviewState;
+            set
+            {
+                if (value != _reviewState)
+                {
+                    _reviewState = value;
+                    
+                    var args = new CharityStateChangedEventArgs();
+                    args.CharityId = this.Id;
+                    args.ReviewState = this.ReviewState;
+                    args.TimeChanged = DateTime.UtcNow;
+
+                    OnCharityStateChanged(args);
+                }
+            }
+        }
 
         public Charity()
         {
@@ -64,10 +86,24 @@ namespace Karma.Models
 
         public List<ItemType> GetItemTypes()
         {
-            var itemTypes = CharityItemTypes.Select(x => x.ItemType).ToList();
-            
-            return itemTypes.Any() ? itemTypes : null;
+            var itemTypes = new List<ItemType>();
+            itemTypes = CharityItemTypes.Select(x => x.ItemType).ToList();
+
+            return itemTypes;
         }
 
+        protected void OnCharityStateChanged(CharityStateChangedEventArgs e)
+        {
+            EventHandler<CharityStateChangedEventArgs> handler = CharityStateChanged;
+            handler?.Invoke(this, e);
+        }
+
+    }
+
+    public class CharityStateChangedEventArgs : EventArgs
+    {
+        public int CharityId { get; set; }
+        public Enums.ReviewState ReviewState { get; set; }
+        public DateTime TimeChanged { get; set; }
     }
 }
