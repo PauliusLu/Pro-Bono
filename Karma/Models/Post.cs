@@ -50,6 +50,8 @@ namespace Karma.Models
         [Required]
         public bool IsVisible { get; set; }
         public int State { get; set; }
+        public string ReceiverUserId { get; set; }
+
 
         public Post()
         {

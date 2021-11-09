@@ -19,6 +19,15 @@
     }
 </div>
 @{
+    if (User.Identity.IsAuthenticated && User.Identity.Name != Model.UserId)
+    {
+        <button type="button" class="btn btn-success" onclick="@("window.location.href='" + @Url.Action("Create", "Chats", Model) + "'");">
+            Send a message
+        </button>
+    }
+}
+
+@{
     if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
     {
         if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
@@ -46,6 +55,7 @@
 </div>
 @if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
 {
+
 <script>
         $(() => {
             $('#dialog').on('show.bs.modal', function (event) {
