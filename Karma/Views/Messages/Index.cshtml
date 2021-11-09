@@ -64,7 +64,7 @@
                                 <h5 class="card-header">@(historyPost.Title)</h5>
                                 <div class="card-body">
                                     <img class="post_img" src="@(historyPost.GetFullImagePath())" />
-                                    <h5 class="card-title">Special title treatment</h5>
+                                    <h5 class="card-title">@historyPost.Title</h5>
                                     <p class="card-text">@(historyPost.Description)</p>
                                     @if (historyPost.State == (int)Karma.Models.Post.PostState.Traded)
                                     {
