@@ -60,7 +60,7 @@ namespace Karma
             {
                 _context.Add(charityItemType);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "CharityManager");
             }
             return View(charityItemType);
         }
@@ -111,21 +111,21 @@ namespace Karma
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "CharityManager");
             }
             return View(charityItemType);
         }
 
         // GET: CharityItemTypes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? charityId, int? itemTypeId)
         {
-            if (id == null)
+            if (charityId == null || itemTypeId == null)
             {
                 return NotFound();
             }
 
             var charityItemType = await _context.CharityItemType
-                .FirstOrDefaultAsync(m => m.CharityId == id);
+                .FirstOrDefaultAsync(m => m.CharityId == charityId && m.ItemTypeId == itemTypeId);
             if (charityItemType == null)
             {
                 return NotFound();
@@ -137,12 +137,13 @@ namespace Karma
         // POST: CharityItemTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int charityId, int itemTypeId)
         {
-            var charityItemType = await _context.CharityItemType.FindAsync(id);
+            var charityItemType = await _context.CharityItemType
+                .FirstOrDefaultAsync(m => m.CharityId == charityId && m.ItemTypeId == itemTypeId);
             _context.CharityItemType.Remove(charityItemType);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "CharityManager");
         }
 
         private bool CharityItemTypeExists(int id)

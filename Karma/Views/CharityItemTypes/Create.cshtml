@@ -2,35 +2,23 @@
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
-
-<h4>CharityItemType</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CharityId" class="control-label"></label>
-                <input asp-for="CharityId" class="form-control" />
-                <span asp-validation-for="CharityId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ItemTypeId" class="control-label"></label>
-                <input asp-for="ItemTypeId" class="form-control" />
-                <span asp-validation-for="ItemTypeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<h5>Add a category</h5>
+<br />
+<form asp-controller="CharityItemTypes" asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="CharityId" />
+    <div class="form-group">
+        <label asp-for="ItemType" class="control-label">Category</label>
+        <select asp-for="ItemType" class="form-control"
+                asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
+            <option value="-1">Select...</option>
+        </select>
+        <span asp-validation-for="ItemType" class="text-danger"></span>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="form-group">
+        <input type="submit" value="Add" class="btn btn-primary" />
+    </div>
+</form>
 

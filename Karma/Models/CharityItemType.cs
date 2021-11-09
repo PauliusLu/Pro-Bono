@@ -14,6 +14,7 @@ namespace Karma.Models
         [Key]
         public int ItemTypeId { get; set; }
         [NotMapped]
+        [Display(Name = "Category")]
         public ItemType ItemType 
         { 
             get { return ItemTypes.GetItemType(ItemTypeId); }
