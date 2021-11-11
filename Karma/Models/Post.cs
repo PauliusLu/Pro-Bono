@@ -89,10 +89,13 @@ namespace Karma.Models
                     IsVisible = true;
                     break;
                 case PostState.Traded:
-                case PostState.Reserved:
                     State = (int)newState;
                     ReceiverUserId = userId;
                     IsVisible = false;
+                    break;
+                case PostState.Reserved:
+                    State = (int)newState;
+                    ReceiverUserId = userId;
                     break;
                 case PostState.Donated:
                     break;
@@ -188,7 +191,8 @@ namespace Karma.Models
         {
             List<Post> posts = await context.Post.ToListAsync();
 
-            return posts.Where((p) => p.UserId == userId).ToList();
+            return posts.Where((p) => p.UserId == userId || 
+                               (p.ReceiverUserId == userId && p.State == (int)Post.PostState.Traded)).ToList();
         }
     }
 }

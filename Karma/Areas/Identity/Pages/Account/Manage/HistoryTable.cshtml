@@ -9,6 +9,7 @@
                 <th>Posting date</th>
                 <th>Title</th>
                 <th>Category</th>
+                <th>Traded with</th>
                 <th></th>
             </tr>
         </thead>
@@ -35,6 +36,17 @@
                 </td>
                 <td>
                     @ItemTypes.GetItemType(item.ItemType)
+                </td>
+                <td>
+                    @if (item.State == (int)Post.PostState.Traded)
+                    {
+                        <p>@item.ReceiverUserId</p>
+                    }
+                    else
+                    {
+                        <p>-</p>
+                    }
+
                 </td>
                 <td>
                     <a asp-controller="Posts" asp-action="Details" asp-route-id="@item.Id">Details</a>
