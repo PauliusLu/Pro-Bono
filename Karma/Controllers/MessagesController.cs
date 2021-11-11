@@ -12,7 +12,8 @@ namespace Karma.Controllers
 {
     public class MessagesController : Controller
     {
-        delegate List<T> GenerateList<T>(Dictionary<int, T> objs);
+        delegate List<T> GenerateList<K, T>(Dictionary<K, T> objs);
+        delegate K GetKey<K, T>(T obj);
 
         private readonly KarmaContext _context;
 
@@ -38,7 +39,12 @@ namespace Karma.Controllers
 
             bool isValidChatId = false;
 
-            var messages = ConvertDictionary(user, allMessages, delegate (Dictionary<int, List<Message>> objs)
+            GetKey<int, Message> MessageChatKey = delegate (Message m)
+            {
+                return m.Chat.Id;
+            };
+
+            var messages = ConvertDictionary(allMessages, MessageChatKey, delegate (Dictionary<int, List<Message>> objs)
             {
                 var finalList = new List<List<Message>>();
 
@@ -56,6 +62,7 @@ namespace Karma.Controllers
 
                 return finalList;
             });
+
             if (!isValidChatId)
             {
                 ViewBag.History = messages?.FirstOrDefault();
@@ -69,23 +76,21 @@ namespace Karma.Controllers
             return View(messages);
         }
 
-        private List<List<T>> ConvertDictionary<T>(string user, List<Message> allMessages, GenerateList<List<T>> genFunc)
-            where T : Message
+        private List<List<T>> ConvertDictionary<K, T>(List<T> list, GetKey<K, T> getKey, GenerateList<K, List<T>> genFunc)
         {
-
-            Dictionary<int, List<T>> messages = new();
-            foreach (T m in allMessages)
+            Dictionary<K, List<T>> dict = new();
+            foreach (T m in list)
             {
-                if (!messages.TryGetValue(m.Chat.Id, out List<T> list))
+                K key = getKey(m);
+                if (!dict.TryGetValue(key, out List<T> dictList))
                 {
-                    list = new List<T>();
-                    messages[m.Chat.Id] = list;
+                    dictList = new List<T>();
+                    dict[key] = dictList;
                 }
-                list.Add(m);
+                dictList.Add(m);
             }
 
-            return genFunc(messages);
-
+            return genFunc(dict);
         }
 
         public async Task<IActionResult> Create(int chatId = -1)
