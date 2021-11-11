@@ -93,7 +93,7 @@ namespace Karma.Controllers
             return genFunc(dict);
         }
 
-        public async Task<IActionResult> Create(int chatId = -1)
+        public IActionResult Create(int chatId = -1)
         {
             if (!User.Identity.IsAuthenticated || chatId == -1)
             {
@@ -119,14 +119,32 @@ namespace Karma.Controllers
 
             if (ModelState.IsValid)
             {
-                AddMessage(m);
-                var model = new CreateMessageModel() { ChatId = m.ChatId };
+                Message message = CreateMessage(m);
+                _context.Add(message);
+                await _context.SaveChangesAsync();
+
                 return new EmptyResult();
             }
             return PartialView(m);
         }
 
-        private void AddMessage(CreateMessageModel m)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePostState([FromBody] PostModel pm)
+        {
+            if (!User.Identity.IsAuthenticated || User.Identity.Name != pm.Post.UserId)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            pm.Post.ChangeState((Models.Post.PostState)pm.State, pm.Receiver);
+
+             _context.Update(pm.Post);
+            await _context.SaveChangesAsync();
+
+            return new EmptyResult();
+        }
+
+        private Message CreateMessage(CreateMessageModel m)
         {
             Message message = new()
             {
@@ -135,9 +153,15 @@ namespace Karma.Controllers
                 Text = m.Text,
                 Username = User.Identity.Name
             };
-            _context.Add(message);
-            _context.SaveChangesAsync();
+
+            return message;
         }
 
+        public class PostModel
+        {
+            public Models.Post Post { get; set; }
+            public int State { get; set; }
+            public string Receiver { get; set; }
+        }
     }
 }

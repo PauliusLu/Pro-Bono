@@ -253,3 +253,31 @@ img {
 .post_details a {
     margin-top: 1.4em;
 }
+
+.btn-reserve {
+    background-color: #e91670;
+    color: #ffffff;
+}
+.btn-reserve:hover{
+    background-color: #b21156;
+    color: #ffffff;
+}
+
+.btn-trade {
+    background-color: #25c35e;
+    color: #ffffff;
+}
+
+.btn-trade:hover {
+    background-color: #209249;
+    color: #ffffff;
+}
+
+.btn-cancel {
+    background-color: #e44130;
+    color: #ffffff;
+}
+.btn-cancel:hover {
+    background-color: #b43629;
+    color: #ffffff;
+}

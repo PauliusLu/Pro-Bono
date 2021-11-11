@@ -78,6 +78,37 @@ namespace Karma.Models
             return isDonation ? "Offer" : "Request";
         }
 
+        public void ChangeState(PostState newState, string userId = null)
+        {
+            switch (newState)
+            {
+                case PostState.NotSet:
+                case PostState.Open:
+                    State = (int)newState;
+                    ReceiverUserId = null;
+                    IsVisible = true;
+                    break;
+                case PostState.Traded:
+                case PostState.Reserved:
+                    State = (int)newState;
+                    ReceiverUserId = userId;
+                    IsVisible = false;
+                    break;
+                case PostState.Donated:
+                    break;
+                case PostState.Received:
+                    break;
+                case PostState.Hidden:
+                    break;
+                case PostState.Deleted:
+                    break;
+                case PostState.Reported:
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public string GetFullImagePath()
         {
             if (ImagePath == null)
@@ -127,6 +158,7 @@ namespace Karma.Models
             }
             return false;
         }
+
         static List<Post> posts;
         static List<User> users;
 
