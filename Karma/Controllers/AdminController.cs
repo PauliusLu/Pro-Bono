@@ -134,6 +134,9 @@ namespace Karma.Controllers
         [HttpPost]
         public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
         {
+            var charities = await _context.Charity.ToListAsync();
+            ViewBag.charities = charities;
+
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
@@ -159,18 +162,22 @@ namespace Karma.Controllers
                 selectedRoles.Where(r => r.RoleId != charityManagerRole.Id)
                     .Select(r => r.RoleName));
 
-            result = await _userManager.AddUserRoleWithCharityId(user, charityManagerRole.Name, 
-                selectedRoles.Where(r => r.RoleId == charityManagerRole.Id)
-                    .Select(r => r.CharityId).FirstOrDefault());
+            var charityId = selectedRoles.Where(r => r.RoleId == charityManagerRole.Id)
+                    .Select(r => r.CharityId).FirstOrDefault();
+
+            if (charityId == -1)
+            {
+                ModelState.AddModelError("CharityNotSelected", "Charity should be selected to add this user role");
+                return View(model);
+            }
+
+            result = await _userManager.AddUserRoleWithCharityId(user, charityManagerRole.Name, charityId);
 
             if (!result.Succeeded)
             {
                 ModelState.AddModelError("", "Cannot add selected roles to the user");
                 return View(model);
             }
-
-            var charities = await _context.Charity.ToListAsync();
-            ViewBag.charities = charities;
 
             return View(model);
         }

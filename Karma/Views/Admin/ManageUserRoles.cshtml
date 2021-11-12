@@ -34,8 +34,9 @@
                         <option value="-1">Select a charity to manage</option>
                     </select>
                 </div>
+                <span class="text-danger">@Html.ValidationMessage("CharityNotSelected")</span>
             }
-            else 
+            else
             {
                 <input type="hidden" asp-for="@Model[i].CharityId" />
             }
