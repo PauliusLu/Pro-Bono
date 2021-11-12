@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,6 +15,7 @@ namespace Karma.Models
         [Key]
         public int ItemTypeId { get; set; }
         [NotMapped]
+        [Display(Name = "Category")]
         public ItemType ItemType 
         { 
             get { return ItemTypes.GetItemType(ItemTypeId); }

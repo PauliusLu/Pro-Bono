@@ -1,37 +1,54 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Karma.Models
 
+@model Charity
+
 @{
     ViewData["Title"] = "Index";
 }
 
 <div class="row" style="margin-top:10px">
     <div class="col-md-10">
-        <ul class="nav nav-tabs" mb-3" id="navs-tab" role="tablist">
+        <ul class="nav nav-tabs mb-3" id="navs-tab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="navs-a-tab" href="#navs-a" role="tab" aria-controls="navs-a" aria-selected="true">Charity details</a>
+                <a class="nav-link active" id="navs-a-tab" data-toggle="pill" href="#navs-a" role="tab" aria-controls="navs-a" aria-selected="true">Charity details</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="navs-b-tab" href="#navs-b" role="tab" aria-controls="navs-b" aria-selected="false">Charity categories</a>
+                <a class="nav-link" id="navs-b-tab" data-toggle="pill" href="#navs-b" role="tab" aria-controls="navs-b" aria-selected="false">Charity categories</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="navs-c-tab" href="#navs-c" role="tab" aria-controls="navs-c" aria-selected="false">Charity addresses</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="navs-d-tab" href="#navs-d" role="tab" aria-controls="navs-d" aria-selected="false">Users</a>
+                <a class="nav-link" id="navs-c-tab" data-toggle="pill" href="#navs-c" role="tab" aria-controls="navs-c" aria-selected="false">Charity addresses</a>
             </li>
         </ul>
 
         <div class="tab-content" id="navs-tabContent">
             <div class="tab-pane fade show active" id="navs-a" role="tabpanel" aria-labelledby="navs-a-tab">
-                @{await (Html.RenderPartialAsync("~/Views/Charities/Edit.cshtml", ViewData["Charity"]));}
+                @{await (Html.RenderPartialAsync("~/Views/Charities/Edit.cshtml", Model));}
             </div>
-            @*<div class="tab-pane fade" id="pills-b" role="tabpanel" aria-labelledby="pills-b-tab">
-                @{await (Html.RenderPartialAsync("~/Views/CharityManager/Users.cshtml", Model));}
-            </div>*@
+            <div class="tab-pane fade" id="navs-b" role="tabpanel" aria-labelledby="navs-b-tab">
+                <br />
+                <div class="row justify-content-between">
+                    <div class="col-md-7">
+                        @{await (Html.RenderPartialAsync("~/Views/CharityItemTypes/Index.cshtml", Model.CharityItemTypes));}
+                    </div>
+                    <div class="col-md-4">
+                        @{await (Html.RenderPartialAsync("~/Views/CharityItemTypes/Create.cshtml", ViewData["NewCharityItemType"]));}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="navs-c" role="tabpanel" aria-labelledby="navs-c-tab">
+                <br />
+                <div class="row justify-content-between">
+                    <div class="col-md-7">
+                        @{await (Html.RenderPartialAsync("~/Views/CharityAddresses/Index.cshtml", Model.CharityAddresses));}
+                    </div>
+                    <div class="col-md-4">
+                        @{await (Html.RenderPartialAsync("~/Views/CharityAddresses/Create.cshtml", ViewData["NewCharityAddress"]));}
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
-
 </div>
 <div style="margin-bottom:30px"></div>
