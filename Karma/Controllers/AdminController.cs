@@ -109,7 +109,8 @@ namespace Karma.Controllers
                 var userRolesViewModel = new UserRolesViewModel
                 {
                     RoleId = role.Id,
-                    RoleName = role.Name
+                    RoleName = role.Name,
+                    CharityId = 0
                 };
                 
                 if (await _userManager.IsInRoleAsync(user, role.Name))
@@ -123,6 +124,9 @@ namespace Karma.Controllers
 
                 model.Add(userRolesViewModel);
             }
+
+            var charities = await _context.Charity.ToListAsync();
+            ViewBag.charities = charities;
 
             return View(model);
         }
@@ -142,21 +146,31 @@ namespace Karma.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             var result = await _userManager.RemoveFromRolesAsync(user, userRoles);
 
-
             if (!result.Succeeded)
             {
                 ModelState.AddModelError("", "Cannot remove existing user roles");
                 return View(model);
             }
 
-            result = await _userManager.AddToRolesAsync(user, 
-                model.Where(r => r.IsSelected).Select(r => r.RoleName));
+            var charityManagerRole = await _roleManager.FindByNameAsync("Charity manager");
+            var selectedRoles = model.Where(r => r.IsSelected);
+
+            result = await _userManager.AddToRolesAsync(user,
+                selectedRoles.Where(r => r.RoleId != charityManagerRole.Id)
+                    .Select(r => r.RoleName));
+
+            result = await _userManager.AddUserRoleWithCharityId(user, charityManagerRole.Name, 
+                selectedRoles.Where(r => r.RoleId == charityManagerRole.Id)
+                    .Select(r => r.CharityId).FirstOrDefault());
 
             if (!result.Succeeded)
             {
                 ModelState.AddModelError("", "Cannot add selected roles to the user");
                 return View(model);
             }
+
+            var charities = await _context.Charity.ToListAsync();
+            ViewBag.charities = charities;
 
             return View(model);
         }

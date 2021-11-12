@@ -5,9 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var userId = ViewBag.userId;
     var username = ViewBag.username;
+    var charities = ViewBag.charities;
 }
 
-<form asp-action="ManageUserRoles">
+<form asp-action="ManageUserRoles" enctype="multipart/form-data">
     <div class="card">
         <div class="card-header">
             <h2>Manage user roles</h2>
@@ -17,14 +18,28 @@
             <input type="hidden" asp-for="@userId" />
             @for (int i = 0; i < Model.Count; ++i)
             {
-                <div class="form-check">
-                    <input type="hidden" asp-for="@Model[i].RoleId" />
-                    <input type="hidden" asp-for="@Model[i].RoleName" />
-                    <input asp-for="@Model[i].IsSelected" class="form-check-input" />
-                    <label class="form-check-label" asp-for="@Model[i].IsSelected">
-                        @Model[i].RoleName
-                    </label>
+        <div class="form-check">
+            <input type="hidden" asp-for="@Model[i].RoleId" />
+            <input type="hidden" asp-for="@Model[i].RoleName" />
+            <input asp-for="@Model[i].IsSelected" class="form-check-input" />
+            <label class="form-check-label" asp-for="@Model[i].IsSelected">
+                @Model[i].RoleName
+            </label>
+            @if (Model[i].RoleName == "Charity manager")
+            {
+                <br />
+                <div class="form-group">
+                    <select asp-for="@Model[i].CharityId" class="form-control"
+                            asp-items='@new SelectList(charities, "Id", "Name")'>
+                        <option value="-1">Select a charity to manage</option>
+                    </select>
                 </div>
+            }
+            else 
+            {
+                <input type="hidden" asp-for="@Model[i].CharityId" />
+            }
+        </div>
             }
         </div>
         <div class="card-footer">
