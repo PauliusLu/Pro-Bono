@@ -171,7 +171,8 @@ namespace Karma.Controllers
                 return View(model);
             }
 
-            result = await _userManager.AddUserRoleWithCharityId(user, charityManagerRole.Name, charityId);
+            if (charityId != 0)
+                result = await _userManager.AddUserRoleWithCharityId(user, charityManagerRole.Name, charityId);
 
             if (!result.Succeeded)
             {
