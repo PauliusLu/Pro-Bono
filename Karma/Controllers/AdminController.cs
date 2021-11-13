@@ -186,5 +186,53 @@ namespace Karma.Controllers
 
             return View(dbCharity);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateReport(int? postId)
+        {
+            if (postId == null)
+            {
+                return View();
+            }
+
+            var post = await _context.Post.FirstOrDefaultAsync(c => c.Id == postId);
+
+            if (post == null)
+            {
+                ViewBag.errorMessage = $"Post with Id = {postId} cannot be found";
+                return NotFound();
+            }
+            ViewData["post"] = post;
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateReport(int id, [Bind("PostId,ReportMessage")] Report report)
+        {
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var post = await _context.Post.FirstOrDefaultAsync(c => c.Id == report.PostId);
+
+            report.PostOwnerId = post.UserId;
+            report.ReporterId = User.Identity.Name;
+            report.ReportState = Report.ReportStates.Open;
+
+            _context.Add(report);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ThankYou));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ThankYou()
+        {
+            return View();
+        }
     }
 }

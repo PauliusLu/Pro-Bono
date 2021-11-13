@@ -19,7 +19,7 @@ namespace Karma.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string PostId { get; set; }
+        public int PostId { get; set; }
         [Required]
         public string PostOwnerId { get; set; }
         [Required]

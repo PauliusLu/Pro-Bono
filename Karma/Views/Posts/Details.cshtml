@@ -1,10 +1,16 @@
 ﻿@model Karma.Models.Post
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<User> SignInManager
+
 
 @{
     ViewData["Title"] = Html.DisplayFor(model => model.Title);
 }
 <h4>@Post.CompareQuerie(Model) @Post.GetPostTypeName(Model.IsDonation)s</h4>
-<h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
+<h1>
+    <bold>@Html.DisplayFor(model => model.Title)</bold>
+</h1>
 
 <div>
     <hr />
@@ -34,6 +40,12 @@
         }
         <br />
     }
+    @if (SignInManager.IsSignedIn(User) && User.Identity.Name != Model.UserId)
+    {
+        <a asp-controller="Admin" asp-action="CreateReport" asp-route-postId="@Model.Id">
+            <button class="btn btn-danger">Report</button>
+        </a>
+    }
 }
 
 
@@ -46,7 +58,7 @@
 </div>
 @if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
 {
-<script>
+    <script>
         $(() => {
             $('#dialog').on('show.bs.modal', function (event) {
                 if (event.relatedTarget.innerHTML == 'Mark as reserved.') {
@@ -60,6 +72,6 @@
                 }
             });
         });
-</script>
+    </script>
 }
 
