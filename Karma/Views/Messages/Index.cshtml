@@ -32,7 +32,7 @@ else
                             <h4>Recent</h4>
                         </div>
                         <div class="srch_bar">
-                            <div class="stylish-input-group">
+                            <div class="stylish-input-group" hidden>
                                 <input type="text" class="search-bar" placeholder="Search">
                                 <span class="input-group-addon">
                                     <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
@@ -47,14 +47,15 @@ else
                             Karma.Models.Messaging.Message m = messages.Last();
                             string otherUser = m.Username;
                             string activeClass = (currentChatId == m.Chat.Id) ? "active_chat" : "";
+                            string seen = ((m.Chat.CreatorId == user && m.Chat.IsSeenByCreator == true) || (m.Chat.PostUserId == user && m.Chat.IsSeenByPostUser == true)) ? "" : "font-weight-bold";
 
                             <div class="chat_people @activeClass" id="00@(m.Chat.Id)" onclick="location.href='@($"/Messages?chatId={m.Chat.Id}")'">
                                 <div class="chat_img"> <img src="~/data/UserImages/Default/default.png"> </div>
-                                <div class="chat_ib">
+                                <div class="chat_ib @seen">
                                     <p>@m.Chat.AttachedPost.UserId</p>
                                     <h5>
-                                        <a href="@($"Posts/Details/{m.Chat.AttachedPost.Id}")">@m.Chat.AttachedPost.Title</a>
-                                        <span class="chat_date">@m.Date.ToLocalTime()</span>
+                                        <a class ="@seen" href="@($"Posts/Details/{m.Chat.AttachedPost.Id}")">@m.Chat.AttachedPost.Title</a>
+                                        <span class="chat_date @seen">@m.Date.ToLocalTime()</span>
                                     </h5>
                                 </div>
                             </div>

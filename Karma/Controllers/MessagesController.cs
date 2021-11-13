@@ -14,6 +14,7 @@ namespace Karma.Controllers
     {
         delegate List<T> GenerateList<K, T>(Dictionary<K, T> objs);
         delegate K GetKey<K, T>(T obj);
+        delegate void Modify<T>(T obj);
 
         private readonly KarmaContext _context;
 
@@ -63,15 +64,23 @@ namespace Karma.Controllers
                 return finalList;
             });
 
+            int? newChatId = isValidChatId ? chatId : null;
             if (!isValidChatId)
             {
                 ViewBag.History = messages?.FirstOrDefault();
-                ViewBag.ChatId = messages?.FirstOrDefault()?.LastOrDefault()?.Chat.Id;
+                newChatId = messages?.FirstOrDefault()?.LastOrDefault()?.Chat.Id;
+                ViewBag.ChatId = newChatId;
             }
             else
             {
                 ViewBag.ChatId = chatId;
             }
+            Chat chat = _context.Chat.Find(newChatId);
+            if (chat != null)
+            {
+                MarkChatAsSeen(chat, user);
+            }
+
 
             return View(messages);
         }
@@ -120,6 +129,8 @@ namespace Karma.Controllers
             if (ModelState.IsValid)
             {
                 Message message = CreateMessage(m);
+                MarkChatAsNotSeen(message.Chat, message.Username);
+
                 _context.Add(message);
                 await _context.SaveChangesAsync();
 
@@ -162,6 +173,43 @@ namespace Karma.Controllers
             public Models.Post Post { get; set; }
             public int State { get; set; }
             public string Receiver { get; set; }
+        }
+
+        private void MarkChatAsNotSeen(Chat chat, string userId)
+        {
+            UpdateChat(chat, delegate (Chat c)
+            {
+                if (c.CreatorId == userId)
+                {
+                    c.IsSeenByPostUser = false;
+                }
+                else
+                {
+                    c.IsSeenByCreator = false;
+                }
+            });
+        }
+
+        private void MarkChatAsSeen(Chat chat, string userId)
+        {
+            UpdateChat(chat, delegate (Chat c)
+            {
+                if (c.CreatorId == userId)
+                {
+                    c.IsSeenByCreator = true;
+                }
+                else
+                {
+                    c.IsSeenByPostUser = true;
+                }
+            });
+        }
+
+        private async void UpdateChat(Chat chat, Modify<Chat> modify) {
+            modify(chat);
+
+            _context.Update(chat);
+            await _context.SaveChangesAsync();
         }
     }
 }
