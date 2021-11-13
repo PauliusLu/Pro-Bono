@@ -245,6 +245,16 @@ img {
     margin-right: 15px;
 }
 
+.buttons {
+
+    display: inline-block;
+    margin: 8px 8px 8px 0px;
+}
+
+.btn {
+    margin: 5px 0px 5px 0px;
+}
+
 .post_details p, .post_details h5{
     margin-left: 15px;
     display: block;

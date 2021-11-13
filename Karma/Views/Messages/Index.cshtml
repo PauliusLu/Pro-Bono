@@ -45,14 +45,15 @@ else
                         {
 
                             Karma.Models.Messaging.Message m = messages.Last();
-                            string otherUser = m.Username;
+                            string otherUser = (m.Chat.CreatorId == user) ? m.Chat.PostUserId : (m.Chat.CreatorId);
                             string activeClass = (currentChatId == m.Chat.Id) ? "active_chat" : "";
                             string seen = ((m.Chat.CreatorId == user && m.Chat.IsSeenByCreator == true) || (m.Chat.PostUserId == user && m.Chat.IsSeenByPostUser == true)) ? "" : "font-weight-bold";
+
 
                             <div class="chat_people @activeClass" id="00@(m.Chat.Id)" onclick="location.href='@($"/Messages?chatId={m.Chat.Id}")'">
                                 <div class="chat_img"> <img src="~/data/UserImages/Default/default.png"> </div>
                                 <div class="chat_ib @seen">
-                                    <p>@m.Chat.AttachedPost.UserId</p>
+                                    <p>@otherUser</p>
                                     <h5>
                                         <a class ="@seen" href="@($"Posts/Details/{m.Chat.AttachedPost.Id}")">@m.Chat.AttachedPost.Title</a>
                                         <span class="chat_date @seen">@m.Date.ToLocalTime()</span>
@@ -76,6 +77,7 @@ else
                                         <p>This item has been traded.</p>
                                     </div>
                                 }
+                                <div class="buttons">
                                 @if (historyPost.UserId == User.Identity.Name)
                                 {
                                     if (historyPost.State == (int)Karma.Models.Post.PostState.NotSet ||
@@ -90,17 +92,28 @@ else
                                     }
                                     if (historyPost.State == (int)Karma.Models.Post.PostState.Reserved)
                                     {
+                                        string reserveText = "Cancel reservation";
                                         if (historyPost.ReceiverUserId == historyLastMessage.Chat.CreatorId)
                                         {
                                             <button class="btn btn-trade" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Traded))">
                                                 Complete trade with @(historyPost.ReceiverUserId)
                                             </button>
                                         }
+                                        else
+                                        {
+                                            
+                                            string? receiver = receiver = historyPost.ReceiverUserId;
+                                            if (receiver == null)
+                                                reserveText += " you've made for no one";
+                                            else
+                                                reserveText += " for user " + receiver;
+                                        }
                                         <button class="btn btn-cancel" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Open))">
-                                            Cancel @(historyPost.ReceiverUserId)'s reservation
+                                            @reserveText
                                         </button>
                                     }
                                 }
+                                </div>
                             </div>
 
                         </div>

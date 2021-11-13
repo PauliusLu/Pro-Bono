@@ -27,19 +27,24 @@
 
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-a" role="tabpanel" aria-labelledby="pills-a-tab">
-                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.UserId == User.Identity?.Name)));}
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", 
+                          (await Model.UserPosts.Value).Where(p => p.UserId == User.Identity?.Name)));}
                 </div>
                 <div class="tab-pane fade" id="pills-b" role="tabpanel" aria-labelledby="pills-b-tab">
-                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.State == (int)Post.PostState.Traded)));}
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml",
+                          (await Model.UserPosts.Value).Where(p => p.State == (int)Post.PostState.Traded)));}
                 </div>
                 <div class="tab-pane fade" id="pills-c" role="tabpanel" aria-labelledby="pills-c-tab">
-                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => p.State != (int)Post.PostState.Traded)));}
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", 
+                          (await Model.UserPosts.Value).Where(p => p.State != (int)Post.PostState.Traded && p.IsVisible)));}
                 </div>
                 <div class="tab-pane fade" id="pills-d" role="tabpanel" aria-labelledby="pills-d-tab">
-                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => (p.State != (int)Post.PostState.Traded) && !p.IsDonation)));}
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml",
+                            (await Model.UserPosts.Value).Where(p => (p.State != (int)Post.PostState.Traded) && p.IsVisible && !p.IsDonation)));}
                 </div>
                 <div class="tab-pane fade" id="pills-e" role="tabpanel" aria-labelledby="pills-e-tab">
-                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml", (await Model.UserPosts.Value).Where(p => (p.State != (int)Post.PostState.Traded) && p.IsDonation)));}
+                    @{await (Html.RenderPartialAsync("~/Areas/Identity/Pages/Account/Manage/HistoryTable.cshtml",
+                          (await Model.UserPosts.Value).Where(p => (p.State != (int)Post.PostState.Traded) && p.IsVisible && p.IsDonation)));}
                 </div>
             </div>
 
