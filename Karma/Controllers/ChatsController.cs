@@ -46,7 +46,7 @@ namespace Karma.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateChatModel chatData)
+        public async Task<IActionResult> Create([FromBody] CreateChatModel chatData)
         {
 
             if (ModelState.IsValid && User.Identity.IsAuthenticated)
