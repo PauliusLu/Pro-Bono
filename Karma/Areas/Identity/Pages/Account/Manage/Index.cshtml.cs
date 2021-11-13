@@ -17,6 +17,7 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly KarmaContext _context;
+        public User currentUser;
 
         public AsyncLazy<List<Post>> UserPosts { get; set; }
 
@@ -30,8 +31,12 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             _context = context;
         }
 
-        public string Username { get; set; }
+        public IndexModel()
+        {
+        }
 
+        public string UserId { get; set; }
+        public string Username { get; set; }
         [TempData]
         public string StatusMessage { get; set; }
 
@@ -67,7 +72,7 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             }
 
             await LoadAsync(user);
-
+            currentUser = user;
             UserPosts = new(() => Post.getUserPosts(_context, user.UserName));
 
             return Page();
@@ -97,7 +102,7 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-
+            currentUser = user;
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();

@@ -101,7 +101,6 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
-
             return View(post);
         }
 
