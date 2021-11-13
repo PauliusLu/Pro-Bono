@@ -96,7 +96,7 @@ namespace Karma.Controllers
         {
             if (id == null)
             {
-                _logger.LogInformation(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
+                _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
                 return NotFound();
             }
 
@@ -104,7 +104,7 @@ namespace Karma.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
-                _logger.LogInformation(LogEvents.GetPost, "Post {PostId} NOT FOUND", id);
+                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", id);
                 return NotFound();
             }
 
@@ -243,7 +243,7 @@ namespace Karma.Controllers
         {
             if (id == null)
             {
-                _logger.LogInformation(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
+                _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
                 return NotFound();
             }
             var post = await _context.Post.FindAsync(id);
@@ -253,7 +253,7 @@ namespace Karma.Controllers
 
             if (post == null || !post.IsVisible)
             {
-                _logger.LogInformation(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
+                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 return NotFound();
             }
 
@@ -269,7 +269,7 @@ namespace Karma.Controllers
         {
             if (id != post.Id || !post.IsVisible)
             {
-                _logger.LogInformation(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
+                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 return NotFound();
             }
 
@@ -318,7 +318,7 @@ namespace Karma.Controllers
         {
             if (id == null)
             {
-                _logger.LogInformation(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
+                _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
                 return NotFound();
             }
 
@@ -329,7 +329,7 @@ namespace Karma.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null || !post.IsVisible)
             {
-                _logger.LogInformation(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
+                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 return NotFound();
             }
 
