@@ -147,7 +147,7 @@ namespace Karma.Controllers
                 _context.Add(post);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(LogEvents.CreatePost, "Post created by User {PostId}", post.UserId);
+                _logger.LogInformation(LogEvents.CreatePost, "Post created by User {UserId}", post.UserId);
                 return RedirectToAction(nameof(Index));
             }
             return View(post);
@@ -221,7 +221,7 @@ namespace Karma.Controllers
                 _context.Add(post);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(LogEvents.CreatePost, "Post created by User {PostId}", post.UserId);
+                _logger.LogInformation(LogEvents.CreatePost, "Post created by User {UserId}", post.UserId);
                 return RedirectToAction(nameof(Index));
             }
 

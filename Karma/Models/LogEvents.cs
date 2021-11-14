@@ -16,6 +16,8 @@ namespace Karma.Models
 
         // User events
         public const int UserNotAuthenticated = 2001;
+        public const int UserLoggedIn = 2002;
+        public const int UserLockedOut = 2003;
 
         // File events
         public const int AddImage = 3001;
