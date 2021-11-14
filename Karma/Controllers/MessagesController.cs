@@ -12,7 +12,9 @@ namespace Karma.Controllers
 {
     public class MessagesController : Controller
     {
-        delegate List<T> GenerateList<T>(Dictionary<int, T> objs);
+        delegate List<T> GenerateList<K, T>(Dictionary<K, T> objs);
+        delegate K GetKey<K, T>(T obj);
+        delegate void Modify<T>(T obj);
 
         private readonly KarmaContext _context;
 
@@ -38,7 +40,12 @@ namespace Karma.Controllers
 
             bool isValidChatId = false;
 
-            var messages = ConvertDictionary(user, allMessages, delegate (Dictionary<int, List<Message>> objs)
+            GetKey<int, Message> MessageChatKey = delegate (Message m)
+            {
+                return m.Chat.Id;
+            };
+
+            var messages = ConvertDictionary(allMessages, MessageChatKey, delegate (Dictionary<int, List<Message>> objs)
             {
                 var finalList = new List<List<Message>>();
 
@@ -56,39 +63,46 @@ namespace Karma.Controllers
 
                 return finalList;
             });
+
+            int? newChatId = isValidChatId ? chatId : null;
             if (!isValidChatId)
             {
                 ViewBag.History = messages?.FirstOrDefault();
-                ViewBag.ChatId = messages?.FirstOrDefault()?.LastOrDefault()?.Chat.Id;
+                newChatId = messages?.FirstOrDefault()?.LastOrDefault()?.Chat.Id;
+                ViewBag.ChatId = newChatId;
             }
             else
             {
                 ViewBag.ChatId = chatId;
             }
+            Chat chat = _context.Chat.Find(newChatId);
+            if (chat != null)
+            {
+                MarkChatAsSeen(chat, user);
+            }
+
 
             return View(messages);
         }
 
-        private List<List<T>> ConvertDictionary<T>(string user, List<Message> allMessages, GenerateList<List<T>> genFunc)
-            where T : Message
+        private List<List<T>> ConvertDictionary<K, T>(List<T> list, GetKey<K, T> getKey, GenerateList<K, List<T>> genFunc)
         {
-
-            Dictionary<int, List<T>> messages = new();
-            foreach (T m in allMessages)
+            Dictionary<K, List<T>> dict = new();
+            foreach (T m in list)
             {
-                if (!messages.TryGetValue(m.Chat.Id, out List<T> list))
+                K key = getKey(m);
+                if (!dict.TryGetValue(key, out List<T> dictList))
                 {
-                    list = new List<T>();
-                    messages[m.Chat.Id] = list;
+                    dictList = new List<T>();
+                    dict[key] = dictList;
                 }
-                list.Add(m);
+                dictList.Add(m);
             }
 
-            return genFunc(messages);
-
+            return genFunc(dict);
         }
 
-        public async Task<IActionResult> Create(int chatId = -1)
+        public IActionResult Create(int chatId = -1)
         {
             if (!User.Identity.IsAuthenticated || chatId == -1)
             {
@@ -114,14 +128,34 @@ namespace Karma.Controllers
 
             if (ModelState.IsValid)
             {
-                AddMessage(m);
-                var model = new CreateMessageModel() { ChatId = m.ChatId };
+                Message message = CreateMessage(m);
+                MarkChatAsNotSeen(message.Chat, message.Username);
+
+                _context.Add(message);
+                await _context.SaveChangesAsync();
+
                 return new EmptyResult();
             }
             return PartialView(m);
         }
 
-        private void AddMessage(CreateMessageModel m)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePostState([FromBody] PostModel pm)
+        {
+            if (!User.Identity.IsAuthenticated || User.Identity.Name != pm.Post.UserId)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            pm.Post.ChangeState((Models.Post.PostState)pm.State, pm.Receiver);
+
+             _context.Update(pm.Post);
+            await _context.SaveChangesAsync();
+
+            return new EmptyResult();
+        }
+
+        private Message CreateMessage(CreateMessageModel m)
         {
             Message message = new()
             {
@@ -130,9 +164,52 @@ namespace Karma.Controllers
                 Text = m.Text,
                 Username = User.Identity.Name
             };
-            _context.Add(message);
-            _context.SaveChangesAsync();
+
+            return message;
         }
 
+        public class PostModel
+        {
+            public Models.Post Post { get; set; }
+            public int State { get; set; }
+            public string Receiver { get; set; }
+        }
+
+        private void MarkChatAsNotSeen(Chat chat, string userId)
+        {
+            UpdateChat(chat, delegate (Chat c)
+            {
+                if (c.CreatorId == userId)
+                {
+                    c.IsSeenByPostUser = false;
+                }
+                else
+                {
+                    c.IsSeenByCreator = false;
+                }
+            });
+        }
+
+        private void MarkChatAsSeen(Chat chat, string userId)
+        {
+            UpdateChat(chat, delegate (Chat c)
+            {
+                if (c.CreatorId == userId)
+                {
+                    c.IsSeenByCreator = true;
+                }
+                else
+                {
+                    c.IsSeenByPostUser = true;
+                }
+            });
+        }
+
+        private async void UpdateChat(Chat chat, Modify<Chat> modify) {
+            modify(chat);
+
+            _context.Update(chat);
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -10,12 +10,12 @@
 @if (SignInManager.IsSignedIn(User))
 {
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" onclick="MessageUpdate('@(User.Identity.Name)')" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 @UserManager.GetUserName(User)
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a id="manage" class="dropdown-item text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Account</a>
-                <a id="messages" class="dropdown-item text-dark" asp-controller="Messages" asp-action="Index">Messages</a>
+                <a id="messages" class="dropdown-item text-dark" asp-controller="Messages" asp-action="Index">Messages <span id="update-count"></span></a>
                 @if (User.IsInRole("Admin"))
                 {
                     <a id="manage" class="dropdown-item text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Manage page</a>
@@ -44,3 +44,30 @@ else
     </li>
 }
 </ul>
+
+<script>
+
+    function MessageUpdate(user) {
+        console.log("click");
+        var token = $('@Html.AntiForgeryToken()').val();
+        var parameters = {
+            'Receiver': user
+        }
+        $.ajax({
+            type: "GET",
+            contentType: "application/json",
+            url: "@Url.Action("UnseenMessages", "Chats")",
+            data: JSON.stringify(parameters),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (data) {
+                $("#update-count").load(location.href + " #update-count>*", function () {
+                    $("#update-count").append((data));
+                });
+
+
+            }
+        });
+    }
+</script>

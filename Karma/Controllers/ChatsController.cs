@@ -46,7 +46,7 @@ namespace Karma.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateChatModel chatData)
+        public async Task<IActionResult> Create([FromBody] CreateChatModel chatData)
         {
 
             if (ModelState.IsValid && User.Identity.IsAuthenticated)
@@ -71,13 +71,44 @@ namespace Karma.Controllers
             return RedirectToAction("Index", "Posts");
         }
 
+        public IActionResult UnseenMessages()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            string count = UnseenMessagesNumber(User.Identity.Name);
+            ViewBag.Count = count;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnseenMessages(string userId)
+        {
+            if (!User.Identity.IsAuthenticated || userId != User.Identity.Name)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            string count = UnseenMessagesNumber(userId);
+            ViewBag.Count = count;
+            return View();
+        }
+
+
         private Chat CreateChat(CreateChatModel chatData, Chat chat = null)
         {
             if (chat == null)
             {
                 Post post = _context.Post.Find(chatData.PostId);
-                chat = new() { AttachedPost = post, State = Chat.ChatState.Open, CreatorId = User.Identity.Name};
+                chat = new(0, post, Chat.ChatState.Open, User.Identity.Name, post.UserId, true, false);
                 _context.Add(chat);
+            }
+            else
+            {
+                chat.IsSeenByPostUser = false;
             }
 
 
@@ -93,6 +124,18 @@ namespace Karma.Controllers
             _context.Add(message);
             _context.SaveChangesAsync();
             return chat;
+        }
+
+        private int UnseenMessagesCount(string userId)
+        {
+            return _context.Chat
+               .Where(c => (c.PostUserId == userId && c.IsSeenByPostUser == false) || (c.CreatorId == userId && c.IsSeenByCreator == false))
+               .Count();
+        }
+        private string UnseenMessagesNumber(string userId)
+        {
+            int num = UnseenMessagesCount(userId);
+            return (num < 100) ? num.ToString() : "99+";
         }
 
         private bool ChatExists(int id)
