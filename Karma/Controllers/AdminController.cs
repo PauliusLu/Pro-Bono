@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Karma.Models.Report;
 
 namespace Karma.Controllers
 {
@@ -233,6 +234,55 @@ namespace Karma.Controllers
         public async Task<IActionResult> ThankYou()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReportReview(int? reportId)
+        {
+            if (reportId == null)
+            {
+                return View();
+            }
+
+            var report = await _context.Report.FirstOrDefaultAsync(c => c.Id == reportId);
+
+            if (report == null)
+            {
+                ViewBag.errorMessage = $"Report with Id = {report} cannot be found";
+                return NotFound();
+            }
+
+            return View(report);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReportReview(int reportId, string confirm, string reject)
+        {
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            bool confirmed = !string.IsNullOrEmpty(confirm);
+            
+            var oldReport = await _context.Report.FirstOrDefaultAsync(c => c.Id == reportId);
+
+            oldReport.ReportState = confirmed ? ReportStates.Approved : ReportStates.Declined;
+            if (confirmed)
+                hideReportedPost(oldReport.PostId);
+
+            _context.Update(oldReport);
+            await _context.SaveChangesAsync();
+
+            return SwitchToTabs(Enums.AdminTab.ReportReview);
+        }
+
+        private void hideReportedPost(int id)
+        {
+            var post = _context.Post.FirstOrDefault(c => c.Id == id);
+            post.State = (int)Post.PostState.Hidden;
+            post.IsVisible = false;
         }
     }
 }
