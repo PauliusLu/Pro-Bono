@@ -247,6 +247,8 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
+            post.ImagePath = post.GetFullImagePath();
+
             return View(post);
         }
 
