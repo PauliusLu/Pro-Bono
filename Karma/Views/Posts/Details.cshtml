@@ -32,7 +32,7 @@
                 {
                     if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
                     {
-                        <button class="btn btn-success" data-toggle="modal" data-target="#dialog">Mark as reserved.</button>
+                        <button class="btn btn-success btn-block" data-toggle="modal" data-target="#dialog">Mark as reserved</button>
 
                     }
                     else if (Model.State == (int)Post.PostState.Reserved)
@@ -44,6 +44,13 @@
                             <button class="btn btn-warning btn-block mt-2" data-toggle="modal" data-target="#dialog">Cancel reservation</button>
                         </div>
                     }
+
+                    <div class="row justify-content-around mt-2">
+                        <div style="display:inline-block; text-align:center">
+                            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+                        </div>
+                    </div>
                 }
             }
         </div>
@@ -81,13 +88,13 @@
 <script>
         $(() => {
             $('#dialog').on('show.bs.modal', function (event) {
-                if (event.relatedTarget.innerHTML == 'Mark as reserved.') {
+                if (event.relatedTarget.innerHTML == 'Mark as reserved') {
                     $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Are you sure you want to reserve this item?", action3 = "ReserveItem", buttonAffirmText = "Reserve" })');
                 }
-                else if (event.relatedTarget.innerHTML == 'Cancel reservation.') {
+                else if (event.relatedTarget.innerHTML == 'Cancel reservation') {
                     $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Are you sure you want to cancel reservation?", action3 = "ReserveItem", buttonAffirmText = "Cancel Reservation"})');
                 }
-                else if (event.relatedTarget.innerHTML == 'Mark as Completed.') {
+                else if (event.relatedTarget.innerHTML == 'Mark as Completed') {
                     $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Did you " + (Model.IsDonation ? "donate" : "receive") + " all items?", action3 = "CompleteItem", buttonAffirmText = "Yes"})');
                 }
             });

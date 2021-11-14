@@ -45,29 +45,28 @@
 
                         @if (item is not Advert)
                         {
-                    <div class="card-footer">
-                        <small class="text-muted">@Html.DisplayFor(modelItem => item.Date)</small>
-                        <div class="mb-1">@Post.CompareQuerie(item)</div>
-                        @if (item.State == (int)Post.PostState.Reserved)
-                        {
-                            <div class="mb-1 d-inline bg-success rounded-pill p-1 pl-2 pr-2">
-                                Reserved
+                            <div class="card-footer">
+                                <small class="text-muted">@Html.DisplayFor(modelItem => item.Date)</small>
+                                <div class="mb-1">@Post.CompareQuerie(item)</div>
+                                @if (item.State == (int)Post.PostState.Reserved)
+                                {
+                                    <div class="mb-1 d-inline bg-success rounded-pill p-1 pl-2 pr-2">
+                                        Reserved
+                                    </div>
+                                    <br />
+                                }
                             </div>
-                            <br />
-                        }
-                        <a asp-action="Details" asp-route-id="@item.Id">Details  </a>
-                        @if (SignInManager.IsSignedIn(User) && User.Identity.Name == item.UserId)
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit  </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        }
-                    </div>
                         }
                         else
                         {
                             <div class="card-footer">
                                 <p>@(((Advert)item).EmphasizedMessage)</p>
                             </div>
+                        }
+
+                        @if (item is not Advert)
+                        {
+                            <a class="stretched-link" asp-action="Details" asp-route-id="@item.Id"></a>
                         }
                     </div>
                 </div>
