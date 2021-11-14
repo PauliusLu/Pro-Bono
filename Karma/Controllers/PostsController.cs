@@ -102,6 +102,9 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
+            // Sets default image for post by itemtype if there's no image given
+            post.ImagePath = post.GetFullImagePath();
+
             return View(post);
         }
 
