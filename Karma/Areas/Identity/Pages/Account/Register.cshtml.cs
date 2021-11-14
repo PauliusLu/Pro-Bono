@@ -59,6 +59,8 @@ namespace Karma.Areas.Identity.Pages.Account
             public string Surname { get; set; }
 
             [Required]
+            [RegularExpression(@"(86|\+3706)\d{7}",
+                ErrorMessage = "Phone number should consist of 86 or +3706 and 7 more digits")]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
 
