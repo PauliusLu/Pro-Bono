@@ -31,7 +31,7 @@
                     <div class="@((item is not Advert) ? "card h-100" : "card text-white bg-info mb-3 h-100")">
                         @if (@item.ImagePath != null && item.ImagePath != "")
                         {
-                            <img class="card-img-top ratio ratio-4x3" src=@item.ImagePath>
+                            <img class="card-img-top ratio ratio-4x3" src=@item.ImagePath style="max-height:300px; object-fit: cover;">
                         }
                         <div class="card-body">
                             <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
