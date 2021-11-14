@@ -1,13 +1,10 @@
 ﻿@model Karma.Models.Report
 
 @{
-    ViewData["Title"] = "View";
+    ViewData["Title"] = "Report";
 }
 
-<h1>View</h1>
-
-<h4>Report</h4>
-@(((Karma.Models.Post)ViewData["post"]).Title);
+<h1>Report post</h1>
 
 <hr />
 <div class="row">
@@ -20,7 +17,7 @@
                 <span asp-validation-for="PostId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ReportMessage" class="control-label"></label>
+                <label asp-for="ReportMessage" class="control-label">What is wrong with the post?</label>
                 <input asp-for="ReportMessage" class="form-control" />
                 <span asp-validation-for="ReportMessage" class="text-danger"></span>
             </div>
@@ -28,6 +25,9 @@
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+    </div>
+    <div class="col-md-6 border border-info">
+        <partial name="~/Views/Posts/Details.cshtml" for="@ViewData["post"]" />
     </div>
 </div>
 

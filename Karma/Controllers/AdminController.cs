@@ -236,8 +236,8 @@ namespace Karma.Controllers
             }
         }
 
-        [Authorize(Roles = "User")]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateReport(int? postId)
         {
             if (postId == null)
