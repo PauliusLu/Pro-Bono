@@ -21,7 +21,14 @@ else
                             @report.ReporterId
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">@Html.DisplayFor(m => report.ReportMessage)</h5>
+                            <h5 class="card-title">@{
+                                if (String.IsNullOrWhiteSpace(report.ReportMessage))
+                                {
+                                    @("No message provided.");
+                                } else {
+                                    @(Html.DisplayFor(m => report.ReportMessage));
+                                }
+                            }</h5>
                             <p class="mb-1 d-inline @switch (report.ReportState)
                             {
                                 case Report.ReportStates.Open:

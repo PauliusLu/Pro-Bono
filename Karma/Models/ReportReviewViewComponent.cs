@@ -21,6 +21,11 @@ namespace Karma.Models
         {
             var dbReportList = await _context.Report.ToListAsync();
 
+            dbReportList.Sort((Report a, Report b) =>
+            {
+                return a.ReportState.CompareTo(b.ReportState);
+            });
+
             return View(dbReportList);
         }
     }
