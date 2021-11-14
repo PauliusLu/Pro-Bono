@@ -245,13 +245,14 @@ namespace Karma.Controllers
             }
 
             var report = await _context.Report.FirstOrDefaultAsync(c => c.Id == reportId);
+            var post = await _context.Post.FirstOrDefaultAsync(c => c.Id == report.PostId);
 
             if (report == null)
             {
                 ViewBag.errorMessage = $"Report with Id = {report} cannot be found";
                 return NotFound();
             }
-
+            ViewData["post"] = post;
             return View(report);
         }
 

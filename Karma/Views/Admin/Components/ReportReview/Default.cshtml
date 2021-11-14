@@ -1,57 +1,102 @@
 ﻿@model IEnumerable<Karma.Models.Report>
 
 @{
-    ViewData["Title"] = "Default";
+    ViewData["Title"] = "Review reports";
 }
 
-<h1>Default</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.PostId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PostOwnerId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReporterId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReportState)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReportMessage)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PostId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PostOwnerId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReporterId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReportState)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReportMessage)
-            </td>
-            <td>
-                <a asp-action="ReportReview" asp-route-reportId="@item.Id">Details</a> |
-            </td>
-        </tr>
+@if (Model == null)
+{
+    <h3>You have currently reviewed reports.</h3>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="post-cards container-fluid content-row">
+        <div class="row">
+            @foreach (var report in Model)
+            {
+                <div class="col col-12 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            Reported by: <br />
+                            @report.ReporterId
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(m => report.ReportMessage)</h5>
+                            <p class="mb-1 d-inline @switch (report.ReportState)
+                            {
+                                case Report.ReportStates.Open:
+                                    @("bg-info");
+                                    break;
+                                case Report.ReportStates.Approved:
+                                    @("bg-success");
+                                    break;
+                                case Report.ReportStates.Declined:
+                                    @("bg-danger");
+                                    break;
+                                default:
+                                    @("bg-info");
+                                    break;
+                            }
+                            rounded-pill p-1 pl-2 pr-2 card-text">
+                                @Html.DisplayFor(model => report.ReportState)
+                            </p>
+                            <br />
+                            <br />
+                            <a asp-controller="Admin" asp-action="ReportReview" asp-route-reportId=@report.Id class="btn btn-primary">Review report</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+
+
+@*<table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PostId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PostOwnerId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReporterId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReportState)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReportMessage)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostOwnerId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReporterId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReportState)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReportMessage)
+                </td>
+                <td>
+                    <a asp-action="ReportReview" asp-route-reportId="@item.Id">Details</a> |
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>*@
