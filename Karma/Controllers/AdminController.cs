@@ -1,17 +1,26 @@
-﻿using Karma.Data;
+﻿using FluentEmail.Core;
+using FluentEmail.Razor;
+using FluentEmail.Smtp;
+using Karma.Data;
 using Karma.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 using static Karma.Models.Report;
 
 namespace Karma.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly KarmaContext _context;
@@ -20,11 +29,14 @@ namespace Karma.Controllers
 
         private readonly UserManage _userManager;
 
-        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManage userManager)
+        private readonly IWebHostEnvironment _iWebHostEnv;
+
+        public AdminController(KarmaContext context, RoleManager<IdentityRole> roleManager, UserManage userManager, IWebHostEnvironment webHostEnv)
         {
             _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
+            _iWebHostEnv = webHostEnv;
         }
 
         public IActionResult Index(AdminTabViewModel tabViewModel)
@@ -101,7 +113,8 @@ namespace Karma.Controllers
                 var userRolesViewModel = new UserRolesViewModel
                 {
                     RoleId = role.Id,
-                    RoleName = role.Name
+                    RoleName = role.Name,
+                    CharityId = 0
                 };
                 
                 if (await _userManager.IsInRoleAsync(user, role.Name))
@@ -116,12 +129,18 @@ namespace Karma.Controllers
                 model.Add(userRolesViewModel);
             }
 
+            var charities = await _context.Charity.ToListAsync();
+            ViewBag.charities = charities;
+
             return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
         {
+            var charities = await _context.Charity.ToListAsync();
+            ViewBag.charities = charities;
+
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
@@ -134,15 +153,30 @@ namespace Karma.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             var result = await _userManager.RemoveFromRolesAsync(user, userRoles);
 
-
             if (!result.Succeeded)
             {
                 ModelState.AddModelError("", "Cannot remove existing user roles");
                 return View(model);
             }
 
-            result = await _userManager.AddToRolesAsync(user, 
-                model.Where(r => r.IsSelected).Select(r => r.RoleName));
+            var charityManagerRole = await _roleManager.FindByNameAsync("Charity manager");
+            var selectedRoles = model.Where(r => r.IsSelected);
+
+            result = await _userManager.AddToRolesAsync(user,
+                selectedRoles.Where(r => r.RoleId != charityManagerRole.Id)
+                    .Select(r => r.RoleName));
+
+            var charityId = selectedRoles.Where(r => r.RoleId == charityManagerRole.Id)
+                    .Select(r => r.CharityId).FirstOrDefault();
+
+            if (charityId == -1)
+            {
+                ModelState.AddModelError("CharityNotSelected", "Charity should be selected to add this user role");
+                return View(model);
+            }
+
+            if (charityId != 0)
+                result = await _userManager.AddUserRoleWithCharityId(user, charityManagerRole.Name, charityId);
 
             if (!result.Succeeded)
             {
@@ -180,12 +214,26 @@ namespace Karma.Controllers
         public async Task<IActionResult> CharityReview(int id, [Bind("Id,ReviewState")] Charity charity)
         {
             var dbCharity = await _context.Charity.FirstOrDefaultAsync(c => c.Id == id);
+            dbCharity.CharityStateChanged += CharityStateChangedEventHandler;
+
             dbCharity.ReviewState = charity.ReviewState;
 
             _context.Update(dbCharity);
             await _context.SaveChangesAsync();
 
             return View(dbCharity);
+        }
+
+        public async void CharityStateChangedEventHandler(object sender, CharityStateChangedEventArgs e)
+        {
+            var user = _userManager.GetUserByCharityId("Charity manager", e.CharityId);
+            var charity = await _context.Charity.FindAsync(e.CharityId);
+
+            if (user != null)
+            {
+                var emailModel = new EmailModel.EmailCharityState(user.UserName, charity.Name, e.ReviewState, e.TimeChanged);
+                await emailModel.SendEmail(_iWebHostEnv, user);
+            }
         }
 
         [HttpGet]

@@ -4,9 +4,9 @@
     ViewData["Title"] = "Edit";
 }
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<br />
+<div class="row justify-content-between">
+    <div class="col-md-5">
         <form asp-controller="Charities" asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -17,14 +17,6 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="CharityAddresses" class="control-label"></label>
-                @{await (Html.PartialAsync("~/Views/CharityAddresses/Index.cshtml", Model.CharityAddresses));}
-            </div>
-            <div class="form-group">
-                <label asp-for="CharityItemTypes" class="control-label"></label>
-                @{await (Html.PartialAsync("~/Views/CharityItemTypes/Index.cshtml", Model.CharityItemTypes));}
-            </div>*@
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control" rows="6"></textarea>

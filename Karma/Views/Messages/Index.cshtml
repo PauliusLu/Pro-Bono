@@ -1,0 +1,256 @@
+﻿@model List<List<Karma.Models.Messaging.Message>>
+@{
+    ViewData["Title"] = "Index";
+
+}
+@{ string user = User.Identity.Name;
+    List<Karma.Models.Messaging.Message> activeMessages = Model.FirstOrDefault();
+    Karma.Models.Messaging.Message recentMessage = activeMessages?.LastOrDefault();
+    int? currentChatId = ViewBag.ChatId ?? recentMessage?.Chat.Id;
+    List<Karma.Models.Messaging.Message> history = ViewBag.History;
+    Karma.Models.Messaging.Message historyLastMessage = history?.LastOrDefault();
+    Karma.Models.Post historyPost = historyLastMessage?.Chat.AttachedPost;}
+<head>
+    <link href="~/css/messages.css" type="text/css" rel="stylesheet" />
+    <script src="~/lib/sweetalert/sweetalert2.all.js"></script>
+    <link rel="stylesheet" href="~/lib/sweetalert/sweetalert2.all.css">
+</head>
+
+<h3 class=" text-center">Messaging</h3>
+@if (recentMessage == null)
+{
+    <div>You don't have any active chat sessions.</div>
+}
+else
+{
+    <div class="container">
+        <div class="messaging">
+            <div class="inbox_msg">
+                <div class="inbox_people">
+                    <div class="headind_srch">
+                        <div class="recent_heading">
+                            <h4>Recent</h4>
+                        </div>
+                        <div class="srch_bar">
+                            <div class="stylish-input-group" hidden>
+                                <input type="text" class="search-bar" placeholder="Search">
+                                <span class="input-group-addon">
+                                    <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inbox_chat" id="inbox_list">
+                        @foreach (var messages in Model ?? Enumerable.Empty<List<Karma.Models.Messaging.Message>>())
+                        {
+
+                            Karma.Models.Messaging.Message m = messages.Last();
+                            string otherUser = (m.Chat.CreatorId == user) ? m.Chat.PostUserId : (m.Chat.CreatorId);
+                            string activeClass = (currentChatId == m.Chat.Id) ? "active_chat" : "";
+                            string seen = ((m.Chat.CreatorId == user && m.Chat.IsSeenByCreator == true) || (m.Chat.PostUserId == user && m.Chat.IsSeenByPostUser == true)) ? "" : "font-weight-bold";
+
+
+                            <div class="chat_people @activeClass" id="00@(m.Chat.Id)" onclick="location.href='@($"/Messages?chatId={m.Chat.Id}")'">
+                                <div class="chat_img"> <img src="~/data/UserImages/Default/default.png"> </div>
+                                <div class="chat_ib @seen">
+                                    <p>@otherUser</p>
+                                    <h5>
+                                        <a class ="@seen" href="@($"Posts/Details/{m.Chat.AttachedPost.Id}")">@m.Chat.AttachedPost.Title</a>
+                                        <span class="chat_date @seen">@m.Date.ToLocalTime()</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="mesgs">
+                    <div class="post_details">
+                        <div class="card" id="pinned-post">
+                            <h5 class="card-header">@(historyPost.Title)</h5>
+                            <div class="card-body">
+                                <img class="post_img" src="@(historyPost.GetFullImagePath())" />
+                                <h5 class="card-title">@historyPost.Title</h5>
+                                <p class="card-text">@(historyPost.Description)</p>
+                                @if (historyPost.State == (int)Karma.Models.Post.PostState.Traded)
+                                {
+                                    <div class="alert alert-danger" style="float:right; display:inline-block">
+                                        <p>This item has been traded.</p>
+                                    </div>
+                                }
+                                <div class="buttons">
+                                @if (historyPost.UserId == User.Identity.Name)
+                                {
+                                    if (historyPost.State == (int)Karma.Models.Post.PostState.NotSet ||
+                                        historyPost.State == (int)Karma.Models.Post.PostState.Open)
+                                    {
+                                        <button class="btn btn-trade" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Traded))">
+                                            Complete trade
+                                        </button>
+                                        <button class="btn btn-reserve" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Reserved))">
+                                            Reserve for this user
+                                        </button>
+                                    }
+                                    if (historyPost.State == (int)Karma.Models.Post.PostState.Reserved)
+                                    {
+                                        string reserveText = "Cancel reservation";
+                                        if (historyPost.ReceiverUserId == historyLastMessage.Chat.CreatorId)
+                                        {
+                                            <button class="btn btn-trade" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Traded))">
+                                                Complete trade with @(historyPost.ReceiverUserId)
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            
+                                            string? receiver = receiver = historyPost.ReceiverUserId;
+                                            if (receiver == null)
+                                                reserveText += " you've made for no one";
+                                            else
+                                                reserveText += " for user " + receiver;
+                                        }
+                                        <button class="btn btn-cancel" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Open))">
+                                            @reserveText
+                                        </button>
+                                    }
+                                }
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="msg_history" id="scrolldown">
+                        @foreach (var m in history ?? Enumerable.Empty<Karma.Models.Messaging.Message>())
+                        {
+
+                            bool isReceiver = m.Username != user;
+
+                            <div class="@(isReceiver ? "incoming_msg" : "outgoing_msg")">
+                                @if (isReceiver)
+                                {
+                                    <div class="incoming_msg_img"> <img src="~/data/UserImages/Default/default.png" alt=""> </div>
+                                }
+                                <div class="@(isReceiver ? "received_msg" : "sent_msg")">
+                                    @if (isReceiver)
+                                    {
+                                        <div class="received_withd_msg">
+                                            <p>@m.Text</p>
+                                            <span class="time_date">@m.Date.ToLocalTime()</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p>@m.Text</p>
+                                        <span class="time_date">@m.Date.ToLocalTime()</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div id='mod1'>Chat is loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var objDiv = document.getElementById("scrolldown");
+    objDiv.scrollTop = objDiv.scrollHeight;
+
+</script>
+
+<script>
+    function fireSwal(func) {
+        Swal.fire({
+            title: 'Are you sure?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#05718f',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                func();
+            }
+        })
+    };
+
+    function ChangeState(state) {
+        var reserved = @((int)Karma.Models.Post.PostState.Reserved);
+        var traded = @((int)Karma.Models.Post.PostState.Traded);
+        var open = @((int)Karma.Models.Post.PostState.Open);
+
+        if (state == reserved)
+            fireSwal(function () { postState(reserved, 'Reserved!', 'Your item was successfully reserved!')});
+        else if (state ==  traded)
+            fireSwal(function () { postState(traded, 'Traded!', 'Your item was sucessfully donated!') });
+        else if (state == open)
+            fireSwal(function () { postState(open, 'Canceled!', 'You\'ve successfully canceled the reservation!') });
+    };
+
+    function postState(st, m1, m2) {
+        var jsonPost =  @Html.Raw(Json.Serialize(historyPost));
+        var token = $('@Html.AntiForgeryToken()').val();
+        var parameters = {
+            'Post': jsonPost,
+            'State': st,
+            'Receiver': "@historyLastMessage.Chat.CreatorId"
+        }
+
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "@Url.Action("ChangePostState", "Messages")",
+            data: JSON.stringify(parameters),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function () {
+                Swal.fire({
+                    title: m1,
+                    text: m2,
+                    icon: 'success',
+                    confirmButtonColor: '#05718f'
+                }).then(result => {
+                    $("#pinned-post").load(location.href + " #pinned-post>*", "");
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'Something went wrong, please report it to administrators.',
+                    icon: 'error',
+                    confirmButtonColor: '#05718f'
+                });
+            }
+        });
+    };
+</script>
+
+@if (recentMessage != null)
+{
+    <script>
+    $("#mod1").load("/Messages/Create?chatId=@currentChatId");
+    </script>
+}
+
+
+
+<script>
+    setInterval(function () {
+        var isScrolled = false;
+        if (objDiv.scrollHeight <= (objDiv.scrollTop + objDiv.clientHeight)) {
+            isScrolled = true;
+        }
+        $("#scrolldown").load(location.href + " #scrolldown>*", function () {
+            if (isScrolled) {
+                objDiv.scrollTop += 800;
+            }
+        });
+
+    }, 150);
+    setInterval(function () {
+        $("#inbox_list").load(location.href + " #inbox_list>*", "");
+    }, 1000);
+</script>

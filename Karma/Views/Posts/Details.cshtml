@@ -7,6 +7,11 @@
 @{
     ViewData["Title"] = Html.DisplayFor(model => model.Title);
 }
+<head>
+    <script src="~/lib/sweetalert/sweetalert2.all.js"></script>
+    <link rel="stylesheet" href="~/lib/sweetalert/sweetalert2.all.css">
+</head>
+
 <h4>@Post.CompareQuerie(Model) @Post.GetPostTypeName(Model.IsDonation)s</h4>
 <h1>
     <bold>@Html.DisplayFor(model => model.Title)</bold>
@@ -25,6 +30,21 @@
     }
 </div>
 @{
+    if (User.Identity.IsAuthenticated && User.Identity.Name != Model.UserId)
+    {
+        <!-- Old method for sending messages
+        <button type="button" class="btn btn-success" onclick="@("window.location.href='" + @Url.Action("Create", "Chats", Model) + "'");">
+            Send a message
+        </button>
+        -->
+        
+        <button type="button" class="btn btn-success" onclick="MessageText()">
+            Send a message
+        </button>
+    }
+}
+
+@{
     if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
     {
         if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
@@ -34,7 +54,6 @@
         }
         else if (Model.State == (int)Post.PostState.Reserved)
         {
-            <button class="btn btn-info" data-toggle="modal" data-target="#dialog">Mark as Completed.</button>
             <button class="btn btn-warning" data-toggle="modal" data-target="#dialog">Cancel reservation.</button>
 
         }
@@ -56,6 +75,68 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script>
+    async function MessageText() {
+        const { value: text } = await Swal.fire({
+            input: 'textarea',
+            inputLabel: 'Message',
+            inputPlaceholder: 'Type your message here...',
+            inputAttributes: {
+                'aria-label': 'Type your message here'
+            },
+            confirmButtonColor: '#05718f',
+            confirmButtonText: 'Send',
+            showCancelButton: true
+        });
+        if (text) {
+            SendMessage(text);
+        }
+    };
+
+    function SendMessage(text) {
+        var token = $('@Html.AntiForgeryToken()').val();
+        var parameters = {
+            'PostId': @Model.Id,
+            'Text': text,
+        }
+
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "@Url.Action("Create", "Chats")",
+            data: JSON.stringify(parameters),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (request, status, response) {
+                Swal.fire({
+                    title: "Success!",
+                    text: "Your message has been sent!",
+                    icon: 'success',
+                    confirmButtonColor: '#05718f',
+                    confirmButtonText: 'Go to your messages',
+                    showCancelButton: true,
+                    cancelButtonText: 'Back'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Messages';
+                    }
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'Something went wrong, please report it to administrators.',
+                    icon: 'error',
+                    confirmButtonColor: '#05718f'
+                });
+            }
+        });
+    };
+</script>
+
 @if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
 {
     <script>

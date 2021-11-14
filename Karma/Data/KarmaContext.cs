@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Karma.Models;
 using Microsoft.AspNetCore.Identity;
+using Karma.Models.Messaging;
 
 namespace Karma.Data
 {
@@ -37,6 +38,10 @@ namespace Karma.Data
 
             builder.Entity<CharityItemType>().HasKey(x => new { x.CharityId, x.ItemTypeId });
         }
+
+        public DbSet<Karma.Models.Messaging.Chat> Chat { get; set; }
+
+        public DbSet<Karma.Models.Messaging.Message> Message { get; set; }
 
         public DbSet<Karma.Models.Report> Report { get; set; }
     }

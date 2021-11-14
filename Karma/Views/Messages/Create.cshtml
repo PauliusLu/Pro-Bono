@@ -1,0 +1,56 @@
+﻿@model Karma.Models.Messaging.CreateMessageModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = null;
+
+}
+
+<form asp-action="Create" id="form">
+    <div class="type_msg">
+        <div class="input_msg_write">
+            <textarea asp-for="Text" class="input_msg_write" placeholder="Type a message" id="txinput" rows="3"></textarea>
+            @Html.HiddenFor(m => m.ChatId)
+            <button class="msg_send_btn" type="submit"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $("#txinput").keypress(function (e) {
+        if (e.which === 13 && !e.shiftKey) {
+            e.preventDefault();
+
+            $(this).closest("form").submit();
+        }
+    });
+</script>
+
+<script>
+    $(function () {
+        $('#form').on('submit', function (e) {
+
+            $.ajax({
+                type: 'post',
+                url: 'Messages/Create',
+                data: $('#form').serialize(),
+                success: function () {
+                    console.log("Message has been sent!");
+                    document.getElementById("form").reset();
+                    //location.reload();
+                }
+            });
+            e.preventDefault();
+
+        });
+    });
+</script>
+
+
+
+
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
