@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.Collections;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading;
 
 namespace Karma.Controllers
 {
@@ -177,8 +178,12 @@ namespace Karma.Controllers
                 string path = Path.Combine(_iWebHostEnv.WebRootPath, Post.ImagesDirName, fileName);
 
                 // Copying file to wwwroot/PostImages
-                FileStream stream = new FileStream(path, FileMode.Create);
-                _ = file.CopyToAsync(stream);
+                Thread thread = new Thread(() =>
+                {
+                    FileStream stream = new FileStream(path, FileMode.Create);
+                    file.CopyTo(stream);
+                });
+                thread.Start();
 
                 post.ImagePath = fileName;
             }
