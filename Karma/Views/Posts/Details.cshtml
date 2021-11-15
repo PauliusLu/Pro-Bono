@@ -1,4 +1,7 @@
 @model Karma.Models.Post
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<User> SignInManager
 
 @{
     ViewData["Title"] = Html.DisplayFor(model => model.Title);
@@ -39,6 +42,11 @@
                             Send a message
                         </button>
                     </div>
+                    <div class="row">
+                        <a asp-controller="Admin" asp-action="CreateReport" asp-route-postId="@Model.Id">
+                          <button class="btn btn-danger mt-2">Report</button>
+                        </a>
+                    </div>
                 }
 
                 if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
@@ -46,7 +54,6 @@
                     if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
                     {
                         <button class="btn btn-success btn-block" data-toggle="modal" data-target="#dialog">Mark as reserved</button>
-
                     }
                     else if (Model.State == (int)Post.PostState.Reserved)
                     {

@@ -1,0 +1,40 @@
+﻿@model Karma.Models.Report
+
+@{
+    ViewData["Title"] = "Report";
+}
+
+<h1>Report post</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateReport">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" style="display:none">
+                <label asp-for="PostId" class="control-label"></label>
+                <input asp-for="PostId" class="form-control" />
+                <span asp-validation-for="PostId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReportMessage" class="control-label">What is wrong with the post?</label>
+                <input asp-for="ReportMessage" class="form-control" />
+                <span asp-validation-for="ReportMessage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 border border-info">
+        <partial name="~/Views/Posts/Details.cshtml" for="@ViewData["post"]" />
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

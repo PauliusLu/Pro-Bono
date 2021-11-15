@@ -498,5 +498,6 @@ namespace Karma.Controllers
             var post = await _context.Post.FindAsync(postId);
             return await cb(post);
         }
+
     }
 }

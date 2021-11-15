@@ -1,0 +1,70 @@
+﻿@model Karma.Models.Report
+
+@{
+    ViewData["Title"] = "Report Review";
+}
+
+@*;*@
+
+<div class="row">
+    <div class="col-md-6">
+        <h1>Report Review</h1>
+    </div>
+    <div class="col-md-6">
+        <h1>Quick Post View</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div>
+            <h4>Report</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3">
+                    Description:
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.ReportMessage)
+                </dd>
+                <dt class="col-sm-3">
+                    Reported by:
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.ReporterId)
+                </dd>
+                <dt class="col-sm-3">
+                    Posted by:
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.PostOwnerId)
+                </dd>
+                <dt class="col-sm-3">
+                    Report state:
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.ReportState)
+                </dd>
+            </dl>
+        </div>
+        <form asp-controller="Admin"
+              asp-action="ReportReview" method="post" asp-route-reportId="@Model.Id" style="display:inline-block">
+            <input class="btn btn-success" type="submit" name="confirm" value="Confirm report" />
+            <input class="btn btn-danger" type="submit" name="reject" value="Reject report" />
+        </form>
+        @*Cancel*@
+        <div class="form-group" style="display:inline-block">
+            <a asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.ReportReview"
+               class="btn btn-primary">
+                Cancel
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6 border border-info">
+        <partial name="~/Views/Posts/Details.cshtml" for="@ViewData["post"]" />
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.ReportReview">Back to List</a>
+</div>

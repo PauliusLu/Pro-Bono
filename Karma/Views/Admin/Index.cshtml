@@ -13,6 +13,10 @@
         <a class="nav-link @(Model.ActiveTab == Enums.AdminTab.CharityReview ? "active" : string.Empty)"
            asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.CharityReview">Charity review</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model.ActiveTab == Enums.AdminTab.ReportReview ? "active" : string.Empty)"
+           asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.ReportReview">Report review</a>
+    </li>
 </ul>
 
 @switch (Model.ActiveTab)
@@ -22,6 +26,9 @@
         break;
     case Enums.AdminTab.CharityReview:
         @await Component.InvokeAsync(@Karma.Enums.AdminTab.CharityReview.ToString());
+        break;
+    case Enums.AdminTab.ReportReview:
+        @await Component.InvokeAsync(@Karma.Enums.AdminTab.ReportReview.ToString());
         break;
     default:
         break;
