@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.Collections;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace Karma.Controllers
 {
@@ -21,11 +22,14 @@ namespace Karma.Controllers
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
+        private readonly ILogger<PostsController> _logger;
+
         // Passes an object of type IWebHostEnvironment that carries information about our host environment.
-        public PostsController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
+        public PostsController(KarmaContext context, IWebHostEnvironment webHostEnvironment, ILogger<PostsController> logger)
         {
             _context = context;
             _iWebHostEnv = webHostEnvironment;
+            _logger = logger;
         }
 
         // GET: Posts
@@ -92,6 +96,7 @@ namespace Karma.Controllers
         {
             if (id == null)
             {
+                _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
                 return NotFound();
             }
 
@@ -99,6 +104,7 @@ namespace Karma.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
+                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", id);
                 return NotFound();
             }
 
@@ -110,6 +116,7 @@ namespace Karma.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
+                _logger.LogInformation(LogEvents.UserNotAuthenticated, "User is not authenticated");
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             return View();
@@ -140,6 +147,7 @@ namespace Karma.Controllers
                 _context.Add(post);
                 await _context.SaveChangesAsync();
 
+                _logger.LogInformation(LogEvents.CreatePost, "Post created by User {UserId}", post.UserId);
                 return RedirectToAction(nameof(Index));
             }
             return View(post);
@@ -181,6 +189,7 @@ namespace Karma.Controllers
                 _ = file.CopyToAsync(stream);
 
                 post.ImagePath = fileName;
+                _logger.LogInformation(LogEvents.AddImage, "Image {ImagePath} copied to {PathToImagesDir}", post.ImagePath, path);
             }
             return true;
         }
@@ -212,6 +221,7 @@ namespace Karma.Controllers
                 _context.Add(post);
                 await _context.SaveChangesAsync();
 
+                _logger.LogInformation(LogEvents.CreatePost, "Post created by User {UserId}", post.UserId);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -233,6 +243,7 @@ namespace Karma.Controllers
         {
             if (id == null)
             {
+                _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
                 return NotFound();
             }
             var post = await _context.Post.FindAsync(id);
@@ -242,8 +253,10 @@ namespace Karma.Controllers
 
             if (post == null || !post.IsVisible)
             {
+                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 return NotFound();
             }
+
             return View(post);
         }
 
@@ -256,6 +269,7 @@ namespace Karma.Controllers
         {
             if (id != post.Id || !post.IsVisible)
             {
+                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 return NotFound();
             }
 
@@ -293,6 +307,7 @@ namespace Karma.Controllers
                         throw;
                     }
                 }
+                _logger.LogInformation(LogEvents.EditPost, "Post {PostId} edited", post.Id);
                 return RedirectToAction(nameof(Index));
             }
             return View(post);
@@ -303,6 +318,7 @@ namespace Karma.Controllers
         {
             if (id == null)
             {
+                _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
                 return NotFound();
             }
 
@@ -313,6 +329,7 @@ namespace Karma.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null || !post.IsVisible)
             {
+                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 return NotFound();
             }
 
@@ -335,6 +352,7 @@ namespace Karma.Controllers
             _context.Post.Update(post);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation(LogEvents.DeletePost, "Post {PostId} deleted", post.Id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -359,6 +377,8 @@ namespace Karma.Controllers
 
                     _context.Update(post);
                     await _context.SaveChangesAsync();
+
+                    _logger.LogInformation(LogEvents.ChangeState, "Post {PostId} state changed to {PostState}", post.Id, post.State);
                 }
 
                 return RedirectToAction("Details", new { id = postId });
@@ -386,6 +406,8 @@ namespace Karma.Controllers
 
                     _context.Update(post);
                     await _context.SaveChangesAsync();
+
+                    _logger.LogInformation(LogEvents.ChangeState, "Post {PostId} state changed to {PostState}", post.Id, post.State);
                 }
 
                 return RedirectToAction("Index");
