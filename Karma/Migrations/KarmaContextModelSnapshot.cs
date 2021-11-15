@@ -14,7 +14,7 @@ namespace Karma.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.12");
+                .HasAnnotation("ProductVersion", "5.0.11");
 
             modelBuilder.Entity("Karma.Models.Charity", b =>
                 {
@@ -96,66 +96,6 @@ namespace Karma.Migrations
                     b.ToTable("CharityItemType");
                 });
 
-            modelBuilder.Entity("Karma.Models.Messaging.Chat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("AttachedPostId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CreatorId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsSeenByCreator")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsSeenByPostUser")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PostUserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("State")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttachedPostId");
-
-                    b.ToTable("Chat");
-                });
-
-            modelBuilder.Entity("Karma.Models.Messaging.Message", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ChatId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.ToTable("Message");
-                });
-
             modelBuilder.Entity("Karma.Models.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -181,9 +121,6 @@ namespace Karma.Migrations
 
                     b.Property<int>("ItemType")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("ReceiverUserId")
-                        .HasColumnType("TEXT");
 
                     b.Property<int>("State")
                         .HasColumnType("INTEGER");
@@ -456,24 +393,6 @@ namespace Karma.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("UserRole");
-                });
-
-            modelBuilder.Entity("Karma.Models.Messaging.Chat", b =>
-                {
-                    b.HasOne("Karma.Models.Post", "AttachedPost")
-                        .WithMany()
-                        .HasForeignKey("AttachedPostId");
-
-                    b.Navigation("AttachedPost");
-                });
-
-            modelBuilder.Entity("Karma.Models.Messaging.Message", b =>
-                {
-                    b.HasOne("Karma.Models.Messaging.Chat", "Chat")
-                        .WithMany()
-                        .HasForeignKey("ChatId");
-
-                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
