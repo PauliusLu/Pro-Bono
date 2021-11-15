@@ -42,5 +42,6 @@ namespace Karma.Data
         public DbSet<Karma.Models.Messaging.Chat> Chat { get; set; }
 
         public DbSet<Karma.Models.Messaging.Message> Message { get; set; }
+
     }
 }

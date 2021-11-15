@@ -32,7 +32,8 @@ namespace Karma
         public enum AdminTab
         {
             Users,
-            CharityReview
+            CharityReview,
+            ReportReview
         }
     }
 

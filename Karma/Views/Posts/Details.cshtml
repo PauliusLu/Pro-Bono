@@ -1,67 +1,105 @@
-﻿@model Karma.Models.Post
+@model Karma.Models.Post
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<User> SignInManager
 
 @{
     ViewData["Title"] = Html.DisplayFor(model => model.Title);
 }
+
 <head>
     <script src="~/lib/sweetalert/sweetalert2.all.js"></script>
     <link rel="stylesheet" href="~/lib/sweetalert/sweetalert2.all.css">
 </head>
 
-<h4>@Post.CompareQuerie(Model) @Post.GetPostTypeName(Model.IsDonation)s</h4>
-<h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
+<div class="container">
+    <div class="row justify-content-between align-items-end">
+        <div class="col-lg-6 col-md-7 col-12">
+            <div class="row">
+                <h4>@Post.CompareQuerie(Model) @Post.GetPostTypeName(Model.IsDonation)s</h4>
+            </div>
+            <div class="row">
+                <h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
+            </div>
+            <div class="row">
+                <h5><span class="badge badge-pill badge-info">@ItemTypes.GetItemType(Model.ItemType)</span></h5>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-12">
+            @{
+                if (User.Identity.IsAuthenticated && User.Identity.Name != Model.UserId)
+                {
+                    <!-- Old method for sending messages
+                    <div class="row">
+                        <button type="button" class="btn btn-success btn-block" onclick="@("window.location.href='" + @Url.Action("Create", "Chats", Model) + "'");">
+                            Send a message
+                        </button>
+                    </div>
+                    -->
+          
+                    <div class="row">
+                        <button type="button" class="btn btn-success btn-block" onclick="MessageText()">
+                            Send a message
+                        </button>
+                    </div>
+                    <div class="row">
+                        <a asp-controller="Admin" asp-action="CreateReport" asp-route-postId="@Model.Id">
+                          <button class="btn btn-danger mt-2">Report</button>
+                        </a>
+                    </div>
+                }
 
-<div>
+                if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
+                {
+                    if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
+                    {
+                        <button class="btn btn-success btn-block" data-toggle="modal" data-target="#dialog">Mark as reserved</button>
+                    }
+                    else if (Model.State == (int)Post.PostState.Reserved)
+                    {
+                        <div class="row">
+                            <button class="btn btn-info btn-block" data-toggle="modal" data-target="#dialog">Mark as Completed</button>
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-warning btn-block mt-2" data-toggle="modal" data-target="#dialog">Cancel reservation</button>
+                        </div>
+                    }
+
+                    <div class="row justify-content-around mt-2">
+                        <div style="display:inline-block; text-align:center">
+                            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
     <hr />
-    Category: @ItemTypes.GetItemType(Model.ItemType)
-    <br />
-    @Html.DisplayFor(model => model.Description)
-    <br />
-    @if (Model.ImagePath != null && Model.ImagePath != "")
-    {
-        <img src="/@Post.ImagesDirName/@Model.ImagePath" asp-append-version="true"
-             alt="Item image" class="img-fluid" style="max-width:400px;" />
-    }
-</div>
-@{
-    if (User.Identity.IsAuthenticated && User.Identity.Name != Model.UserId)
-    {
-        <!-- Old method for sending messages
-        <button type="button" class="btn btn-success" onclick="@("window.location.href='" + @Url.Action("Create", "Chats", Model) + "'");">
-            Send a message
-        </button>
-        -->
-        
-        <button type="button" class="btn btn-success" onclick="MessageText()">
-            Send a message
-        </button>
-    }
-}
-
-@{
-    if (User.Identity.Name != null && User.Identity.Name == Model.UserId)
-    {
-        if (Model.State == (int)Post.PostState.NotSet || Model.State == (int)Post.PostState.Open)
-        {
-            <button class="btn btn-success" data-toggle="modal" data-target="#dialog">Mark as reserved.</button>
-
-        }
-        else if (Model.State == (int)Post.PostState.Reserved)
-        {
-            <button class="btn btn-warning" data-toggle="modal" data-target="#dialog">Cancel reservation.</button>
-
-        }
-        <br />
-    }
-}
-
-
-<div>
-    Posted at @Html.DisplayFor(model => model.Date)
-</div>
-<hr />
-<div>
-    <a asp-action="Index">Back to List</a>
+    <div class="row justify-content-around align-items-center">
+        <div class="col-lg-6 col-12">
+            <div class="row mt-3 mb-5">
+                @Html.DisplayFor(model => model.Description)
+            </div>
+        </div>
+        <div class="col-lg-4 col-12">
+            @if (!String.IsNullOrEmpty(Model.ImagePath))
+            {
+                <img src="/@Model.ImagePath" alt="Item image" class="img-fluid " style="max-width:100%;">
+            }
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-lg-6 col-12">
+            <a asp-action="Index">Back to List</a>
+        </div>
+        <div class="col-lg-6 col-12">
+            <div class="float-right">
+                Posted at @Html.DisplayFor(model => model.Date)
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -130,13 +168,13 @@
     <script>
         $(() => {
             $('#dialog').on('show.bs.modal', function (event) {
-                if (event.relatedTarget.innerHTML == 'Mark as reserved.') {
+                if (event.relatedTarget.innerHTML == 'Mark as reserved') {
                     $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Are you sure you want to reserve this item?", action3 = "ReserveItem", buttonAffirmText = "Reserve" })');
                 }
-                else if (event.relatedTarget.innerHTML == 'Cancel reservation.') {
+                else if (event.relatedTarget.innerHTML == 'Cancel reservation') {
                     $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Are you sure you want to cancel reservation?", action3 = "ReserveItem", buttonAffirmText = "Cancel Reservation"})');
                 }
-                else if (event.relatedTarget.innerHTML == 'Mark as Completed.') {
+                else if (event.relatedTarget.innerHTML == 'Mark as Completed') {
                     $('#dialog .modal-body').load('@Url.Action("YesNoDialog", "Posts", new { postId = @Model.Id, questionText = "Did you " + (Model.IsDonation ? "donate" : "receive") + " all items?", action3 = "CompleteItem", buttonAffirmText = "Yes"})');
                 }
             });

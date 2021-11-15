@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Karma.Models.Report>
+
+@{
+    ViewData["Title"] = "Review reports";
+}
+
+@if (Model == null)
+{
+    <h3>You have currently reviewed reports.</h3>
+}
+else
+{
+    <div class="post-cards container-fluid content-row">
+        <div class="row">
+            @foreach (var report in Model)
+            {
+                <div class="col col-12 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            Reported by: <br />
+                            @report.ReporterId
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@{
+                                if (String.IsNullOrWhiteSpace(report.ReportMessage))
+                                {
+                                    @("No message provided.");
+                                } else {
+                                    @(Html.DisplayFor(m => report.ReportMessage));
+                                }
+                            }</h5>
+                            <p class="mb-1 d-inline @switch (report.ReportState)
+                            {
+                                case Report.ReportStates.Open:
+                                    @("bg-info");
+                                    break;
+                                case Report.ReportStates.Approved:
+                                    @("bg-success");
+                                    break;
+                                case Report.ReportStates.Declined:
+                                    @("bg-danger");
+                                    break;
+                                default:
+                                    @("bg-info");
+                                    break;
+                            }
+                            rounded-pill p-1 pl-2 pr-2 card-text">
+                                @Html.DisplayFor(model => report.ReportState)
+                            </p>
+                            <br />
+                            <br />
+                            <a asp-controller="Admin" asp-action="ReportReview" asp-route-reportId=@report.Id class="btn btn-primary">Review report</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

@@ -133,7 +133,7 @@ namespace Karma.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(userName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
+                    _logger.LogInformation(LogEvents.UserLoggedIn, "User {UserId} logged in.", _userManager.GetUserId(User));
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -142,7 +142,7 @@ namespace Karma.Areas.Identity.Pages.Account
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning("User account locked out.");
+                    _logger.LogWarning(LogEvents.UserLockedOut, "User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
                 else

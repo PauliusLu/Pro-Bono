@@ -16,6 +16,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using static Karma.Models.Report;
 
 namespace Karma.Controllers
 {
@@ -56,6 +57,9 @@ namespace Karma.Controllers
                     break;
                 case Karma.Enums.AdminTab.CharityReview:
                     tabViewModel.ActiveTab = Enums.AdminTab.CharityReview;
+                    break;
+                case Karma.Enums.AdminTab.ReportReview:
+                    tabViewModel.ActiveTab = Enums.AdminTab.ReportReview;
                     break;
                 default:
                     tabViewModel.ActiveTab = Enums.AdminTab.Users;
@@ -230,6 +234,105 @@ namespace Karma.Controllers
                 var emailModel = new EmailModel.EmailCharityState(user.UserName, charity.Name, e.ReviewState, e.TimeChanged);
                 await emailModel.SendEmail(_iWebHostEnv, user);
             }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateReport(int? postId)
+        {
+            if (postId == null)
+            {
+                return View();
+            }
+
+            var post = await _context.Post.FirstOrDefaultAsync(c => c.Id == postId);
+
+            if (post == null)
+            {
+                ViewBag.errorMessage = $"Post with Id = {postId} cannot be found";
+                return NotFound();
+            }
+            ViewData["post"] = post;
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateReport(int id, [Bind("PostId,ReportMessage")] Report report)
+        {
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var post = await _context.Post.FirstOrDefaultAsync(c => c.Id == report.PostId);
+
+            report.PostOwnerId = post.UserId;
+            report.ReporterId = User.Identity.Name;
+            report.ReportState = Report.ReportStates.Open;
+
+            _context.Add(report);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ThankYou));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ThankYou()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReportReview(int? reportId)
+        {
+            if (reportId == null)
+            {
+                return View();
+            }
+
+            var report = await _context.Report.FirstOrDefaultAsync(c => c.Id == reportId);
+            var post = await _context.Post.FirstOrDefaultAsync(c => c.Id == report.PostId);
+
+            if (report == null)
+            {
+                ViewBag.errorMessage = $"Report with Id = {report} cannot be found";
+                return NotFound();
+            }
+            ViewData["post"] = post;
+            return View(report);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReportReview(int reportId, string confirm, string reject)
+        {
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            bool confirmed = !string.IsNullOrEmpty(confirm);
+            
+            var oldReport = await _context.Report.FirstOrDefaultAsync(c => c.Id == reportId);
+
+            oldReport.ReportState = confirmed ? ReportStates.Approved : ReportStates.Declined;
+            if (confirmed)
+                hideReportedPost(oldReport.PostId);
+
+            _context.Update(oldReport);
+            await _context.SaveChangesAsync();
+
+            return SwitchToTabs(Enums.AdminTab.ReportReview);
+        }
+
+        private void hideReportedPost(int id)
+        {
+            var post = _context.Post.FirstOrDefault(c => c.Id == id);
+            post.State = (int)Post.PostState.Hidden;
+            post.IsVisible = false;
         }
     }
 }

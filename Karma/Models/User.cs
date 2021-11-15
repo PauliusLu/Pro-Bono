@@ -21,6 +21,7 @@ namespace Karma.Models
         public string IpAddress { get; set; }
         public string Description { get; set; }
         public string ImagePath { get; set; }
+        [Display(Name = "Is active")]
         public bool IsActive { get; set; }
 
         public string GetFullImagePath()
