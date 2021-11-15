@@ -21,35 +21,6 @@ namespace Karma.Models
         [Required]
         public string Address { get; set; }
 
-
-        public string CreateFilePath(IWebHostEnvironment webHostEnvironment, string fileName, string dir)
-        {
-            StringBuilder content = new();
-
-            if (dir == Charity.ItemTypesDirName)
-            {
-                foreach (int e in ItemTypes)
-                {
-                    content.AppendLine(Karma.Models.ItemTypes.GetItemType(e).Name);
-                }
-            }
-            else if (dir == Charity.AdressDirName)
-            {
-                content.AppendLine(Address);
-            }
-            else
-            {
-                return "";
-            }
-
-
-            string relativePath = Path.Combine(dir, fileName + ".txt");
-            string path = Path.Combine(webHostEnvironment.ContentRootPath, relativePath);
-
-            File.WriteAllText(path, content.ToString());
-
-            return relativePath;
-        }
     }
 
 }
