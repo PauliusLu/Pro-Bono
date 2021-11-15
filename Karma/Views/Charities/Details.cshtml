@@ -5,16 +5,22 @@
     var charityItemTypes = Model.GetItemTypes();
 }
 
-<h1>@Model.Name</h1>
+
+<h1>@Model.Name
+    <span class="badge @(Model.ReviewState == Enums.ReviewState.Approved? "badge-success" : "badge-secondary") mb-3">
+    @Html.DisplayFor(model => model.ReviewState)</span>
+</h1>
 
 <div>
-    <div>Review state: @Html.DisplayFor(model => model.ReviewState)</div>
-    @if (charityItemTypes.Any())
-    {
-        <div>
-            Charity item types: @string.Join(", ", charityItemTypes)
-        </div>
-    }
+    <h5>
+        @if (charityItemTypes.Any())
+        {
+            foreach(var itemType in Model.CharityItemTypes)
+            {
+                <span class="badge badge-pill badge-info">@itemType.ItemType.Name</span>
+            }
+        }
+    </h5>
     <hr />
     @if (Model.ImagePath != null && Model.ImagePath != "")
     {

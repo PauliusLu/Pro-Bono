@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -107,6 +107,9 @@ namespace Karma.Controllers
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", id);
                 return NotFound();
             }
+
+            // Sets default image for post by itemtype if there's no image given
+            post.ImagePath = post.GetFullImagePath();
 
             return View(post);
         }
@@ -256,6 +259,7 @@ namespace Karma.Controllers
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 return NotFound();
             }
+            post.ImagePath = post.GetFullImagePath();
 
             return View(post);
         }
