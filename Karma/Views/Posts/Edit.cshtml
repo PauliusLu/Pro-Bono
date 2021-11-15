@@ -8,8 +8,8 @@
 
 <h4>Post</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row justify-content-between">
+    <div class="col-12 col-md-5">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -46,8 +46,25 @@
         </form>
     </div>
 
-    <div class="col-md-6">
-        <partial name="~/Views/Posts/Details.cshtml" for="@Model" />
+    <div class="col-12 col-md-6">
+        <div class="row">
+            <h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
+        </div>
+        <div class="row">
+            <h5><span class="badge badge-pill badge-info">@ItemTypes.GetItemType(Model.ItemType)</span></h5>
+        </div>
+        <div class="row mt-3 mb-5">
+            @Html.DisplayFor(model => model.Description)
+        </div>
+        @if (!String.IsNullOrEmpty(Model.ImagePath))
+        {
+            <hr />
+            <img src="/@Model.ImagePath" alt="Item image" class="img-fluid " style="max-height: 300px; max-width: 300px;">
+            <hr />
+        }
+        <div class="row mb-5">
+            Posted at @Html.DisplayFor(model => model.Date)
+        </div>
     </div>
 </div>
 
