@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -47,7 +47,7 @@ namespace Karma.Models
                 if (value != _reviewState)
                 {
                     _reviewState = value;
-                    
+
                     var args = new CharityStateChangedEventArgs();
                     args.CharityId = this.Id;
                     args.ReviewState = this.ReviewState;
@@ -64,7 +64,7 @@ namespace Karma.Models
             CharityItemTypes = new List<CharityItemType>();
         }
 
-        public static List<Charity> FilteredCharities(List<Charity> charities, ItemType itemType) 
+        public static List<Charity> FilteredCharities(List<Charity> charities, ItemType itemType)
         {
             List<Charity> filtered = new List<Charity>();
             if (charities == null)

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,9 +30,16 @@ namespace Karma.Controllers
         { 
             var userId = _userManager.GetUserId(User);
             var charity = _userManager.GetCharityByUserRole("Charity manager", userId);
-            ViewData["Charity"] = GetCharity(charity);
 
-            return View();
+            var charityAddress = new CharityAddress();
+            charityAddress.CharityId = charity.Id;
+            ViewData["NewCharityAddress"] = charityAddress;
+
+            var charityItemType = new CharityItemType();
+            charityItemType.CharityId = charity.Id;
+            ViewData["NewCharityItemType"] = charityItemType;
+
+            return View(GetCharity(charity));
         }
 
         public Charity GetCharity(Charity charity)

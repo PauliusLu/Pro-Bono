@@ -20,19 +20,19 @@ namespace Karma.Models
             {
                 _watcher = new FileSystemWatcher(Path.Combine(_iWebHostEnv.ContentRootPath, ItemTypes.ItemTypesPath));
 
-                _watcher.NotifyFilter = NotifyFilters.Attributes
-                        | NotifyFilters.CreationTime
-                        | NotifyFilters.DirectoryName
-                        | NotifyFilters.FileName
-                        | NotifyFilters.LastAccess
-                        | NotifyFilters.LastWrite
-                        | NotifyFilters.Security
-                        | NotifyFilters.Size;
+            _watcher.NotifyFilter = NotifyFilters.Attributes
+                    | NotifyFilters.CreationTime
+                    | NotifyFilters.DirectoryName
+                    | NotifyFilters.FileName
+                    | NotifyFilters.LastAccess
+                    | NotifyFilters.LastWrite
+                    | NotifyFilters.Security
+                    | NotifyFilters.Size;
 
                 _watcher.Filter = Path.GetFileName(ItemTypes.ItemTypesFileName);
                 _watcher.Changed += ItemTypes.OnChangedEventHandler;
-                _watcher.EnableRaisingEvents = true;
-            }
+            _watcher.EnableRaisingEvents = true;
+        }
 
         }
     }
