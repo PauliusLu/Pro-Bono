@@ -98,7 +98,8 @@ namespace Karma.Controllers
             if (id == null)
             {
                 _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
-                return NotFound();
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Error");
             }
 
             var post = await _context.Post
@@ -106,7 +107,8 @@ namespace Karma.Controllers
             if (post == null)
             {
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", id);
-                return NotFound();
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Error");
             }
 
             // Sets default image for post by itemtype if there's no image given
@@ -252,7 +254,8 @@ namespace Karma.Controllers
             if (id == null)
             {
                 _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
-                return NotFound();
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Error");
             }
             var post = await _context.Post.FindAsync(id);
 
@@ -261,8 +264,15 @@ namespace Karma.Controllers
 
             if (post == null || !post.IsVisible)
             {
+                try { 
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
-                return NotFound();
+                }
+                catch(NullReferenceException)
+                {
+                    Response.StatusCode = 404;
+                    return View("ErrorPages/404Error");
+                }
+               
             }
             post.ImagePath = post.GetFullImagePath();
 
@@ -330,16 +340,27 @@ namespace Karma.Controllers
                 _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
                 return NotFound();
             }
-
-            if (IsUserHavePermission(out IActionResult act, postId: id) != null)
+            try
+            {
+                if (IsUserHavePermission(out IActionResult act, postId: id) != null)
                 return act;
-
+            }
+            catch (NullReferenceException)
+            {
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Error");
+            }
             var post = await _context.Post
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null || !post.IsVisible)
             {
+                try { 
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
-                return NotFound();
+                }
+                catch (NullReferenceException) {
+                    Response.StatusCode = 404;
+                    return View("ErrorPages/404Error");
+                }
             }
 
             return View(post);
@@ -456,7 +477,7 @@ namespace Karma.Controllers
                 if (User.Identity.Name != userId)
                 {
                     //return NoAccess();
-                    act = NotFound();
+                    act = View("ErrorPages/404Error");
                     return act;
                 }
             }
@@ -467,7 +488,7 @@ namespace Karma.Controllers
                 if (User.Identity.Name != real_post.UserId)
                 {
                     //return NoAccess();
-                    act = NotFound();
+                    act = View("ErrorPages/404Error");
                     return act;
                 }
             }
@@ -477,7 +498,7 @@ namespace Karma.Controllers
                 if (User.Identity.Name != post.UserId)
                 {
                     //return NoAccess();
-                    act = NotFound();
+                    act = View("ErrorPages/404Error");
                     return act;
                 }
             }
@@ -487,7 +508,7 @@ namespace Karma.Controllers
                 if (User.Identity.Name != postUserId)
                 {
                     //return NoAccess();
-                    act = NotFound();
+                    act = View("ErrorPages/404Error");
                     return act;
                 }
             }

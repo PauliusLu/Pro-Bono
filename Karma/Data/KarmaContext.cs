@@ -43,5 +43,6 @@ namespace Karma.Data
 
         public DbSet<Karma.Models.Messaging.Message> Message { get; set; }
 
+        public DbSet<Karma.Models.Report> Report { get; set; }
     }
 }
