@@ -14,7 +14,7 @@ namespace Karma.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.12");
+                .HasAnnotation("ProductVersion", "5.0.11");
 
             modelBuilder.Entity("Karma.Models.Charity", b =>
                 {
@@ -106,16 +106,6 @@ namespace Karma.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatorId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsSeenByCreator")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsSeenByPostUser")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PostUserId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -12,7 +12,7 @@ namespace Karma.Models
     public class User : IdentityUser
     {
         public static readonly string ImagesDirName = Path.Combine("data", "UserImages");
-        public static readonly string DefaultImagesDirName = Path.Combine("data", "DefaultUserImages");
+        public static readonly string DefaultImagesDirName = Path.Combine("data", "UserImages/Default");
 
         [Required]
         public string Name { get; set; }
@@ -23,5 +23,19 @@ namespace Karma.Models
         public string ImagePath { get; set; }
         [Display(Name = "Is active")]
         public bool IsActive { get; set; }
+
+        public string GetFullImagePath()
+        {
+            if (ImagePath == null)
+            {
+                return Path.Combine(User.DefaultImagesDirName, "default.png");
+            }
+            else
+            {
+                return Path.Combine(User.ImagesDirName, ImagePath);
+            }
+        }
+
     }
+
 }
