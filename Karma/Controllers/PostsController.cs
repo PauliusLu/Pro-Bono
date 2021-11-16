@@ -264,10 +264,11 @@ namespace Karma.Controllers
 
             if (post == null || !post.IsVisible)
             {
-                try { 
-                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
+                try 
+                { 
+                    _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 }
-                catch(NullReferenceException)
+                catch (NullReferenceException)
                 {
                     _logger.LogError(LogEvents.GetPost, "Post {PostId} DOES NOT EXIST", id);
                     Response.StatusCode = 404;
@@ -329,6 +330,7 @@ namespace Karma.Controllers
                         throw;
                     }
                 }
+
                 _logger.LogInformation(LogEvents.EditPost, "Post {PostId} edited", post.Id);
                 return RedirectToAction(nameof(Index));
             }
@@ -343,24 +345,28 @@ namespace Karma.Controllers
                 _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
                 return NotFound();
             }
+
             try
             {
                 if (IsUserHavePermission(out IActionResult act, postId: id) != null)
-                return act;
+                    return act;
             }
             catch (NullReferenceException)
             {
                 Response.StatusCode = 404;
                 return View("ErrorPages/404Post");
             }
+
             var post = await _context.Post
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null || !post.IsVisible)
             {
-                try { 
-                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
+                try 
+                { 
+                    _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 }
-                catch (NullReferenceException) {
+                catch (NullReferenceException) 
+                {
                     _logger.LogError(LogEvents.GetPost, "Post {PostId} DOES NOT EXIST", id);
                     Response.StatusCode = 404;
                     return View("ErrorPages/404Post");
