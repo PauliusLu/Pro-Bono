@@ -13,10 +13,6 @@
 
 <html>
 <body>
-    <customErrors mode="RemoteOnly" defaultRedirect="~/error">
-        <error statusCode="404" redirect="~/error/Error404" />
-        <error statusCode="500" redirect="~/error" />
-    </customErrors>
     <form asp-controller="Posts" asp-action="Index" method="get">
         <p>
             <input type="hidden" asp-for="@Model.isDonation">

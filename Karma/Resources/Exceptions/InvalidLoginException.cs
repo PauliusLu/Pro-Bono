@@ -5,24 +5,22 @@ using System.Threading.Tasks;
 
 namespace Karma.Resources.Exceptions
 {
-    public class Class : Exception
+    public class InvalidLoginException : Exception
     {
-
-        public Class()
+        public InvalidLoginException()
+            : base("Invalid login attempt.")
         {
+
         }
 
-        public Class(string message)
+        public InvalidLoginException(string message)
             : base(message)
         {
         }
 
-        public Class(string message, Exception inner)
+        public InvalidLoginException(string message, Exception inner)
             : base(message, inner)
         {
         }
-
-
-
     }
 }

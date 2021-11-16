@@ -269,6 +269,7 @@ namespace Karma.Controllers
                 }
                 catch(NullReferenceException)
                 {
+                    _logger.LogError(LogEvents.GetPost, "Post {PostId} DOES NOT EXIST", id);
                     Response.StatusCode = 404;
                     return View("ErrorPages/404Error");
                 }
@@ -360,6 +361,7 @@ namespace Karma.Controllers
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
                 }
                 catch (NullReferenceException) {
+                    _logger.LogError(LogEvents.GetPost, "Post {PostId} DOES NOT EXIST", id);
                     Response.StatusCode = 404;
                     return View("ErrorPages/404Error");
                 }
