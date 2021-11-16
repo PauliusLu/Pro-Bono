@@ -252,6 +252,9 @@ namespace Karma.Controllers
                 ViewBag.errorMessage = $"Post with Id = {postId} cannot be found";
                 return NotFound();
             }
+
+            post.ImagePath = post.GetFullImagePath();
+
             ViewData["post"] = post;
 
             return View();
@@ -301,6 +304,9 @@ namespace Karma.Controllers
                 ViewBag.errorMessage = $"Report with Id = {report} cannot be found";
                 return NotFound();
             }
+
+            post.ImagePath = post.GetFullImagePath();
+
             ViewData["post"] = post;
             return View(report);
         }
