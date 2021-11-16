@@ -289,7 +289,8 @@ namespace Karma.Controllers
             if (id != post.Id || !post.IsVisible)
             {
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
-                return NotFound();
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Error");
             }
 
             if (IsUserHavePermission(out IActionResult act, postUserId: post.UserId) != null)
@@ -319,7 +320,8 @@ namespace Karma.Controllers
                 {
                     if (!PostExists(post.Id))
                     {
-                        return NotFound();
+                        Response.StatusCode = 404;
+                        return View("ErrorPages/404Error");
                     }
                     else
                     {
