@@ -13,16 +13,16 @@
 
 <html>
 <body>
-        <form asp-controller="Posts" asp-action="Index" method="get">
-            <p>
-                <input type="hidden" asp-for="@Model.isDonation">
-                <select asp-for="Category" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
-                    <option selected value=-1>All</option>
-                </select>
-                <input type="text" placeholder=@Model.SearchString name="SearchString" />
-                <input type="submit" value="Search" />
-            </p>
-        </form>
+    <form asp-controller="Posts" asp-action="Index" method="get">
+        <p>
+            <input type="hidden" asp-for="@Model.isDonation">
+            <select asp-for="Category" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
+                <option selected value=-1>All</option>
+            </select>
+            <input type="text" placeholder=@Model.SearchString name="SearchString" />
+            <input type="submit" value="Search" />
+        </p>
+    </form>
     <div class="post-cards container-fluid content-row">
         <div class="row">
             @foreach (var item in Model.Posts)

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
+using Karma.Resources.Exceptions;
 
 namespace Karma.Areas.Identity.Pages.Account
 {
@@ -89,13 +90,16 @@ namespace Karma.Areas.Identity.Pages.Account
                                 @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
 
                 Regex regex = new Regex(emailRegex);
-                if (!regex.IsMatch(Input.UserNameOrEmail))
+                try
                 {
-                    ModelState.AddModelError("UserNameOrEmail", "Email is not valid");
+                    if (!regex.IsMatch(Input.UserNameOrEmail))
+                        throw new InvalidUsernameOrEmailException("Email is not valid.");
+                    else
+                        isLoginWithEmail = true;
                 }
-                else
+                catch(InvalidUsernameOrEmailException ex)
                 {
-                    isLoginWithEmail = true;
+                    ModelState.AddModelError("UserNameOrEmail", ex.Message);
                 }
             }
             else
@@ -104,9 +108,14 @@ namespace Karma.Areas.Identity.Pages.Account
                 // TODO: specific error for @
                 string userNameRegex = @"^[a-zA-Z0-9]*$";
                 Regex regex = new Regex(userNameRegex);
-                if (!regex.IsMatch(Input.UserNameOrEmail))
+                try
                 {
-                    ModelState.AddModelError("UserNameOrEmail", "Username is not valid");
+                    if (!regex.IsMatch(Input.UserNameOrEmail))
+                        throw new InvalidUsernameOrEmailException("Username is not valid.");
+                }
+                catch (InvalidUsernameOrEmailException ex)
+                {
+                    ModelState.AddModelError("UserNameOrEmail", ex.Message);
                 }
             }
 
@@ -117,15 +126,19 @@ namespace Karma.Areas.Identity.Pages.Account
                 if (isLoginWithEmail)
                 {
                     var user = await _userManager.FindByEmailAsync(userName);
-                    if (user == null)
+                    try
                     {
-                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        if (user == null)
+                            throw new InvalidLoginException();
+                        else                        
+                            userName = user.UserName;                       
+                    }
+                    catch (InvalidLoginException ex)
+                    {
+                        ModelState.AddModelError(string.Empty, ex.Message);
                         return Page();
                     }
-                    else
-                    {
-                        userName = user.UserName;
-                    }
+              
                 }
 
                 // This doesn't count login failures towards account lockout
