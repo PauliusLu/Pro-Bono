@@ -45,5 +45,7 @@ namespace Karma.Data
 
         public DbSet<Karma.Models.Report> Report { get; set; }
 
+        public DbSet<Karma.Models.UserReview> UserReview { get; set; }
+
     }
 }
