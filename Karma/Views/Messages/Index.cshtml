@@ -20,9 +20,14 @@
         creatorId = receiverId;
         receiverId = temp;
     }
+
+    var reviewExists = ((IEnumerable<UserReview>)ViewBag.UserReviews)
+        .Where(m => m.PostId == historyPost.Id).FirstOrDefault();
+    var reviewId = reviewExists?.Id;
 }
 
 <head>
+    <link href="~/css/rating.css" type="text/css" rel="stylesheet" />
     <link href="~/css/messages.css" type="text/css" rel="stylesheet" />
     <script src="~/lib/sweetalert/sweetalert2.all.js"></script>
     <link rel="stylesheet" href="~/lib/sweetalert/sweetalert2.all.css">
@@ -85,49 +90,56 @@ else
                                 <p class="card-text">@(historyPost.Description)</p>
                                 @if (historyPost.State == (int)Karma.Models.Post.PostState.Traded)
                                 {
-                                    <button class="btn btn-trade" onclick="ReviewText()">
-                                        Leave a review
-                                    </button>
+                                    if (reviewExists == null)
+                                    {
+                                        <button class="btn btn-trade" onclick="ReviewText()">
+                                            Leave a review
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="Edit" asp-controller="UserReviews" asp-route-id="@reviewId">Edit your review</a>
+                                    }
                                     <div class="alert alert-success" style="float:right; display:inline-block">
                                         <p>This item has been traded.</p>
                                     </div>
                                 }
                                 <div class="buttons">
-                                @if (historyPost.UserId == User.Identity.Name)
-                                {
-                                    if (historyPost.State == (int)Karma.Models.Post.PostState.NotSet ||
-                                        historyPost.State == (int)Karma.Models.Post.PostState.Open)
+                                    @if (historyPost.UserId == User.Identity.Name)
                                     {
-                                        <button class="btn btn-trade" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Traded))">
-                                            Complete trade
-                                        </button>
-                                        <button class="btn btn-reserve" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Reserved))">
-                                            Reserve for this user
-                                        </button>
-                                    }
-                                    if (historyPost.State == (int)Karma.Models.Post.PostState.Reserved)
-                                    {
-                                        string reserveText = "Cancel reservation";
-                                        if (historyPost.ReceiverUserId == historyLastMessage.Chat.CreatorId)
+                                        if (historyPost.State == (int)Karma.Models.Post.PostState.NotSet ||
+                                            historyPost.State == (int)Karma.Models.Post.PostState.Open)
                                         {
                                             <button class="btn btn-trade" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Traded))">
-                                                Complete trade with @(historyPost.ReceiverUserId)
+                                                Complete trade
+                                            </button>
+                                            <button class="btn btn-reserve" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Reserved))">
+                                                Reserve for this user
                                             </button>
                                         }
-                                        else
+                                        if (historyPost.State == (int)Karma.Models.Post.PostState.Reserved)
                                         {
-                                            
-                                            string? receiver = receiver = historyPost.ReceiverUserId;
-                                            if (receiver == null)
-                                                reserveText += " you've made for no one";
+                                            string reserveText = "Cancel reservation";
+                                            if (historyPost.ReceiverUserId == historyLastMessage.Chat.CreatorId)
+                                            {
+                                                <button class="btn btn-trade" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Traded))">
+                                                    Complete trade with @(historyPost.ReceiverUserId)
+                                                </button>
+                                            }
                                             else
-                                                reserveText += " for user " + receiver;
+                                            {
+
+                                                string? receiver = receiver = historyPost.ReceiverUserId;
+                                                if (receiver == null)
+                                                    reserveText += " you've made for no one";
+                                                else
+                                                    reserveText += " for user " + receiver;
+                                            }
+                                            <button class="btn btn-cancel" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Open))">
+                                                @reserveText
+                                            </button>
                                         }
-                                        <button class="btn btn-cancel" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Open))">
-                                            @reserveText
-                                        </button>
                                     }
-                                }
                                 </div>
                             </div>
 
@@ -198,7 +210,7 @@ else
                     return {
                         text: textValue,
                         rating: ratingValue.value
-                    };
+                    }
                 }
             }
         })
@@ -220,7 +232,7 @@ else
         $.ajax({
             type: "POST",
             contentType: "application/json",
-            url: "@Url.Action("PostReview", "Messages")",
+            url: "@Url.Action("PostReview", "UserReviews")",
             data: JSON.stringify(parameters),
             headers: {
                 'RequestVerificationToken': token

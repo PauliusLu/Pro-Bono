@@ -82,6 +82,8 @@ namespace Karma.Controllers
                 MarkChatAsSeen(chat, user);
             }
 
+            var userReviews = await _context.UserReview.Where(m => m.CreatorId == user).ToListAsync();
+            ViewBag.UserReviews = userReviews;
 
             return View(messages);
         }
@@ -213,32 +215,5 @@ namespace Karma.Controllers
             await _context.SaveChangesAsync();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PostReview([FromBody] PostReviewModel reviewModel)
-        {
-            var userReview = new UserReview();
-
-            userReview.CreatorId = reviewModel.CreatorId;
-            userReview.ReceiverId = reviewModel.ReceiverId;
-            userReview.PostId = reviewModel.PostId;
-            userReview.ReviewText = reviewModel.ReviewText;
-            userReview.Rating = reviewModel.Rating;
-
-            _context.Add(userReview);
-            await _context.SaveChangesAsync();
-
-            return new EmptyResult();
-        }
-
-        public class PostReviewModel
-        {
-            public int PostId { get; set; }
-            public string CreatorId { get; set; }
-            public string ReceiverId { get; set; }
-            public string ReviewText { get; set; }
-            public int Rating { get; set; }
-
-        }
     }
 }

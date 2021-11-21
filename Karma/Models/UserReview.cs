@@ -21,6 +21,7 @@ namespace Karma.Models
         public int Rating { get; set; }
         [Required]
         [MaxLength(160)]
+        [Display(Name = "Review text")]
         public string ReviewText { get; set; }
 
         public UserReview()
