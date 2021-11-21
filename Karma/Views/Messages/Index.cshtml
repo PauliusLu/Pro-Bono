@@ -3,13 +3,25 @@
     ViewData["Title"] = "Index";
 
 }
-@{ string user = User.Identity.Name;
+@{
+    string user = User.Identity.Name;
     List<Karma.Models.Messaging.Message> activeMessages = Model.FirstOrDefault();
     Karma.Models.Messaging.Message recentMessage = activeMessages?.LastOrDefault();
     int? currentChatId = ViewBag.ChatId ?? recentMessage?.Chat.Id;
     List<Karma.Models.Messaging.Message> history = ViewBag.History;
     Karma.Models.Messaging.Message historyLastMessage = history?.LastOrDefault();
-    Karma.Models.Post historyPost = historyLastMessage?.Chat.AttachedPost;}
+    Karma.Models.Post historyPost = historyLastMessage?.Chat.AttachedPost;
+
+    var creatorId = historyLastMessage?.Chat?.CreatorId;
+    var receiverId = historyLastMessage?.Chat?.PostUserId;
+    if (user == receu)
+    {
+        var temp = creatorId;
+        creatorId = receiverId;
+        receiverId = temp;
+    }
+}
+
 <head>
     <link href="~/css/messages.css" type="text/css" rel="stylesheet" />
     <script src="~/lib/sweetalert/sweetalert2.all.js"></script>
@@ -73,7 +85,10 @@ else
                                 <p class="card-text">@(historyPost.Description)</p>
                                 @if (historyPost.State == (int)Karma.Models.Post.PostState.Traded)
                                 {
-                                    <div class="alert alert-danger" style="float:right; display:inline-block">
+                                    <button class="btn btn-trade" onclick="ReviewText()">
+                                        Leave a review
+                                    </button>
+                                    <div class="alert alert-success" style="float:right; display:inline-block">
                                         <p>This item has been traded.</p>
                                     </div>
                                 }
@@ -156,10 +171,68 @@ else
 <script>
     var objDiv = document.getElementById("scrolldown");
     objDiv.scrollTop = objDiv.scrollHeight;
-
 </script>
 
 <script>
+    async function ReviewText() {
+        const { value: formValues } = await Swal.fire({
+            title: 'Review',
+            html:
+                '<textarea id="text-input" class="swal2-input" placeholder="Type your review here..." style="height:auto!important" rows="6"></textarea>' +
+                '<div class="rating"> <input type="radio" name="rating" value="5" id="5"><label for="5">☆</label> <input type="radio" name="rating" value="4" id="4"><label for="4">☆</label> <input type="radio" name="rating" value="3" id="3"><label for="3">☆</label> <input type="radio" name="rating" value="2" id="2"><label for="2">☆</label> <input type="radio" name="rating" value="1" id="1"><label for="1">☆</label> </div >',
+            confirmButtonColor: '#05718f',
+            confirmButtonText: 'Post',
+            focusConfirm: false,
+            showCancelButton: true,
+            preConfirm: () => ({
+                text: document.getElementById('text-input').value,
+                rating: document.querySelector('input[name="rating"]:checked').value
+            })
+        })
+        if (formValues) {
+            PostReview(formValues.text, formValues.rating);
+        }
+    };
+
+    function PostReview(text, rating) {
+        var token = $('@Html.AntiForgeryToken()').val();
+        var parameters = {
+            'PostId': "@historyPost.Id",
+            'CreatorId': "@creatorId",
+            'ReceiverId': "@receiverId",
+            'ReviewText': text,
+            'Rating': rating
+        }
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "@Url.Action("PostReview", "Messages")",
+            data: JSON.stringify(parameters),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function () {
+                Swal.fire({
+                    title: "Success!",
+                    text: "You have left a review for @receiverId!",
+                    icon: 'success',
+                    confirmButtonColor: '#05718f'
+                }).then(result => {
+                    $("#pinned-post").load(location.href + " #pinned-post>*", "");
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'Something went wrong, please report it to administrators.',
+                    icon: 'error',
+                    confirmButtonColor: '#05718f'
+                });
+            }
+        });
+    };
+
     function fireSwal(func) {
         Swal.fire({
             title: 'Are you sure?',
