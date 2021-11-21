@@ -16,7 +16,8 @@
     <div class="row justify-content-between align-items-end">
         <div class="col-lg-6 col-md-7 col-12">
             <div class="row">
-                <h4>@Post.CompareQuerie(Model) @Post.GetPostTypeName(Model.IsDonation)s</h4>
+                <h4><a asp-controller="Profile" asp-action="Index" asp-route-userId="@Model.UserId">@Post.CompareQuerie(Model) </a>
+                    @Post.GetPostTypeName(Model.IsDonation)s</h4>
             </div>
             <div class="row">
                 <h1><bold>@Html.DisplayFor(model => model.Title)</bold></h1>
@@ -36,16 +37,15 @@
                         </button>
                     </div>
                     -->
-          
+                     <div class="row">
+                        <button class="btn btn-danger btn-block">
+                            <a class="nav-link text-white" asp-controller="Admin" asp-action="CreateReport" asp-route-postId="@Model.Id" style="padding:0px 0px;">Report</a>
+                        </button>
+                    </div>         
                     <div class="row">
-                        <button type="button" class="btn btn-success btn-block" onclick="MessageText()">
+                        <button type="button" class="btn btn-success btn-block mt-2" onclick="MessageText()">
                             Send a message
                         </button>
-                    </div>
-                    <div class="row">
-                        <a asp-controller="Admin" asp-action="CreateReport" asp-route-postId="@Model.Id">
-                          <button class="btn btn-danger mt-2">Report</button>
-                        </a>
                     </div>
                 }
 
@@ -58,10 +58,7 @@
                     else if (Model.State == (int)Post.PostState.Reserved)
                     {
                         <div class="row">
-                            <button class="btn btn-info btn-block" data-toggle="modal" data-target="#dialog">Mark as Completed</button>
-                        </div>
-                        <div class="row">
-                            <button class="btn btn-warning btn-block mt-2" data-toggle="modal" data-target="#dialog">Cancel reservation</button>
+                            <button class="btn btn-warning btn-block" data-toggle="modal" data-target="#dialog">Cancel reservation</button>
                         </div>
                     }
 

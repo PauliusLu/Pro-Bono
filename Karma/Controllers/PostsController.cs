@@ -98,7 +98,8 @@ namespace Karma.Controllers
             if (id == null)
             {
                 _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
-                return NotFound();
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Post");
             }
 
             var post = await _context.Post
@@ -106,7 +107,8 @@ namespace Karma.Controllers
             if (post == null)
             {
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", id);
-                return NotFound();
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Post");
             }
 
             // Sets default image for post by itemtype if there's no image given
@@ -252,7 +254,8 @@ namespace Karma.Controllers
             if (id == null)
             {
                 _logger.LogWarning(LogEvents.GetPost, "Post NOT FOUND, Post.Id == null");
-                return NotFound();
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Post");
             }
             var post = await _context.Post.FindAsync(id);
 
@@ -261,8 +264,17 @@ namespace Karma.Controllers
 
             if (post == null || !post.IsVisible)
             {
-                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
-                return NotFound();
+                try 
+                { 
+                    _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
+                }
+                catch (NullReferenceException)
+                {
+                    _logger.LogError(LogEvents.GetPost, "Post {PostId} DOES NOT EXIST", id);
+                    Response.StatusCode = 404;
+                    return View("ErrorPages/404Post");
+                }
+               
             }
             post.ImagePath = post.GetFullImagePath();
 
@@ -279,7 +291,8 @@ namespace Karma.Controllers
             if (id != post.Id || !post.IsVisible)
             {
                 _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
-                return NotFound();
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Post");
             }
 
             if (IsUserHavePermission(out IActionResult act, postUserId: post.UserId) != null)
@@ -309,13 +322,15 @@ namespace Karma.Controllers
                 {
                     if (!PostExists(post.Id))
                     {
-                        return NotFound();
+                        Response.StatusCode = 404;
+                        return View("ErrorPages/404Post");
                     }
                     else
                     {
                         throw;
                     }
                 }
+
                 _logger.LogInformation(LogEvents.EditPost, "Post {PostId} edited", post.Id);
                 return RedirectToAction(nameof(Index));
             }
@@ -331,15 +346,31 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
-            if (IsUserHavePermission(out IActionResult act, postId: id) != null)
-                return act;
+            try
+            {
+                if (IsUserHavePermission(out IActionResult act, postId: id) != null)
+                    return act;
+            }
+            catch (NullReferenceException)
+            {
+                Response.StatusCode = 404;
+                return View("ErrorPages/404Post");
+            }
 
             var post = await _context.Post
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null || !post.IsVisible)
             {
-                _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
-                return NotFound();
+                try 
+                { 
+                    _logger.LogWarning(LogEvents.GetPost, "Post {PostId} NOT FOUND", post.Id);
+                }
+                catch (NullReferenceException) 
+                {
+                    _logger.LogError(LogEvents.GetPost, "Post {PostId} DOES NOT EXIST", id);
+                    Response.StatusCode = 404;
+                    return View("ErrorPages/404Post");
+                }
             }
 
             return View(post);
@@ -456,7 +487,7 @@ namespace Karma.Controllers
                 if (User.Identity.Name != userId)
                 {
                     //return NoAccess();
-                    act = NotFound();
+                    act = View("ErrorPages/404Post");
                     return act;
                 }
             }
@@ -467,7 +498,7 @@ namespace Karma.Controllers
                 if (User.Identity.Name != real_post.UserId)
                 {
                     //return NoAccess();
-                    act = NotFound();
+                    act = View("ErrorPages/404Post");
                     return act;
                 }
             }
@@ -477,7 +508,7 @@ namespace Karma.Controllers
                 if (User.Identity.Name != post.UserId)
                 {
                     //return NoAccess();
-                    act = NotFound();
+                    act = View("ErrorPages/404Post");
                     return act;
                 }
             }
@@ -487,7 +518,7 @@ namespace Karma.Controllers
                 if (User.Identity.Name != postUserId)
                 {
                     //return NoAccess();
-                    act = NotFound();
+                    act = View("ErrorPages/404Post");
                     return act;
                 }
             }

@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "404";
+}
+
+<div class="alert alert-danger mt-1 mb-1">
+    <h1>@ViewBag.ErrorMessege</h1>
+    <hr />
+    <h5>
+        Page cannot be found
+    </h5>
+</div>
+
+<a asp-controller="Posts" asp-action="index" class="btn btn-outline-success"
+   style="width:auto">Click here to go back to posts</a>
