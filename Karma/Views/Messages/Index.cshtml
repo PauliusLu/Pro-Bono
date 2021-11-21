@@ -14,7 +14,7 @@
 
     var creatorId = historyLastMessage?.Chat?.CreatorId;
     var receiverId = historyLastMessage?.Chat?.PostUserId;
-    if (user == receu)
+    if (user == receiverId)
     {
         var temp = creatorId;
         creatorId = receiverId;
@@ -184,10 +184,23 @@ else
             confirmButtonText: 'Post',
             focusConfirm: false,
             showCancelButton: true,
-            preConfirm: () => ({
-                text: document.getElementById('text-input').value,
-                rating: document.querySelector('input[name="rating"]:checked').value
-            })
+            preConfirm: () => {
+                var textValue = document.getElementById('text-input').value
+                var ratingValue = document.querySelector('input[name="rating"]:checked')
+
+                if (!textValue) {
+                    Swal.showValidationMessage('Review cannot be empty')
+                }
+                else if (!ratingValue) {
+                    Swal.showValidationMessage('Rating should be selected')
+                }
+                else {
+                    return {
+                        text: textValue,
+                        rating: ratingValue.value
+                    };
+                }
+            }
         })
         if (formValues) {
             PostReview(formValues.text, formValues.rating);
