@@ -43,6 +43,11 @@ namespace Karma.Controllers
             IndexModel modelView = new IndexModel(_userManager, _signInManager, _context);
             modelView.currentUser = user;
             modelView.UserPosts = new(() => Post.getUserPosts(_context, user.UserName));
+
+            var ratings = await _context.UserReview.Where(m => m.ReceiverId == user.UserName).ToListAsync();
+            int sum = ratings.Sum(m => m.Rating);
+            modelView.RatingAverage = sum == 0 ? 0 : sum / ratings.Count();
+
             return View(modelView);
         }
     }

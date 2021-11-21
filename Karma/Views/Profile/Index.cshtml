@@ -3,6 +3,12 @@
 @{
     ViewData["Title"] = "Profile";
 }
+
+<head>
+    <link href="~/css/rating.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
 <h4 class="col-md-4 mb-3" style="font-size: 40px;"><b>@ViewData["Title"]</b></h4>
 <html>
 <body>
@@ -18,6 +24,22 @@
                                     <h4>@Model.currentUser.Name @Model.currentUser.Surname</h4>
                                     <p class="text-secondary mb-1">Karma</p>
                                     <p class="text-muted font-size-sm">@Model.currentUser.UserName</p>
+                                    @if (Model.RatingAverage != 0)
+                                    {
+                                        for (int i = 0; i < Model.RatingAverage; ++i)
+                                        {
+                                            <span class="fa fa-star checked"></span>
+                                        }
+                                        for (int i = 0; i < (5 - Model.RatingAverage); ++i)
+                                        {
+                                            <span class="fa fa-star"></span>
+                                        }
+                                        <p><a asp-controller="UserReviews" asp-action="Index" asp-route-userId="@Model.UserId">View reviews</a></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-primary font-size-sm">No reviews</p>
+                                    }
                                 </div>
                             </div>
                         </div>
