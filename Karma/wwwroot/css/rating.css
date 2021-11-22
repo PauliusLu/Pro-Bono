@@ -2,55 +2,6 @@
     color: orange;
 }
 
-.review.card {
-    border-radius: 5px;
-    background-color: #fff;
-    padding-left: 60px;
-    padding-right: 60px;
-    margin-top: 30px;
-    padding-top: 30px;
-    padding-bottom: 30px
-}
-
-.rating-box {
-    width: 130px;
-    height: 130px;
-    margin-right: auto;
-    margin-left: auto;
-    background-color: #FBC02D;
-    color: #fff
-}
-
-.rating-label {
-    font-weight: bold
-}
-
-.rating-bar {
-    width: 300px;
-    padding: 8px;
-    border-radius: 5px
-}
-
-.bar-container {
-    width: 100%;
-    background-color: #f1f1f1;
-    text-align: center;
-    color: white;
-    border-radius: 20px;
-    cursor: pointer;
-    margin-bottom: 5px
-}
-
-.bar {
-    width: 50%;
-    height: 13px;
-    background-color: #FBC02D;
-    border-radius: 20px
-}
-
-td {
-    padding-bottom: 10px
-}
 
 .profile-pic {
     width: 90px;
@@ -58,17 +9,6 @@ td {
     border-radius: 100%;
     margin-right: 30px
 }
-
-.pic {
-    width: 80px;
-    height: 80px;
-    margin-right: 10px
-}
-
-.vote {
-    cursor: pointer
-}
-
 
 
 .rating {

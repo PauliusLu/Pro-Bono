@@ -1,5 +1,7 @@
-﻿using Karma.Data;
+﻿using Karma.Areas.Identity.Pages.Account.Manage;
+using Karma.Data;
 using Karma.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,15 +14,38 @@ namespace Karma.Controllers
     public class UserReviewsController : Controller
     {
         private readonly KarmaContext _context;
+        private readonly UserManage _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public UserReviewsController(KarmaContext context)
+        public UserReviewsController(KarmaContext context, UserManage userManager, SignInManager<User> signInManager)
         {
             _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> Index(string userId)
         {
-            return View(await _context.UserReview.ToListAsync());
+            if (userId == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.User.FirstOrDefaultAsync(m => m.UserName == userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            IndexModel modelView = new IndexModel(_userManager, _signInManager, _context);
+            modelView.currentUser = user;
+
+            var ratings = await _context.UserReview.Where(m => m.ReceiverId == user.UserName).ToListAsync();
+            int sum = ratings.Sum(m => m.Rating);
+            modelView.RatingAverage = sum == 0 ? 0 : (float) sum / ratings.Count();
+
+            ViewBag.UserModel = modelView;
+
+            return View(await _context.UserReview.Where(m => m.ReceiverId == userId).ToListAsync());
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -40,7 +65,7 @@ namespace Karma.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PostId,CreatorId,ReceiverId,Rating,ReviewText")] UserReview userReview)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PostId,CreatorId,ReceiverId,Rating,ReviewText,Date")] UserReview userReview)
         {
             if (id != userReview.Id)
             {
@@ -113,6 +138,7 @@ namespace Karma.Controllers
             userReview.PostId = reviewModel.PostId;
             userReview.ReviewText = reviewModel.ReviewText;
             userReview.Rating = reviewModel.Rating;
+            userReview.Date = DateTime.UtcNow;
 
             _context.Add(userReview);
             await _context.SaveChangesAsync();

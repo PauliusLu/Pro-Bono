@@ -46,7 +46,7 @@ namespace Karma.Controllers
 
             var ratings = await _context.UserReview.Where(m => m.ReceiverId == user.UserName).ToListAsync();
             int sum = ratings.Sum(m => m.Rating);
-            modelView.RatingAverage = sum == 0 ? 0 : sum / ratings.Count();
+            modelView.RatingAverage = sum == 0 ? 0 : (float) sum / ratings.Count();
 
             return View(modelView);
         }

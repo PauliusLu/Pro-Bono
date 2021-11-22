@@ -56,7 +56,7 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
             var ratings = await _context.UserReview.Where(m => m.ReceiverId == userName).ToListAsync();
             int sum = ratings.Sum(m => m.Rating);
 
-            RatingAverage = sum == 0 ? 0 : sum / ratings.Count();
+            RatingAverage = sum == 0 ? 0 : (float) sum / ratings.Count();
             Username = userName;
 
             Input = new InputModel
