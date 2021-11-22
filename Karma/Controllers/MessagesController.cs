@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Karma.Data;
 using Karma.Models.Messaging;
+using Karma.Models;
 
 namespace Karma.Controllers
 {
@@ -81,6 +82,8 @@ namespace Karma.Controllers
                 MarkChatAsSeen(chat, user);
             }
 
+            var userReviews = await _context.UserReview.Where(m => m.CreatorId == user).ToListAsync();
+            ViewBag.UserReviews = userReviews;
 
             return View(messages);
         }
@@ -211,5 +214,6 @@ namespace Karma.Controllers
             _context.Update(chat);
             await _context.SaveChangesAsync();
         }
+
     }
 }
