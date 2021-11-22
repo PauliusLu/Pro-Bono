@@ -202,6 +202,34 @@ namespace Karma.Migrations
                     b.ToTable("Post");
                 });
 
+            modelBuilder.Entity("Karma.Models.Report", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PostOwnerId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReportMessage")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReportState")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ReporterId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Report");
+                });
+
             modelBuilder.Entity("Karma.Models.User", b =>
                 {
                     b.Property<string>("Id")
