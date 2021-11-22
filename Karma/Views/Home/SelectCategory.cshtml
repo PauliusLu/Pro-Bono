@@ -1,20 +1,40 @@
 ﻿@model SelectCategoryViewModel
 
-<form asp-action="SelectCategory">
-    <div class="form-group">
 
+ <div class="form-group">
+     <label class="control-label">Category</label>
+     <select id="category" class="form-control"
+             asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
+         <option selected value="-1">All</option>
+     </select>
+ </div>
+<div class="form-group">
+    <button value="Search" onclick="Get()" class="btn btn-primary"> Search</button>
+</div>
 
-        <label asp-for="ItemType" class="control-label">Category</label>
-        <select asp-for="ItemType" class="form-control"
-                asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
-            <option selected value="-1">Select...</option>
-        </select>
+<div id="result">
 
-        @Html.HiddenFor(m => m.ActionType)
+</div>
 
-        <span asp-validation-for="ItemType" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Search" class="btn btn-primary" />
-    </div>
-</form>
+<script>
+    $(document).ready(function () {
+        Get();
+    });
+
+    function Get() {
+        var e = document.getElementById("category");
+        var category = e.value;
+
+        console.log("was");
+     $.ajax({
+        url: "@Url.Action("FilteredCharities", "Charities")?itemTypeId=" + category,
+        type: 'GET',
+        success: function (res) {
+            $('#result').html(res);
+         },
+        error: function () {
+         }
+     });
+    }
+
+</script>
