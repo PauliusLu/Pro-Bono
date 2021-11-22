@@ -222,7 +222,7 @@ else
     function PostReview(text, rating) {
         var token = $('@Html.AntiForgeryToken()').val();
         var parameters = {
-            'PostId': "@historyPost.Id",
+            'PostId': "@historyPost?.Id",
             'CreatorId': "@creatorId",
             'ReceiverId': "@receiverId",
             'ReviewText': text,
