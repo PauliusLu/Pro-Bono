@@ -25,7 +25,6 @@
         var e = document.getElementById("category");
         var category = e.value;
 
-        console.log("was");
      $.ajax({
         url: "@Url.Action("FilteredCharities", "Charities")?itemTypeId=" + category,
         type: 'GET',
