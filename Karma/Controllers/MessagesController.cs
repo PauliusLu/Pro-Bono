@@ -149,6 +149,14 @@ namespace Karma.Controllers
             }
             pm.Post.ChangeState((Models.Post.PostState)pm.State, pm.Receiver);
 
+            if (pm.Post.State == (int)Models.Post.PostState.Traded)
+            {
+                int karmaPoints = 3;
+                var user = _context.User.Where(u => u.UserName == pm.Post.UserId).FirstOrDefault();
+                user.KarmaPoints += karmaPoints;
+                _context.Update(user);
+            }
+
              _context.Update(pm.Post);
             await _context.SaveChangesAsync();
 
