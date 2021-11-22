@@ -34,7 +34,7 @@
                                             <span class="fa fa-star @(rating > 0 ? "checked" : "")"></span>
                                         }
                                         <p class="text-muted">@preciseRating/5.00</p>
-                                        <p><a asp-controller="UserReviews" asp-action="Index" asp-route-userId="@Model.currentUser.UserName">View reviews</a></p>
+                                        <p><a asp-controller="UserReviews" asp-action="Index" asp-route-id="@Model.currentUser.UserName">View reviews</a></p>
                                     }
                                     else
                                     {
@@ -77,6 +77,14 @@
                             </div>
                         </div>
                     </div>
+                    @if (Model.currentUser.UserName == User.Identity.Name)
+                    {
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a class="btn btn-info" asp-controller="Profile" asp-action="Edit" asp-route-id="@Model.currentUser.UserName">Edit</a>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

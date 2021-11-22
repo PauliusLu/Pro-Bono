@@ -1,0 +1,111 @@
+﻿@model Karma.Models.User
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+<html>
+<body>
+    <div>
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Name" />
+            <input type="hidden" asp-for="Surname" />
+            <input type="hidden" asp-for="IpAddress" />
+            <input type="hidden" asp-for="UserName" />
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="Id" />
+
+            <div class="container">
+                <div class="main-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-column align-items-center text-center">
+                                        <img src="~/@Model.GetFullImagePath()" alt="Admin" class="rounded-circle p-1 bg-primary" width="150">
+                                        <div class="mt-3">
+                                            <h4>@Model.Name @Model.Surname</h4>
+                                            <p class="text-secondary mb-1">Karma</p>
+                                            <p class="text-muted font-size-sm">@Model.UserName</p>
+                                        </div>
+                                    </div>
+                                    <hr class="my-4">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Email</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <a href="~/Identity/Account/Manage/Email" URL class="btn btn-primary">Change Email</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Phone number</h6>
+
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <a href="~/Identity/Account/Manage" URL class="btn btn-primary">Change Phone Number</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Password</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <a href="~/Identity/Account/Manage/ChangePassword" URL class="btn btn-primary">Change Password</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Description</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Update Image</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <input asp-for="ImagePath" type="file" class="form-control-file" accept=".jpg, .jpeg, .png, .bmp" name="file" />
+                                                <span class="text-danger">@ViewBag.Message</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-3"></div>
+                                        <div class="form-group">
+                                            <input type="submit" value="Save changes" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" asp-for="IsActive" />
+        </form>
+    </div>
+</body>
+</html>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

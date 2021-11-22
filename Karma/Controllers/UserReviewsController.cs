@@ -24,13 +24,13 @@ namespace Karma.Controllers
             _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> Index(string userId)
+        public async Task<IActionResult> Index(string id)
         {
-            if (userId == null)
+            if (id == null)
             {
                 return NotFound();
             }
-            var user = await _context.User.FirstOrDefaultAsync(m => m.UserName == userId);
+            var user = await _context.User.FirstOrDefaultAsync(m => m.UserName == id);
             if (user == null)
             {
                 return NotFound();
@@ -45,7 +45,7 @@ namespace Karma.Controllers
 
             ViewBag.UserModel = modelView;
 
-            return View(await _context.UserReview.Where(m => m.ReceiverId == userId).ToListAsync());
+            return View(await _context.UserReview.Where(m => m.ReceiverId == id).ToListAsync());
         }
 
         public async Task<IActionResult> Edit(int? id)
