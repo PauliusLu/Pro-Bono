@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Karma.Migrations
 {
@@ -16,7 +17,8 @@ namespace Karma.Migrations
                     CreatorId = table.Column<string>(type: "TEXT", nullable: false),
                     ReceiverId = table.Column<string>(type: "TEXT", nullable: false),
                     Rating = table.Column<int>(type: "INTEGER", nullable: false),
-                    ReviewText = table.Column<string>(type: "TEXT", maxLength: 160, nullable: false)
+                    ReviewText = table.Column<string>(type: "TEXT", maxLength: 160, nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

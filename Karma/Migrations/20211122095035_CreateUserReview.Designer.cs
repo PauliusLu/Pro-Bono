@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Karma.Migrations
 {
     [DbContext(typeof(KarmaContext))]
-    [Migration("20211121093605_CreateUserReview")]
+    [Migration("20211122095035_CreateUserReview")]
     partial class CreateUserReview
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -324,6 +324,9 @@ namespace Karma.Migrations
 
                     b.Property<string>("CreatorId")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("PostId")

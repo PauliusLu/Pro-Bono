@@ -23,6 +23,8 @@ namespace Karma.Models
         [MaxLength(160)]
         [Display(Name = "Review text")]
         public string ReviewText { get; set; }
+        [Required]
+        public DateTime Date { get; set; }
 
         public UserReview()
         {

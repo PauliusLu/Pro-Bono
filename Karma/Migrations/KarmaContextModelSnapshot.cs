@@ -296,6 +296,9 @@ namespace Karma.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("PostId")
                         .HasColumnType("INTEGER");
 
