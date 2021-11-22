@@ -36,13 +36,21 @@ namespace Karma.Controllers
             return View(_charities);
         }
 
+        [HttpGet]
         public IActionResult FilteredCharities(int itemTypeId)
         {
-            ItemType itemType = new ItemTypes()[itemTypeId];
-            ViewBag.ItemType = itemType.Name;
-
-            var filtered = Charity.FilteredCharities(_charities, itemType);
-
+            List<Charity> filtered;
+            if (itemTypeId < 0)
+            {
+                ViewBag.ItemType = null;
+                filtered = Charity.GetApprovedCharities(_charities);
+            }
+            else
+            {
+                ItemType itemType = new ItemTypes()[itemTypeId];
+                ViewBag.ItemType = itemType.Name;
+                filtered = Charity.FilteredCharities(_charities, itemType);
+            }
             return View(filtered);
         }
 
