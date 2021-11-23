@@ -11,6 +11,7 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
         public static string Index => "Index";
 
         public static string Email => "Email";
+        public static string PhoneNumber => "PhoneNumber";
 
         public static string ChangePassword => "ChangePassword";
 
@@ -29,6 +30,7 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
         public static string EmailNavClass(ViewContext viewContext) => PageNavClass(viewContext, Email);
+        public static string PhoneNumberNavClass(ViewContext viewContext) => PageNavClass(viewContext, PhoneNumber);
 
         public static string ChangePasswordNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangePassword);
 

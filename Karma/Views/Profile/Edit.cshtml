@@ -1,4 +1,4 @@
-﻿@model Karma.Models.User
+﻿@model Karma.Areas.Identity.Pages.Account.Manage.IndexModel
 @{
     ViewData["Title"] = "Edit Profile";
 }
@@ -8,30 +8,20 @@
         <form asp-action="Edit" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <input type="hidden" asp-for="Name" />
-            <input type="hidden" asp-for="Surname" />
-            <input type="hidden" asp-for="IpAddress" />
-            <input type="hidden" asp-for="UserName" />
-            <input type="hidden" asp-for="Email" />
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="currentUser.Name" />
+            <input type="hidden" asp-for="currentUser.Surname" />
+            <input type="hidden" asp-for="currentUser.IpAddress" />
+            <input type="hidden" asp-for="currentUser.UserName" />
+            <input type="hidden" asp-for="currentUser.Email" />
+            <input type="hidden" asp-for="currentUser.Id" />
 
             <div class="container">
                 <div class="main-body">
                     <div class="row">
                         <div class="col-lg-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex flex-column align-items-center text-center">
-                                        <img src="~/@Model.GetFullImagePath()" alt="Admin" class="rounded-circle p-1 bg-primary" width="150">
-                                        <div class="mt-3">
-                                            <h4>@Model.Name @Model.Surname</h4>
-                                            <p class="text-secondary mb-1">Karma</p>
-                                            <p class="text-muted font-size-sm">@Model.UserName</p>
-                                        </div>
-                                    </div>
-                                    <hr class="my-4">
-                                </div>
-                            </div>
+                            <partial name="~/Views/Profile/ProfileBox.cshtml" for="@Model">
+                                <hr class="my-4">
+
                         </div>
                         <div class="col-lg-8">
                             <div class="card">
@@ -73,8 +63,8 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <div class="form-group">
-                                                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
-                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                                <textarea asp-for="currentUser.Description" class="form-control" rows="6"></textarea>
+                                                <span asp-validation-for="currentUser.Description" class="text-danger"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -84,7 +74,7 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <div class="form-group">
-                                                <input asp-for="ImagePath" type="file" class="form-control-file" accept=".jpg, .jpeg, .png, .bmp" name="file" />
+                                                <input asp-for="currentUser.ImagePath" type="file" class="form-control-file" accept=".jpg, .jpeg, .png, .bmp" name="file" />
                                                 <span class="text-danger">@ViewBag.Message</span>
                                             </div>
                                         </div>
@@ -101,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" asp-for="IsActive" />
+            <input type="hidden" asp-for="currentUser.IsActive" />
         </form>
     </div>
 </body>

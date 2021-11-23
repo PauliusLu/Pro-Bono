@@ -62,7 +62,10 @@ namespace Karma.Controllers
             {
                 return NotFound();
             }
-            return View(user);
+            IndexModel modelView = new IndexModel(_userManager, _signInManager, _context);
+            modelView.currentUser = user;
+            modelView.UserPosts = new(() => Post.getUserPosts(_context, user.UserName));
+            return View(modelView);
         }
         // POST: Profile/Edit/
         [HttpPost]
@@ -86,10 +89,6 @@ namespace Karma.Controllers
                 {
                     return View(real_user);
                 }
-                if(oldPath !=null && real_user.ImagePath != null)
-                {
-                   System.IO.File.Delete(Path.Combine(_iWebHostEnv.WebRootPath, Karma.Models.User.ImagesDirName, oldPath));
-                }
                 try
                 {
                     _context.Update(real_user);
@@ -108,10 +107,16 @@ namespace Karma.Controllers
                         throw;
                     }
                 }
-
+//                if (oldPath != null && real_user.ImagePath != null)
+//                {
+//                    System.IO.File.Delete(Path.Combine(_iWebHostEnv.WebRootPath, Karma.Models.User.ImagesDirName, oldPath));
+//                }
                 return Redirect("~/Identity/Account/Manage");
             }
-            return View(user);
+            IndexModel modelView = new IndexModel(_userManager, _signInManager, _context);
+            modelView.currentUser = user;
+            modelView.UserPosts = new(() => Post.getUserPosts(_context, user.UserName));
+            return View(modelView);
         }
         private bool CopyFileToRoot(User user, IFormFile file, string ext = null)
         {
