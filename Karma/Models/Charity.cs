@@ -62,6 +62,22 @@ namespace Karma.Models
             CharityItemTypes = new List<CharityItemType>();
         }
 
+        public static List<Charity> GetApprovedCharities(List<Charity> charities)
+        {
+            List<Charity> filtered = new List<Charity>();
+            if (charities == null)
+                return filtered;
+
+            foreach (Charity c in charities)
+            {
+                if (c.ReviewState == Enums.ReviewState.Approved)
+                {
+                    filtered.Add(c);
+                }
+            }
+            return filtered;
+        }
+
         public static List<Charity> FilteredCharities(List<Charity> charities, ItemType itemType)
         {
             List<Charity> filtered = new List<Charity>();

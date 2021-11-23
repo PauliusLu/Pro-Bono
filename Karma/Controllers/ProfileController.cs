@@ -9,6 +9,9 @@ using Karma.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using System.Collections;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Karma.Areas.Identity.Pages.Account.Manage;
 using Microsoft.AspNetCore.Identity;
 
@@ -40,6 +43,11 @@ namespace Karma.Controllers
             IndexModel modelView = new IndexModel(_userManager, _signInManager, _context);
             modelView.currentUser = user;
             modelView.UserPosts = new(() => Post.getUserPosts(_context, user.UserName));
+
+            var ratings = await _context.UserReview.Where(m => m.ReceiverId == user.UserName).ToListAsync();
+            int sum = ratings.Sum(m => m.Rating);
+            modelView.RatingAverage = sum == 0 ? 0 : (float) sum / ratings.Count();
+
             return View(modelView);
         }
     }

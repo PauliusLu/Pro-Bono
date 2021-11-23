@@ -1,12 +1,17 @@
 ﻿@model IEnumerable<Karma.Models.Charity>
 
-@if (Model == null || !Model.Any())
-{
-    <h3>We're sorry, there are no charities that request or donate @ViewBag.ItemType</h3>
+
+@{
+    Layout = null;
 }
-else
+
+@if ((Model == null || !Model.Any()) && ViewBag.ItemType != null)
 {
-    <h3>Charities that donate or request @ViewBag.ItemType</h3>
+    <h3>We're sorry, there are no charities with tag <span class="badge badge-primary">@ViewBag.ItemType</span></h3>
+}
+else if (ViewBag.ItemType != null)
+{
+    <h3>Charities with tag <span class="badge badge-primary">@ViewBag.ItemType</span></h3>
 }
 <div class="post-cards container-fluid content-row">
     <div class="row">

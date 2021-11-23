@@ -262,6 +262,7 @@ namespace Karma.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateReport(int id, [Bind("PostId,ReportMessage")] Report report)
         {
 
@@ -283,6 +284,7 @@ namespace Karma.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ThankYou()
         {
             return View();
