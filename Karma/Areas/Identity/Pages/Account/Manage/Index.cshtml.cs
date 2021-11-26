@@ -33,10 +33,10 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
 
         public string UserId { get; set; }
         [Required]
-        [StringLength(60, MinimumLength = 3)]
+        [StringLength(60)]
         public string Username { get; set; }
         [Required]
-        [StringLength(60, MinimumLength = 3)]
+        [StringLength(60)]
         public string Name { get; set; }
         public string Surname { get; set; }
         [MaxLength(120)]
