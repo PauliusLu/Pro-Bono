@@ -19,8 +19,12 @@
             <select asp-for="Category" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
                 <option selected value=-1>All</option>
             </select>
-            <input type="text" placeholder=@Model.SearchString name="SearchString" />
+            <input id="searchId" asp-for="SearchString" placeholder=@Model.SearchString />
+            <span asp-validation-for="SearchString" class="text-danger"></span>
             <input type="submit" value="Search" />
+            <script>
+                document.getElementById('searchId').value = '';
+            </script>
         </p>
     </form>
     <div class="post-cards container-fluid content-row">
