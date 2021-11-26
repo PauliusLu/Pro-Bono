@@ -75,10 +75,14 @@ namespace Karma.Controllers
                 post.ImagePath = post.GetFullImagePath();
             }
 
-            if (isDonation == null)
+            if (isDonation == null && posts.Count>=3)
             {
                 foreach (Advert ad in Advert.Samples)
                     posts.Add(ad);
+            }
+            if (posts.Count == 0)
+            {
+                ViewBag.Message = "No posts";
             }
 
             posts.Sort();

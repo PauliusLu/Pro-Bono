@@ -7,6 +7,7 @@
 
 @{
     ViewData["Title"] = "All posts";
+
 }
 
 <h1>@ViewBag.Header</h1>
@@ -28,6 +29,7 @@
         </p>
     </form>
     <div class="post-cards container-fluid content-row">
+        <div><p style="text-align:center; font-size: 60px;">@ViewBag.Message</p></div>
         <div class="row">
             @foreach (var item in Model.Posts)
             {
