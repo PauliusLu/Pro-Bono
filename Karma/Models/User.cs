@@ -19,6 +19,7 @@ namespace Karma.Models
         [Required]
         public string Surname { get; set; }
         public string IpAddress { get; set; }
+        [MaxLength(120)]
         public string Description { get; set; }
         public string ImagePath { get; set; }
         [Display(Name = "Is active")]

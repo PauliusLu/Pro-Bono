@@ -70,7 +70,7 @@ namespace Karma.Controllers
         // POST: Profile/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind(include:"Name,Surname,IpAddress,UserName,Email,Id,PhoneNumber,Description,ImagePath,IsActive")] User user, IFormFile file)
+        public async Task<IActionResult> Edit(string id, [Bind(include:"Name,Surname,IpAddress,UserName,Description,ImagePath,IsActive")] User user, IFormFile file)
         {
             
             if (ModelState.IsValid)
@@ -82,6 +82,18 @@ namespace Karma.Controllers
                     return NotFound();
                 }
                 real_user.Description = user.Description;
+                if (String.IsNullOrEmpty(user.UserName) || String.IsNullOrEmpty(user.Name))
+                {
+                    real_user.Surname = user.Surname;
+                    real_user.Name = user.Name;
+                }
+                else
+                {
+                    return Redirect("~/Identity/Account/Manage");
+                }
+
+                
+
                 _context.Entry(real_user).State = EntityState.Detached;
 
 
@@ -116,6 +128,7 @@ namespace Karma.Controllers
             IndexModel modelView = new IndexModel(_userManager, _signInManager, _context);
             modelView.currentUser = user;
             modelView.UserPosts = new(() => Post.getUserPosts(_context, user.UserName));
+           // return Redirect("~/Identity/Account/Manage");
             return View(modelView);
         }
         private bool CopyFileToRoot(User user, IFormFile file, string ext = null)
