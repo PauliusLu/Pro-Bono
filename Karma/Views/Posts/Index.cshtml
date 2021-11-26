@@ -10,22 +10,22 @@
 
 }
 
-<h1>@ViewBag.Header</h1>
+<h1 style="position: relative; left: 15px; margin-bottom: 30px; ">@ViewBag.Header</h1>
 
 <html>
 <body>
     <form asp-controller="Posts" asp-action="Index" method="get">
-        <p>
+        <p class=" height d-flex" style="position: relative; left: 15px; ">
             <input type="hidden" asp-for="@Model.isDonation">
             <select asp-for="Category" asp-items='@new SelectList(ItemTypes.Types, "Key", "Value")'>
                 <option selected value=-1>All</option>
             </select>
-            <input id="searchId" asp-for="SearchString" placeholder=@Model.SearchString />
-            <span asp-validation-for="SearchString" class="text-danger"></span>
-            <input type="submit" value="Search" />
-            <script>
-                document.getElementById('searchId').value = '';
-            </script>
+                <input class="col-md-3" id="searchId" asp-for="SearchString" placeholder=@Model.SearchString />
+                <span asp-validation-for="SearchString" class="text-danger"></span>
+                <input class="btn btn-primary" type="submit" value="Search" />
+                <script>
+                    document.getElementById('searchId').value = '';
+                </script>
         </p>
     </form>
     <div class="post-cards container-fluid content-row">
