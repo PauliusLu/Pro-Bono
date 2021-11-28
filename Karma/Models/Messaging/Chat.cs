@@ -17,9 +17,9 @@ namespace Karma.Models.Messaging
         [Required]
         public ChatState State { get; set; }
         [Required]
-        public string CreatorId { get; set; }
+        public User CreatorId { get; set; }
         [Required]
-        public string PostUserId { get; set; }
+        public User PostUserId { get; set; }
         [Required]
         public bool IsSeenByCreator { get; set; }
         [Required]
@@ -31,7 +31,7 @@ namespace Karma.Models.Messaging
 
         }
 
-        public Chat(int id, Post post, ChatState state, string creatorId, string postUserId, bool isSeenByCreator, bool isSeenByPostUser)
+        public Chat(int id, Post post, ChatState state, User creatorId, User postUserId, bool isSeenByCreator, bool isSeenByPostUser)
         {
             Id = id;
             AttachedPost = post;
