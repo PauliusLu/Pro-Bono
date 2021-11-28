@@ -21,7 +21,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-column align-items-center text-center">
-                            <img src="~/@userModel.currentUser.GetFullImagePath()" alt="Admin" class="rounded-circle" width="150">
+                            <img src="~/@userModel.currentUser.GetFullImagePath()" alt="Admin" class="profile-pic">
                             <div class="mt-3">
                                 <h4>@userModel.currentUser.Name @userModel.currentUser.Surname</h4>
                                 <p class="text-secondary mb-1">Karma</p>
@@ -41,11 +41,11 @@
                 @foreach (var item in Model)
                 {
                 <div class="row justify-content-center">
-                    <div class="card mb-4">
+                    <div class="card mb-4 review">
                         <div class="card-body">
                             <div class="row justify-content-between">
                                 <div class="col-3">
-                                    <div class=""> <img class="profile-pic" src="~/@userModel.currentUser.GetFullImagePath()"> </div>
+                                    <div class=""> <img class="profile-pic" src="~/@item.Creator.GetFullImagePath()"></div>
                                 </div>
                                 <div class="col-4">
                                     <div class="row"><h3 class="mt-2 mb-0">@item.CreatorId</h3></div>

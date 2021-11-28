@@ -43,7 +43,15 @@ namespace Karma.Controllers
 
             ViewBag.UserModel = modelView;
 
-            return View(await _context.UserReview.Where(m => m.ReceiverId == userId).ToListAsync());
+            var userReviews = await _context.UserReview.Where(m => m.ReceiverId == userId).ToListAsync();
+            var users = await _context.User.ToListAsync();
+            var reviewsWithCreators = userReviews.Join(
+                                users,
+                                userReview => userReview.CreatorId,
+                                user => user.UserName,
+                                (userReview, user) => { userReview.Creator = user; return userReview; });
+
+            return View(reviewsWithCreators);
         }
 
         public async Task<IActionResult> Edit(int? id)

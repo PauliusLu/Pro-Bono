@@ -15,6 +15,7 @@ namespace Karma.Models
         public Post Post { get; set; }
         [Required]
         public string CreatorId { get; set; }
+        public User Creator { get; set; }
         [Required]
         public string ReceiverId { get; set; }
         [Required]
