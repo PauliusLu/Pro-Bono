@@ -343,29 +343,27 @@ else
             isScrolled = true;
         }
 
-        var olddiv = document.getElementById("scrolldown").innerHTML;
-        $.get(location.href, function (data) {
-            var newdiv = $(data).find("#scrolldown")[0].innerHTML;
-            if (olddiv == newdiv) {
-            }
-            else {
-                document.getElementById("scrolldown").innerHTML = newdiv;
-                if (isScrolled) {
-                    objDiv.scrollTop += 800;
-                }
+        updateDiv("scrolldown", function () {
+            if (isScrolled) {
+                objDiv.scrollTop += 800;
             }
         });
     }, 250);
+
     setInterval(function () {
-        var olddiv = document.getElementById("inbox_list").innerHTML;
+        updateDiv("inbox_list", function () { });
+    }, 1000);
+
+    function updateDiv(str, func) {
+        var olddiv = document.getElementById(str).innerHTML;
         $.get(location.href, function (data) {
-            var newdiv = $(data).find("#inbox_list")[0].innerHTML;
+            var newdiv = $(data).find("#" + str)[0].innerHTML;
             if (olddiv == newdiv) {
             }
             else {
-                document.getElementById("inbox_list").innerHTML = newdiv;
+                document.getElementById(str).innerHTML = newdiv;
+                func();
             }
         });
-        
-    }, 1000);
+    }
 </script>
