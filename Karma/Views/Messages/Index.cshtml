@@ -336,6 +336,9 @@ else
 
 
 <script>
+    var intervalForMessages = 250;
+    var intervalForChats = 1000;
+
     setInterval(function () {
         var isScrolled = false;
         var allowedDifference = 50;
@@ -345,14 +348,14 @@ else
 
         updateDiv("scrolldown", function () {
             if (isScrolled) {
-                objDiv.scrollTop += 800;
+                objDiv.scrollTop += objDiv.scrollTop;
             }
         });
-    }, 250);
+    }, intervalForMessages);
 
     setInterval(function () {
         updateDiv("inbox_list", function () { });
-    }, 1000);
+    }, intervalForChats);
 
     function updateDiv(str, func) {
         var olddiv = document.getElementById(str).innerHTML;
