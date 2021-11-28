@@ -30,5 +30,13 @@ namespace Karma.Models
         {
 
         }
+
+        static public float CountRatingAverage(List<UserReview> ratings)
+        {
+            int count = ratings.Count();
+            float sum = ratings.Sum(m => m.Rating);
+
+            return sum == 0 ? 0 : sum / count;
+        }
     }
 }

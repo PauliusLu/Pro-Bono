@@ -51,13 +51,12 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
         private async Task LoadAsync(User user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
-            var ratings = await _context.UserReview.Where(m => m.ReceiverId == userName).ToListAsync();
-            int sum = ratings.Sum(m => m.Rating);
-
-            RatingAverage = sum == 0 ? 0 : (float) sum / ratings.Count();
             Username = userName;
+
+            var ratings = await _context.UserReview.Where(m => m.ReceiverId == user.UserName).ToListAsync();
+            RatingAverage = UserReview.CountRatingAverage(ratings);
+
+            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Input = new InputModel
             {
