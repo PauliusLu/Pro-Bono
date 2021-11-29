@@ -38,14 +38,20 @@ namespace Karma.Controllers
 
             IndexModel modelView = new IndexModel(_userManager, _signInManager, _context);
             modelView.currentUser = user;
-
             var ratings = await _context.UserReview.Where(m => m.ReceiverId == user.UserName).ToListAsync();
-            int sum = ratings.Sum(m => m.Rating);
-            modelView.RatingAverage = sum == 0 ? 0 : (float) sum / ratings.Count();
+            modelView.RatingAverage = UserReview.CountRatingAverage(ratings);
 
             ViewBag.UserModel = modelView;
 
-            return View(await _context.UserReview.Where(m => m.ReceiverId == id).ToListAsync());
+            var userReviews = await _context.UserReview.Where(m => m.ReceiverId == userId).ToListAsync();
+            var users = await _context.User.ToListAsync();
+            var reviewsWithCreators = userReviews.Join(
+                                users,
+                                userReview => userReview.CreatorId,
+                                user => user.UserName,
+                                (userReview, user) => { userReview.Creator = user; return userReview; });
+
+            return View(reviewsWithCreators);
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -90,7 +96,7 @@ namespace Karma.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index", "Messages");
+                return RedirectToAction("Index", new { userId = userReview.ReceiverId });
             }
             return View(userReview);
         }
@@ -119,7 +125,8 @@ namespace Karma.Controllers
             var userReview = await _context.UserReview.FindAsync(id);
             _context.UserReview.Remove(userReview);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "UserReviews");
+
+            return RedirectToAction("Index", new { userId = userReview.ReceiverId });
         }
 
         private bool UserReviewExists(int id)

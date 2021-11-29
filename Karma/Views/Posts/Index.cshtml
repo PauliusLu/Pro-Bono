@@ -47,7 +47,7 @@
                         {
                             <div class="card-footer">
                                 <small class="text-muted">@Html.DisplayFor(modelItem => item.Date)</small>
-                                <div class="mb-1">@Post.CompareQuerie(item)</div>
+                                <div class="mb-1">@item.UserId</div>
                                 @if (item.State == (int)Post.PostState.Reserved)
                                 {
                                     <div class="mb-1 d-inline bg-success rounded-pill p-1 pl-2 pr-2">

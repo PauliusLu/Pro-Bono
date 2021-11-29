@@ -48,11 +48,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\data\DefaultPostImages\books.png" />
-    <None Include="wwwroot\data\DefaultPostImages\clothes.png" />
-    <None Include="wwwroot\data\DefaultPostImages\crafts.png" />
-    <None Include="wwwroot\data\DefaultPostImages\furniture.png" />
-    <None Include="wwwroot\data\DefaultPostImages\tools.png" />
+    <None Include="wwwroot\data\PostImages\Default\books.png" />
+    <None Include="wwwroot\data\PostImages\Default\clothes.png" />
+    <None Include="wwwroot\data\PostImages\Default\crafts.png" />
+    <None Include="wwwroot\data\PostImages\Default\furniture.png" />
+    <None Include="wwwroot\data\PostImages\Default\tools.png" />
     <None Include="wwwroot\data\DialogImages\person.png" />
   </ItemGroup>
 
