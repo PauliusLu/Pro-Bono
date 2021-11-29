@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Karma.Models.Messaging
 {
@@ -17,9 +13,9 @@ namespace Karma.Models.Messaging
         [Required]
         public ChatState State { get; set; }
         [Required]
-        public string CreatorId { get; set; }
+        public User Creator { get; set; }
         [Required]
-        public string PostUserId { get; set; }
+        public User PostUser { get; set; }
         [Required]
         public bool IsSeenByCreator { get; set; }
         [Required]
@@ -31,13 +27,13 @@ namespace Karma.Models.Messaging
 
         }
 
-        public Chat(int id, Post post, ChatState state, string creatorId, string postUserId, bool isSeenByCreator, bool isSeenByPostUser)
+        public Chat(int id, Post post, ChatState state, User creatorId, User postUserId, bool isSeenByCreator, bool isSeenByPostUser)
         {
             Id = id;
             AttachedPost = post;
             State = state;
-            CreatorId = creatorId;
-            PostUserId = postUserId;
+            Creator = creatorId;
+            PostUser = postUserId;
             IsSeenByCreator = isSeenByCreator;
             IsSeenByPostUser = isSeenByPostUser;
         }

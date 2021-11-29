@@ -3,14 +3,16 @@ using System;
 using Karma.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Karma.Migrations
 {
     [DbContext(typeof(KarmaContext))]
-    partial class KarmaContextModelSnapshot : ModelSnapshot
+    [Migration("20211128145832_ForeignKeyInChat")]
+    partial class ForeignKeyInChat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,7 +107,7 @@ namespace Karma.Migrations
                     b.Property<int?>("AttachedPostId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CreatorId")
+                    b.Property<string>("CreatorIdId")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsSeenByCreator")
@@ -114,7 +116,7 @@ namespace Karma.Migrations
                     b.Property<bool>("IsSeenByPostUser")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PostUserId")
+                    b.Property<string>("PostUserIdId")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("State")
@@ -124,9 +126,9 @@ namespace Karma.Migrations
 
                     b.HasIndex("AttachedPostId");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("CreatorIdId");
 
-                    b.HasIndex("PostUserId");
+                    b.HasIndex("PostUserIdId");
 
                     b.ToTable("Chat");
                 });
@@ -505,19 +507,19 @@ namespace Karma.Migrations
                         .WithMany()
                         .HasForeignKey("AttachedPostId");
 
-                    b.HasOne("Karma.Models.User", "Creator")
+                    b.HasOne("Karma.Models.User", "CreatorId")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorIdId");
 
-                    b.HasOne("Karma.Models.User", "PostUser")
+                    b.HasOne("Karma.Models.User", "PostUserId")
                         .WithMany()
-                        .HasForeignKey("PostUserId");
+                        .HasForeignKey("PostUserIdId");
 
                     b.Navigation("AttachedPost");
 
-                    b.Navigation("Creator");
+                    b.Navigation("CreatorId");
 
-                    b.Navigation("PostUser");
+                    b.Navigation("PostUserId");
                 });
 
             modelBuilder.Entity("Karma.Models.Messaging.Message", b =>

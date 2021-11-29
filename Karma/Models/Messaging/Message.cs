@@ -11,7 +11,7 @@ namespace Karma.Models.Messaging
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Username { get; set; }
+        public User Sender { get; set; }
         [Required]
         public Chat Chat { get; set; }
         [Required]
@@ -21,7 +21,7 @@ namespace Karma.Models.Messaging
 
         public bool IsSender(string username)
         {
-            return Username == username;
+            return Sender.UserName == username;
         }
     }
 }
