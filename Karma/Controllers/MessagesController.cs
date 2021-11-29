@@ -35,8 +35,8 @@ namespace Karma.Controllers
             User user = _context.User.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
 
             List<Chat> userChats = await _context.Message
-                .Include(m => m.Chat.CreatorId)
-                .Include(m => m.Chat.PostUserId)
+                .Include(m => m.Chat.Creator)
+                .Include(m => m.Chat.PostUser)
                 .Where(m => m.Sender == user || m.Chat.AttachedPost.UserId == user.UserName)
                 .Select(m => m.Chat)
                 .ToListAsync();
@@ -197,7 +197,7 @@ namespace Karma.Controllers
         {
             UpdateChat(chat, delegate (Chat c)
             {
-                if (c.CreatorId == user)
+                if (c.Creator == user)
                 {
                     c.IsSeenByPostUser = false;
                 }
@@ -212,7 +212,7 @@ namespace Karma.Controllers
         {
             UpdateChat(chat, delegate (Chat c)
             {
-                if (c.CreatorId == user)
+                if (c.Creator == user)
                 {
                     c.IsSeenByCreator = true;
                 }

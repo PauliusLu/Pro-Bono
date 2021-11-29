@@ -28,9 +28,9 @@ namespace Karma.Controllers
                 string user = User.Identity.Name;
 
                 List<Chat> chats = _context.Chat
-                    .Include(c => c.CreatorId)
-                    .Include(c => c.PostUserId)
-                    .Where(c => c.AttachedPost.Id == post.Id && c.CreatorId.UserName == user).ToList();
+                    .Include(c => c.Creator)
+                    .Include(c => c.PostUser)
+                    .Where(c => c.AttachedPost.Id == post.Id && c.Creator.UserName == user).ToList();
                 Chat chat = chats?.FirstOrDefault();
                 if (chat != null)
                 {
@@ -62,9 +62,9 @@ namespace Karma.Controllers
 
 
                 List<Chat> chats = await _context.Chat
-                    .Include(c => c.CreatorId)
-                    .Include(c => c.PostUserId)
-                    .Where(c => c.AttachedPost.Id == chatData.PostId && c.CreatorId.UserName == user).ToListAsync();
+                    .Include(c => c.Creator)
+                    .Include(c => c.PostUser)
+                    .Where(c => c.AttachedPost.Id == chatData.PostId && c.Creator.UserName == user).ToListAsync();
                 Chat chat = chats?.FirstOrDefault();
 
                 chat = CreateChat(chatData, chat);
@@ -138,9 +138,9 @@ namespace Karma.Controllers
         private int UnseenMessagesCount(string userId)
         {
             return _context.Chat
-               .Include(c => c.CreatorId )
-               .Include(c => c.PostUserId)
-               .Where(c => (c.PostUserId.UserName == userId && c.IsSeenByPostUser == false) || (c.CreatorId.UserName == userId && c.IsSeenByCreator == false))
+               .Include(c => c.Creator )
+               .Include(c => c.PostUser)
+               .Where(c => (c.PostUser.UserName == userId && c.IsSeenByPostUser == false) || (c.Creator.UserName == userId && c.IsSeenByCreator == false))
                .Count();
         }
         private string UnseenMessagesNumber(string userId)

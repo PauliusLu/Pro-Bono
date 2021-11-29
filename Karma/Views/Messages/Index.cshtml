@@ -12,8 +12,8 @@
     Karma.Models.Messaging.Message historyLastMessage = history?.LastOrDefault();
     Karma.Models.Post historyPost = historyLastMessage?.Chat.AttachedPost;
 
-    var creatorId = historyLastMessage?.Chat?.CreatorId?.UserName;
-    var receiverId = historyLastMessage?.Chat?.PostUserId?.UserName;
+    var creatorId = historyLastMessage?.Chat?.Creator?.UserName;
+    var receiverId = historyLastMessage?.Chat?.PostUser?.UserName;
     if (user == receiverId)
     {
         var temp = creatorId;
@@ -62,9 +62,9 @@ else
                         {
 
                             Karma.Models.Messaging.Message m = messages.Last();
-                            User otherUser = (m.Chat.CreatorId.UserName == user) ? m.Chat.PostUserId : (m.Chat.CreatorId);
+                            User otherUser = (m.Chat.Creator.UserName == user) ? m.Chat.PostUser : (m.Chat.Creator);
                             string activeClass = (currentChatId == m.Chat.Id) ? "active_chat" : "";
-                            string seen = ((m.Chat.CreatorId.UserName == user && m.Chat.IsSeenByCreator == true) || (m.Chat.PostUserId.UserName == user && m.Chat.IsSeenByPostUser == true)) ? "" : "font-weight-bold";
+                            string seen = ((m.Chat.Creator.UserName == user && m.Chat.IsSeenByCreator == true) || (m.Chat.PostUser.UserName == user && m.Chat.IsSeenByPostUser == true)) ? "" : "font-weight-bold";
 
 
                             <div class="chat_people @activeClass" id="00@(m.Chat.Id)" onclick="location.href='@($"/Messages?chatId={m.Chat.Id}")'">
@@ -120,7 +120,7 @@ else
                                         if (historyPost.State == (int)Karma.Models.Post.PostState.Reserved)
                                         {
                                             string reserveText = "Cancel reservation";
-                                            if (historyPost.ReceiverUserId == historyLastMessage.Chat.CreatorId.UserName)
+                                            if (historyPost.ReceiverUserId == historyLastMessage.Chat.Creator.UserName)
                                             {
                                                 <button class="btn btn-trade" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Traded))">
                                                     Complete trade with @(historyPost.ReceiverUserId)
@@ -292,7 +292,7 @@ else
         var parameters = {
             'Post': jsonPost,
             'State': st,
-            'Receiver': "@historyLastMessage?.Chat?.CreatorId?.UserName"
+            'Receiver': "@historyLastMessage?.Chat?.Creator?.UserName"
         }
 
 
