@@ -18,6 +18,7 @@ namespace Karma.Models
         public string Name { get; set; }
         [Required]
         public string Surname { get; set; }
+        public int KarmaPoints { get; set; }
         public string IpAddress { get; set; }
         [MaxLength(120)]
         public string Description { get; set; }
