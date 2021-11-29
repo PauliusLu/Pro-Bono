@@ -17,6 +17,7 @@ namespace Karma.Models
         public string CreatorId { get; set; }
         public User Creator { get; set; }
         [Required]
+        [Display(Name = "Receiver username")]
         public string ReceiverId { get; set; }
         [Required]
         public int Rating { get; set; }

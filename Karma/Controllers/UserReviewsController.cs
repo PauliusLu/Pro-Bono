@@ -96,7 +96,7 @@ namespace Karma.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index", "Messages");
+                return RedirectToAction("Index", new { userId = userReview.ReceiverId });
             }
             return View(userReview);
         }
@@ -125,7 +125,8 @@ namespace Karma.Controllers
             var userReview = await _context.UserReview.FindAsync(id);
             _context.UserReview.Remove(userReview);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "UserReviews");
+
+            return RedirectToAction("Index", new { userId = userReview.ReceiverId });
         }
 
         private bool UserReviewExists(int id)
