@@ -48,7 +48,6 @@ else
 <script>
 
     function MessageUpdate(user) {
-        console.log("click");
         var token = $('@Html.AntiForgeryToken()').val();
         var parameters = {
             'Receiver': user
