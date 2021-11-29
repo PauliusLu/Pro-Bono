@@ -19,7 +19,7 @@ namespace Karma.Models
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var dbReportList = await _context.Report.ToListAsync();
+            var dbReportList = await _context.Report.Take(6).ToListAsync();
 
             dbReportList.Sort((Report a, Report b) =>
             {

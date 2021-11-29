@@ -1,0 +1,108 @@
+﻿@model ReportDataModel
+
+@{
+    ViewData["Title"] = "Review reports";
+}
+
+<form asp-controller="Admin" asp-action="ViewReports" method="get">
+    <div>
+        <input type="hidden" asp-for="@Model.page">
+        <select class="d-inline" asp-for="sorting" asp-items="Html.GetEnumSelectList<Report.ReportStates>()">
+        </select>
+        <div class="border border-secondary mt-0 m-0 p-1 d-inline">
+            <input type="checkbox" name="aggr" />
+            <label for="aggr">Merge together</label>
+        </div>
+        <input type="submit" value="Search" />
+    </div>
+</form>
+@if (Model.Reports.Count == 0)
+{
+    @if (Model.page != null || Model.page != 1)
+    {
+        <h3>No More Reports Found. Go back to previous page.</h3>
+        <a asp-controller="Admin" asp-action="ViewReports" asp-route-page=@(Model.page - 1) asp-route-sorting=@Model.sorting asp-route-aggr=@Model.aggr class="btn btn-success">Previous Page</a>
+    }
+    else
+    {
+        <h3>No Reports Found by your Criteria.</h3>
+    }
+}
+else
+{
+    <div class="post-cards container-fluid content-row">
+        <div class="row">
+            @foreach (var report in Model.Reports)
+            {
+                <div class="col col-12 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            Reported by: <br />
+                            @if (ViewData["aggr"] != null)
+                            {
+                                var grp = (List<IGrouping<int, Report>>)ViewData["grpReports"];
+                                @(grp.FirstOrDefault(m => m.First().PostId == report.PostId).Count().ToString() + " Users.");
+
+                            }
+                            else
+                            {
+                                @report.ReporterId
+                            }
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @{
+                                    if (String.IsNullOrWhiteSpace(report.ReportMessage))
+                                    {
+                                        @("No message provided.");
+                                    }
+                                    else
+                                    {
+                                        var str = report.ReportMessage.Split("\n");
+                                        foreach (var item in str)
+                                        {
+                                            @(item);
+                                            <br />
+                                        }
+                                    }
+                                }
+                            </h5>
+                            <p class="mb-1 d-inline @switch (report.ReportState)
+                            {
+                                case Report.ReportStates.Open:
+                                    @("bg-info");
+                                    break;
+                                case Report.ReportStates.Approved:
+                                    @("bg-success");
+                                    break;
+                                case Report.ReportStates.Declined:
+                                    @("bg-danger");
+                                    break;
+                                default:
+                                    @("bg-info");
+                                    break;
+                            }
+                            rounded-pill p-1 pl-2 pr-2 card-text">
+                                @Html.DisplayFor(model => report.ReportState)
+                            </p>
+                            <br />
+                            <br />
+                            <a asp-controller="Admin" asp-action="ReportReview" asp-route-reportId=@report.Id class="btn btn-primary">Review report</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (Model.page != null && Model.page != 1)
+        {
+            <a asp-controller="Admin" asp-action="ViewReports" asp-route-page=@(Model.page - 1) asp-route-sorting=@Model.sorting asp-route-aggr=@Model.aggr class="btn btn-success">Previous Page</a>
+        }
+        <a asp-controller="Admin" asp-action="ViewReports" asp-route-page=@((Model.page ?? 1) + 1) asp-route-sorting=@Model.sorting asp-route-aggr=@Model.aggr class="btn btn-success">Next Page</a>
+    </div>
+}
+@*Getting Post*@
+@*//Casting to anonymous type
+var b = new { post = new Post(), report = new Report() };
+var list = new[] { b, b }.ToList();
+list = ReportDataModel.Cast(list, ViewData["reportsAndPosts"]);
+var post = list.First(m => m.post.Id == report.PostId);*@

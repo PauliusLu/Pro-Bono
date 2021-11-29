@@ -3,7 +3,17 @@
 @{
     ViewData["Title"] = "Review reports";
 }
-
+<form asp-controller="Admin" asp-action="ViewReports" method="get">
+    <div>
+        <select class="d-inline" name="sorting" asp-items="Html.GetEnumSelectList<Report.ReportStates>()">
+        </select>
+        <div class="border border-secondary mt-0 m-0 p-1 d-inline">
+            <input type="checkbox" name="aggr" />
+            <label for="aggr">Merge together</label>
+        </div>
+        <input type="submit" value="Search" />
+    </div>
+</form>
 @if (Model == null)
 {
     <h3>You have currently reviewed reports.</h3>
