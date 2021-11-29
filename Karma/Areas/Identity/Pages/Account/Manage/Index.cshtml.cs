@@ -32,7 +32,15 @@ namespace Karma.Areas.Identity.Pages.Account.Manage
         }
 
         public string UserId { get; set; }
+        [Required]
+        [StringLength(60)]
         public string Username { get; set; }
+        [Required]
+        [StringLength(60)]
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        [MaxLength(120)]
+        public string Description { get; set; }
         public float RatingAverage { get; set; }
         [TempData]
         public string StatusMessage { get; set; }

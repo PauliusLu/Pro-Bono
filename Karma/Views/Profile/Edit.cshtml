@@ -1,0 +1,95 @@
+﻿@model Karma.Areas.Identity.Pages.Account.Manage.IndexModel
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+<html>
+<body>
+    <div>
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="currentUser.IpAddress" />
+
+
+            <div class="container">
+                <div class="main-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <partial name="~/Views/Profile/ProfileBox.cshtml" for="@Model">
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Username</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <input asp-for="Username" class="form-control" value="@Model.currentUser.UserName" disabled/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Name</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <input asp-for="Name" class="form-control" value="@Model.currentUser.Name" />
+                                                <span asp-validation-for="Name" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Surname</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <input asp-for="Surname" class="form-control" value="@Model.currentUser.Surname" />
+                                                <span asp-validation-for="Surname" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Description</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <textarea asp-for="Description" class="form-control" rows="6">@Model.currentUser.Description</textarea>
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Update Image</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <div class="form-group">
+                                                <input asp-for="@Model.currentUser.ImagePath" type="file" class="form-control-file" accept=".jpg, .jpeg, .png, .bmp" name="file" />
+                                                <span class="text-danger">@ViewBag.Message</span>
+                                            </div>
+                                            <input type="hidden" asp-for="@Model.currentUser.IsActive" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-3"></div>
+                                        <div class="form-group">
+                                            <input type="submit" value="Save changes" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>     
+        </form>
+    </div>
+</body>
+</html>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

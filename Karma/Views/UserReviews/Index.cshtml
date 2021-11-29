@@ -31,7 +31,7 @@
                                     <span class="fa fa-star @(rating > 0 ? "checked" : "")"></span>
                                 }
                                 <p class="text-muted">@preciseRating/5.00</p>
-                                <a asp-controller="Profile" asp-action="Index" asp-route-userId="@userModel.currentUser.UserName">Go back to profile</a>
+                                <a asp-controller="Profile" asp-action="Index" asp-route-id="@userModel.currentUser.UserName">Go back to profile</a>
                             </div>
                         </div>
                     </div>
