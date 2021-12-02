@@ -14,6 +14,7 @@ using Karma.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using System.IO;
+using Serilog;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Karma
@@ -45,6 +46,10 @@ namespace Karma
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Logger = new LoggerConfiguration()
+             .WriteTo.File("logs/httpLog.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
             // Adding localization services
             services.AddLocalization(option => { option.ResourcesPath = "Resources"; });
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
