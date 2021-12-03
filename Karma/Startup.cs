@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using System.IO;
 using Serilog;
 using Microsoft.AspNetCore.Authorization;
+using Karma.Middleware;
 
 namespace Karma
 {
@@ -49,6 +50,8 @@ namespace Karma
             Log.Logger = new LoggerConfiguration()
              .WriteTo.File("logs/httpLog.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
+
+            services.AddSingleton(x => Log.Logger);
 
             // Adding localization services
             services.AddLocalization(option => { option.ResourcesPath = "Resources"; });
@@ -120,6 +123,7 @@ namespace Karma
                 .AddSupportedUICultures(supportedCultures);
 
             app.UseRequestLocalization(localizationOptions);
+            app.UseAnalyticsMiddleware();
 
             app.UseEndpoints(endpoints =>
             {
