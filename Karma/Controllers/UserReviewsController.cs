@@ -43,7 +43,7 @@ namespace Karma.Controllers
 
             ViewBag.UserModel = modelView;
 
-            var userReviews = await _context.UserReview.Where(m => m.ReceiverId == userId).ToListAsync();
+            var userReviews = await _context.UserReview.Where(m => m.ReceiverId == id).ToListAsync();
             var users = await _context.User.ToListAsync();
             var reviewsWithCreators = userReviews.Join(
                                 users,
@@ -96,7 +96,7 @@ namespace Karma.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index", new { userId = userReview.ReceiverId });
+                return RedirectToAction("Index", new { id = userReview.ReceiverId });
             }
             return View(userReview);
         }
@@ -126,7 +126,7 @@ namespace Karma.Controllers
             _context.UserReview.Remove(userReview);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", new { userId = userReview.ReceiverId });
+            return RedirectToAction("Index", new { id = userReview.ReceiverId });
         }
 
         private bool UserReviewExists(int id)
