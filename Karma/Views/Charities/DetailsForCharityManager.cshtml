@@ -1,0 +1,37 @@
+﻿@model Karma.Models.Charity
+
+@{
+    ViewData["Title"] = "Details";
+    var charityItemTypes = Model.GetItemTypes();
+}
+
+
+<h1>
+    @Model.Name
+<span class="badge @(Model.ReviewState == Enums.ReviewState.Approved? "badge-success" : "badge-secondary") mb-3">
+    @Html.DisplayFor(model => model.ReviewState)
+</span>
+</h1>
+
+<div>
+    <h5>
+        @if (charityItemTypes.Any())
+        {
+            foreach (var itemType in Model.CharityItemTypes)
+            {
+                <span class="badge badge-pill badge-info">@itemType.ItemType.Name</span>
+            }
+        }
+    </h5>
+    <hr />
+    @if (Model.ImagePath != null && Model.ImagePath != "")
+    {
+        <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
+             alt="Item image" class="img-fluid" style="max-width:400px;" />
+        <br />
+    }
+</div>
+<hr />
+<div>
+    Posted at @Html.DisplayFor(model => model.DateCreated)
+</div>

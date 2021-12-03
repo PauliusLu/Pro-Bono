@@ -69,6 +69,13 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
+            var charityAddresses = await _context.CharityAddress
+                .Where(m => m.CharityId == charity.Id)
+                .OrderBy(m => m.Country)
+                .ThenBy(m => m.City)
+                .ToListAsync();
+            charity.CharityAddresses = charityAddresses;
+
             return View(charity);
         }
 

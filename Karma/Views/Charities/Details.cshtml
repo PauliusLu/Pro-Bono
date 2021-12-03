@@ -6,30 +6,58 @@
 }
 
 
-<h1>@Model.Name
-    <span class="badge @(Model.ReviewState == Enums.ReviewState.Approved? "badge-success" : "badge-secondary") mb-3">
-    @Html.DisplayFor(model => model.ReviewState)</span>
-</h1>
+<h1>@Model.Name</h1>
 
-<div>
-    <h5>
-        @if (charityItemTypes.Any())
-        {
-            foreach(var itemType in Model.CharityItemTypes)
+<div class="container">
+    <div class="row align-content-between">
+        <div class="col col-12 col-sm-6 col-md-6 col-lg-6">
+            <h5>
+                @if (charityItemTypes.Any())
+                {
+                    foreach (var itemType in Model.CharityItemTypes)
+                    {
+                        <span class="badge badge-pill badge-info">@itemType.ItemType.Name</span>
+                    }
+                }
+            </h5>
+            <hr />
+            @if (Model.ImagePath != null && Model.ImagePath != "")
             {
-                <span class="badge badge-pill badge-info">@itemType.ItemType.Name</span>
+                <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
+                        alt="Item image" class="img-fluid" style="max-width:500px;" />
+                <br />
             }
-        }
-    </h5>
-    <hr />
-    @if (Model.ImagePath != null && Model.ImagePath != "")
-    {
-        <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
-             alt="Item image" class="img-fluid" style="max-width:400px;" />
-        <br />
-    }
+        </div>
+        <div class="col col-12 col-sm-5 col-md-5 col-lg-5">
+            @if (Model.CharityAddresses.Any())
+            {
+                <h5>Where can you find the charity?</h5>
+                <hr />
+                <ul class="list-group">
+                    @foreach (var address in Model.CharityAddresses)
+                    {
+                        <li class="list-group-item">@address.Country, @address.City, @address.Street @address.HouseNumber</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <h5>We're sorry, the charity hasn't provided their location</h5>
+                <hr />
+            }
+        </div>
+    </div>
 </div>
-<hr />
-<div>
-    Posted at @Html.DisplayFor(model => model.DateCreated)
-</div>
+
+<script>
+    $(function () {
+        $('.list-group li').click(function (e) {
+            e.preventDefault();
+            $that = $(this);
+            $that.parent().find('li').removeClass('active');
+            $that.addClass('active');
+        })
+    })
+
+
+</script>
