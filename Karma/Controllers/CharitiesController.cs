@@ -10,6 +10,9 @@ using Karma.Models;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Geocoding;
+using Geocoding.Google;
+using Microsoft.Extensions.Configuration;
 
 namespace Karma.Controllers
 {
@@ -19,13 +22,16 @@ namespace Karma.Controllers
 
         private readonly IWebHostEnvironment _iWebHostEnv;
 
+        private readonly GoogleMaps _googleMaps;
+
         private List<Charity> _charities;
 
         // Passes an object of type IWebHostEnvironment that carries information about our host environment.
-        public CharitiesController(KarmaContext context, IWebHostEnvironment webHostEnvironment)
+        public CharitiesController(KarmaContext context, IWebHostEnvironment webHostEnvironment, GoogleMaps googleMaps)
         {
             _context = context;
             _iWebHostEnv = webHostEnvironment;
+            _googleMaps = googleMaps;
 
             _charities = GetCharityList().Result;
         }
@@ -69,14 +75,35 @@ namespace Karma.Controllers
                 return NotFound();
             }
 
-            var charityAddresses = await _context.CharityAddress
-                .Where(m => m.CharityId == charity.Id)
-                .OrderBy(m => m.Country)
-                .ThenBy(m => m.City)
-                .ToListAsync();
-            charity.CharityAddresses = charityAddresses;
+            var charityAddresses = GetCharityLocales(charity).Result;
+            ViewBag.CharityAddresses = charityAddresses;
 
             return View(charity);
+        }
+
+        public async Task<List<Address>> GetCharityLocales(Charity charity)
+        {
+            var addresses = new List<Address>();
+            var charityAddresses = GetCharityAddresses(charity).Result;
+            var serviceApiKey = _googleMaps.ServiceApiKey;
+
+            if (serviceApiKey != null)
+            {
+                ViewBag.ApiKey = serviceApiKey; 
+                var geocoder = new GoogleGeocoder(serviceApiKey);
+
+                foreach (var address in charityAddresses)
+                {
+                    var fullAddress = address.GetFullAddress();
+                    var googleAddress = await geocoder.GeocodeAsync(fullAddress);
+                    var first = googleAddress.FirstOrDefault();
+
+                    if(first != null)
+                        addresses.Add(first);
+                }
+            }
+
+            return addresses;
         }
 
         // GET: Charities/Create
@@ -241,6 +268,8 @@ namespace Karma.Controllers
         {
             var charityAddressesList = await _context.CharityAddress
                 .Where(x => x.CharityId == charity.Id)
+                .OrderBy(m => m.Country)
+                .ThenBy(m => m.City)
                 .ToListAsync();
 
             return charityAddressesList;

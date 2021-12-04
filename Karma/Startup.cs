@@ -57,6 +57,11 @@ namespace Karma
             services.AddDbContext<KarmaContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
+            // Adding singleton for Google Maps API
+            var maps = new GoogleMaps();
+            maps.ServiceApiKey = Configuration.GetValue<string>("GoogleMaps:ServiceApiKey");
+            services.AddSingleton<GoogleMaps>(maps);
+
             // Adding identity
             services.AddIdentity<Karma.Models.User, IdentityRole>()
                 .AddDefaultUI()

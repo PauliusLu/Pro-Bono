@@ -38,5 +38,15 @@ namespace Karma.Models
         {
             CharityId = charityId;
         }
+
+        public String GetFullAddress()
+        {
+            var streetAndHouseNumber = string.Join(" ", this.Street, this.HouseNumber);
+
+            var fullAddress = string.Join(", ", this.Country, this.City, streetAndHouseNumber,
+                    (string.IsNullOrEmpty(this.PostCode) ? "" : this.PostCode));
+
+            return fullAddress;
+        }
     }
 }

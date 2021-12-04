@@ -1,16 +1,28 @@
-﻿@model Karma.Models.Charity
+﻿@using Geocoding;
+
+@model Karma.Models.Charity
 
 @{
     ViewData["Title"] = "Details";
     var charityItemTypes = Model.GetItemTypes();
+    var charityAddresses = (List<Address>)ViewBag.CharityAddresses;
+
+    var lat = charityAddresses.First().Coordinates.Latitude;
+    var lng = charityAddresses.First().Coordinates.Longitude;
+
+    var googleApi = "https://maps.googleapis.com/maps/api/js?key=" + (string)ViewBag.ApiKey;
 }
 
+<head>
+    <script src=@googleApi></script>
+</head>
 
 <h1>@Model.Name</h1>
 
+<body onload="loadMap(@lat, @lng)">
 <div class="container">
     <div class="row align-content-between">
-        <div class="col col-12 col-sm-6 col-md-6 col-lg-6">
+        <div class="col col-12 col-sm-12 col-md-12 col-lg-5 mb-4">
             <h5>
                 @if (charityItemTypes.Any())
                 {
@@ -24,30 +36,31 @@
             @if (Model.ImagePath != null && Model.ImagePath != "")
             {
                 <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
-                        alt="Item image" class="img-fluid" style="max-width:500px;" />
+                     alt="Item image" class="img-fluid" style="max-width:400px;" />
                 <br />
             }
         </div>
-        <div class="col col-12 col-sm-5 col-md-5 col-lg-5">
+        <div class="col col-12 col-sm-12 col-md-12 col-lg-6">
             @if (Model.CharityAddresses.Any())
             {
-                <h5>Where can you find the charity?</h5>
-                <hr />
+                <h5 class="mb-4">Where can you find the charity?</h5>
                 <ul class="list-group">
-                    @foreach (var address in Model.CharityAddresses)
+                    @foreach (var address in charityAddresses)
                     {
-                        <li class="list-group-item">@address.Country, @address.City, @address.Street @address.HouseNumber</li>
+                        <li class="list-group-item" lat=@address.Coordinates.Latitude 
+                            lng="@address.Coordinates.Longitude">@address.FormattedAddress</li>
                     }
                 </ul>
+                <div id="map" class="mt-4" style="width:500px; height:400px;"></div>
             }
             else
             {
-                <h5>We're sorry, the charity hasn't provided their location</h5>
-                <hr />
+                <h5>We're sorry, the charity hasn't provided their location</h5><hr />
             }
         </div>
     </div>
 </div>
+</body>
 
 <script>
     $(function () {
@@ -56,8 +69,27 @@
             $that = $(this);
             $that.parent().find('li').removeClass('active');
             $that.addClass('active');
-        })
-    })
 
+            var lat = this.attributes.lat.value;
+            var lng = this.attributes.lng.value;
+            loadMap(lat, lng);
+        })
+    });
+
+    function loadMap(lat, lng) {
+
+        var mapOptions = {
+            center: new google.maps.LatLng(lat, lng),
+            zoom: 10
+        }
+
+        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: map,
+        });
+    }
 
 </script>
+
