@@ -7,10 +7,15 @@
     var charityItemTypes = Model.GetItemTypes();
     var charityAddresses = (List<Address>)ViewBag.CharityAddresses;
 
-    var lat = charityAddresses.First().Coordinates.Latitude;
-    var lng = charityAddresses.First().Coordinates.Longitude;
+    double lat = 0;
+    double lng = 0;
+    if (charityAddresses.Any())
+    {
+        lat = charityAddresses.First().Coordinates.Latitude;
+        lng = charityAddresses.First().Coordinates.Longitude;
+    }
 
-    var googleApi = "https://maps.googleapis.com/maps/api/js?key=" + (string)ViewBag.ApiKey;
+    var googleApi = "https://maps.googleapis.com/maps/api/js?key=" + (string) ViewBag.ApiKey;
 }
 
 <head>
@@ -20,46 +25,56 @@
 <h1>@Model.Name</h1>
 
 <body onload="loadMap(@lat, @lng)">
-<div class="container">
-    <div class="row align-content-between">
-        <div class="col col-12 col-sm-12 col-md-12 col-lg-5 mb-4">
-            <h5>
-                @if (charityItemTypes.Any())
+    <div class="container">
+        <div class="row align-content-between">
+            <div class="col col-12 col-sm-12 col-md-12 col-lg-5 mb-4">
+                <h5>
+                    @if (charityItemTypes.Any())
+                    {
+                        foreach (var itemType in Model.CharityItemTypes)
+                        {
+                            <span class="badge badge-pill badge-info">@itemType.ItemType.Name</span>
+                        }
+                    }
+                </h5>
+                <hr />
+                @if (Model.ImagePath != null && Model.ImagePath != "")
                 {
-                    foreach (var itemType in Model.CharityItemTypes)
-                    {
-                        <span class="badge badge-pill badge-info">@itemType.ItemType.Name</span>
-                    }
+                    <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
+                         alt="Item image" class="img-fluid" style="max-width:400px;" />
+                    <br />
                 }
-            </h5>
-            <hr />
-            @if (Model.ImagePath != null && Model.ImagePath != "")
-            {
-                <img src="/@Charity.ImagesDirName/@Model.ImagePath" asp-append-version="true"
-                     alt="Item image" class="img-fluid" style="max-width:400px;" />
-                <br />
-            }
-        </div>
-        <div class="col col-12 col-sm-12 col-md-12 col-lg-6">
-            @if (Model.CharityAddresses.Any())
-            {
-                <h5 class="mb-4">Where can you find the charity?</h5>
-                <ul class="list-group">
-                    @foreach (var address in charityAddresses)
-                    {
-                        <li class="list-group-item" lat=@address.Coordinates.Latitude 
-                            lng="@address.Coordinates.Longitude">@address.FormattedAddress</li>
-                    }
-                </ul>
-                <div id="map" class="mt-4" style="width:500px; height:400px;"></div>
-            }
-            else
-            {
-                <h5>We're sorry, the charity hasn't provided their location</h5><hr />
-            }
+            </div>
+            <div class="col col-12 col-sm-12 col-md-12 col-lg-6">
+                @if (charityAddresses.Any())
+                {
+                    <h5 class="mb-4">Where can you find the charity?</h5>
+                    <ul class="list-group">
+                        @foreach (var address in charityAddresses)
+                        {
+                            <li class="list-group-item" lat=@address.Coordinates.Latitude
+                                lng="@address.Coordinates.Longitude">@address.FormattedAddress</li>
+                            }
+                    </ul>
+                    <div id="map" class="mt-4" style="width:500px; height:400px;"></div>
+                }
+                else if (Model.CharityAddresses.Any())
+                {
+                    <h5 class="mb-4">Where can you find the charity?</h5>
+                    <ul class="list-group">
+                        @foreach (var address in Model.CharityAddresses)
+                        {
+                            <li class="list-group-item">@address.GetFullAddress()</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <h5>We're sorry, the charity hasn't provided their location</h5><hr />
+                }
+            </div>
         </div>
     </div>
-</div>
 </body>
 
 <script>
@@ -77,18 +92,19 @@
     });
 
     function loadMap(lat, lng) {
+        if (lat != 0 && lng != 0) {
+            var mapOptions = {
+                center: new google.maps.LatLng(lat, lng),
+                zoom: 10
+            }
 
-        var mapOptions = {
-            center: new google.maps.LatLng(lat, lng),
-            zoom: 10
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(lat, lng),
+                map: map,
+            });
         }
-
-        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-        var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(lat, lng),
-            map: map,
-        });
     }
 
 </script>

@@ -43,8 +43,10 @@ namespace Karma.Models
         {
             var streetAndHouseNumber = string.Join(" ", this.Street, this.HouseNumber);
 
-            var fullAddress = string.Join(", ", this.Country, this.City, streetAndHouseNumber,
-                    (string.IsNullOrEmpty(this.PostCode) ? "" : this.PostCode));
+            var fullAddress = string.Join(", ", this.Country, this.City, streetAndHouseNumber);
+
+            if (!string.IsNullOrEmpty(this.PostCode))
+                fullAddress = string.Join(", ", fullAddress, this.PostCode);
 
             return fullAddress;
         }
