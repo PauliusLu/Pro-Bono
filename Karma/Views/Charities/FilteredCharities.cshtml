@@ -27,7 +27,7 @@ else if (ViewBag.ItemType != null)
                     <div class="card-body">
                         <h5 class="card-title">@Html.DisplayFor(m => item.Name)</h5>
                         <p class="card-text">@Html.DisplayFor(model => item.Description)</p>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">@Html.DisplayFor(m => item.Name)</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">View details</a>
                     </div>
                 </div>
             </div>
