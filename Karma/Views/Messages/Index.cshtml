@@ -70,7 +70,7 @@ else
                             <div class="chat_people @activeClass" id="00@(m.Chat.Id)" onclick="location.href='@($"/Messages?chatId={m.Chat.Id}")'">
                                 <div class="chat_img"> <img src="@(otherUser.GetFullImagePath())"> </div>
                                 <div class="chat_ib @seen">
-                                    <p>@otherUser.UserName</p>
+                                    <p><a asp-controller="Profile" asp-action="Index" asp-route-id="@otherUser.UserName">@otherUser.UserName</a></p>
                                     <h5>
                                         <a class ="@seen" href="@($"Posts/Details/{m.Chat.AttachedPost.Id}")">@m.Chat.AttachedPost.Title</a>
                                         <span class="chat_date @seen">@m.Date.ToLocalTime()</span>
