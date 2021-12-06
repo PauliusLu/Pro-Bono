@@ -46,17 +46,21 @@
                 </dd>
             </dl>
         </div>
-        <form asp-controller="Admin"
-              asp-action="ReportReview" method="post" asp-route-reportId="@Model.Id" style="display:inline-block">
-            <input class="btn btn-success" type="submit" name="confirm" value="Confirm report" />
-            <input class="btn btn-danger" type="submit" name="reject" value="Reject report" />
-        </form>
+        <div class="form-group" style="display:inline-block" id="confirmPost">
+            <a href="#" class="btn btn-success">Confirm report</a>
+        </div>
+        <div class="form-group" style="display:inline-block" id="rejectPost">
+            <a href="#" class="btn btn-warning">Reject report</a>
+        </div>
         @*Cancel*@
         <div class="form-group" style="display:inline-block">
             <a asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.ReportReview"
                class="btn btn-primary">
                 Cancel
             </a>
+        </div>
+        <div class="form-group" style="display:inline-block" id="deletePost">
+            <a href="#" class="btn btn-danger">Delete Report</a>
         </div>
     </div>
     <div class="col-md-6 border border-info">
@@ -68,3 +72,47 @@
 <div>
     <a href="javascript: history.go(-1)">Back to List</a>
 </div>
+
+<script>
+    var token = $('@Html.AntiForgeryToken()').val();
+    $("#deletePost").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: "delete",
+            url: "ReportReview?reportId=" + @Model.Id,
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (response) {
+                history.go(-1);
+            }
+        });
+    });
+    $("#confirmPost").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: "put",
+            url: "ReportReview?reportId=" + @Model.Id + "&confirm=true",
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (response) {
+                history.go(-1);
+            }
+        });
+    });
+
+    $("#rejectPost").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: "put",
+            url: "ReportReview?reportId=" + @Model.Id + "&reject=true",
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (response) {
+                history.go(-1);
+            }
+        });
+    });
+</script>

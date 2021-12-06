@@ -292,7 +292,6 @@ namespace Karma.Controllers
         }
 
         [HttpGet]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> ReportReview(int? reportId)
         {
             if (reportId == null)
@@ -315,11 +314,11 @@ namespace Karma.Controllers
             return View(report);
         }
 
-        [HttpPost]
+        [HttpPut]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReportReview(int reportId, string confirm, string reject)
         {
-
+            if (string.IsNullOrEmpty(confirm) && string.IsNullOrEmpty(reject)) return NotFound();
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
@@ -338,15 +337,37 @@ namespace Karma.Controllers
             return SwitchToTabs(Enums.AdminTab.ReportReview);
         }
 
+        [HttpDelete]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReportReview(int reportId)
+        {
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            
+            var oldReport = await _context.Report.FirstOrDefaultAsync(c => c.Id == reportId);
+
+            _context.Remove(oldReport);
+            await _context.SaveChangesAsync();
+
+            return SwitchToTabs(Enums.AdminTab.ReportReview);
+        }
+
+
         private void hideReportedPost(int id)
         {
             var post = _context.Post.FirstOrDefault(c => c.Id == id);
             post.State = (int)Post.PostState.Hidden;
             post.IsVisible = false;
+
+            var allSimilarReports = _context.Report.Where(a => a.PostId == id && a.ReportState == ReportStates.Open).ToListAsync();
+            allSimilarReports.Result.ForEach(a => a.ReportState = ReportStates.Approved);
+            _context.Report.UpdateRange(allSimilarReports.Result);
         }
 
         [HttpGet]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> ViewReports(int? page, string sorting, string? aggr)
         {
             const int ReportsPerPage = 6;
