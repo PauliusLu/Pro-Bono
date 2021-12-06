@@ -13,7 +13,7 @@
         @foreach (var m in activeMessages ?? Enumerable.Empty<Karma.Models.Messaging.Message>())
         {
 
-            bool isReceiver = m.Username != user;
+            bool isReceiver = m.Sender.UserName != user;
 
             <div class="@(isReceiver ? "incoming_msg" : "outgoing_msg")">
                 @if (isReceiver)

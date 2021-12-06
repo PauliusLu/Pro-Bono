@@ -2,14 +2,18 @@
     color: orange;
 }
 
-
-.profile-pic {
+.review .profile-pic {
     width: 90px;
     height: 90px;
     border-radius: 100%;
     margin-right: 30px
 }
 
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+}
 
 .rating {
     display: flex;

@@ -21,12 +21,13 @@ else if (ViewBag.ItemType != null)
                 <div class="card h-100">
                     @if (item.ImagePath != null && item.ImagePath != "")
                     {
-                        <img class="card-img-top ratio ratio-4x3" src="/@Charity.ImagesDirName/@item.ImagePath" asp-append-version="true" alt="">
+                        <img class="card-img-top ratio ratio-4x3" src="/@Charity.ImagesDirName/@item.ImagePath" asp-append-version="true" alt="" 
+                             style="max-height:300px; object-fit: cover;">
                     }
                     <div class="card-body">
                         <h5 class="card-title">@Html.DisplayFor(m => item.Name)</h5>
                         <p class="card-text">@Html.DisplayFor(model => item.Description)</p>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">@Html.DisplayFor(m => item.Name)</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">View details</a>
                     </div>
                 </div>
             </div>

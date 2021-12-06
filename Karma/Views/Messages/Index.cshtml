@@ -12,8 +12,8 @@
     Karma.Models.Messaging.Message historyLastMessage = history?.LastOrDefault();
     Karma.Models.Post historyPost = historyLastMessage?.Chat.AttachedPost;
 
-    var creatorId = historyLastMessage?.Chat?.CreatorId;
-    var receiverId = historyLastMessage?.Chat?.PostUserId;
+    var creatorId = historyLastMessage?.Chat?.Creator?.UserName;
+    var receiverId = historyLastMessage?.Chat?.PostUser?.UserName;
     if (user == receiverId)
     {
         var temp = creatorId;
@@ -62,15 +62,15 @@ else
                         {
 
                             Karma.Models.Messaging.Message m = messages.Last();
-                            string otherUser = (m.Chat.CreatorId == user) ? m.Chat.PostUserId : (m.Chat.CreatorId);
+                            User otherUser = (m.Chat.Creator.UserName == user) ? m.Chat.PostUser : (m.Chat.Creator);
                             string activeClass = (currentChatId == m.Chat.Id) ? "active_chat" : "";
-                            string seen = ((m.Chat.CreatorId == user && m.Chat.IsSeenByCreator == true) || (m.Chat.PostUserId == user && m.Chat.IsSeenByPostUser == true)) ? "" : "font-weight-bold";
+                            string seen = ((m.Chat.Creator.UserName == user && m.Chat.IsSeenByCreator == true) || (m.Chat.PostUser.UserName == user && m.Chat.IsSeenByPostUser == true)) ? "" : "font-weight-bold";
 
 
                             <div class="chat_people @activeClass" id="00@(m.Chat.Id)" onclick="location.href='@($"/Messages?chatId={m.Chat.Id}")'">
-                                <div class="chat_img"> <img src="~/data/UserImages/Default/default.png"> </div>
+                                <div class="chat_img"> <img src="@(otherUser.GetFullImagePath())"> </div>
                                 <div class="chat_ib @seen">
-                                    <p>@otherUser</p>
+                                    <p><a asp-controller="Profile" asp-action="Index" asp-route-id="@otherUser.UserName">@otherUser.UserName</a></p>
                                     <h5>
                                         <a class ="@seen" href="@($"Posts/Details/{m.Chat.AttachedPost.Id}")">@m.Chat.AttachedPost.Title</a>
                                         <span class="chat_date @seen">@m.Date.ToLocalTime()</span>
@@ -120,7 +120,7 @@ else
                                         if (historyPost.State == (int)Karma.Models.Post.PostState.Reserved)
                                         {
                                             string reserveText = "Cancel reservation";
-                                            if (historyPost.ReceiverUserId == historyLastMessage.Chat.CreatorId)
+                                            if (historyPost.ReceiverUserId == historyLastMessage.Chat.Creator.UserName)
                                             {
                                                 <button class="btn btn-trade" onclick="ChangeState(@((int)Karma.Models.Post.PostState.Traded))">
                                                     Complete trade with @(historyPost.ReceiverUserId)
@@ -149,12 +149,12 @@ else
                         @foreach (var m in history ?? Enumerable.Empty<Karma.Models.Messaging.Message>())
                         {
 
-                            bool isReceiver = m.Username != user;
+                            bool isReceiver = m.Sender.UserName != user;
 
                             <div class="@(isReceiver ? "incoming_msg" : "outgoing_msg")">
                                 @if (isReceiver)
                                 {
-                                    <div class="incoming_msg_img"> <img src="~/data/UserImages/Default/default.png" alt=""> </div>
+                                    <div class="incoming_msg_img"> <img src="@(m.Sender.GetFullImagePath())" alt=""> </div>
                                 }
                                 <div class="@(isReceiver ? "received_msg" : "sent_msg")">
                                     @if (isReceiver)
@@ -292,7 +292,7 @@ else
         var parameters = {
             'Post': jsonPost,
             'State': st,
-            'Receiver': "@historyLastMessage?.Chat?.CreatorId"
+            'Receiver': "@historyLastMessage?.Chat?.Creator?.UserName"
         }
 
 
@@ -336,19 +336,37 @@ else
 
 
 <script>
+    var intervalForMessages = 250;
+    var intervalForChats = 1000;
+
     setInterval(function () {
         var isScrolled = false;
-        if (objDiv.scrollHeight <= (objDiv.scrollTop + objDiv.clientHeight)) {
+        var allowedDifference = 50;
+        if (objDiv.scrollHeight <= (objDiv.scrollTop + objDiv.clientHeight) + allowedDifference) {
             isScrolled = true;
         }
-        $("#scrolldown").load(location.href + " #scrolldown>*", function () {
+
+        updateDiv("scrolldown", function () {
             if (isScrolled) {
-                objDiv.scrollTop += 800;
+                objDiv.scrollTop += objDiv.scrollTop;
             }
         });
+    }, intervalForMessages);
 
-    }, 150);
     setInterval(function () {
-        $("#inbox_list").load(location.href + " #inbox_list>*", "");
-    }, 1000);
+        updateDiv("inbox_list", function () { });
+    }, intervalForChats);
+
+    function updateDiv(str, func) {
+        var olddiv = document.getElementById(str).innerHTML;
+        $.get(location.href, function (data) {
+            var newdiv = $(data).find("#" + str)[0].innerHTML;
+            if (olddiv == newdiv) {
+            }
+            else {
+                document.getElementById(str).innerHTML = newdiv;
+                func();
+            }
+        });
+    }
 </script>

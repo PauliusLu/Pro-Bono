@@ -24,7 +24,7 @@ namespace Karma.Models
         [MaxLength(120)]
         public string Description { get; set; }
         [NotMapped]
-        [Display(Name = "Item types")]
+        [Display(Name = "Charity addresses")]
         public List<CharityAddress> CharityAddresses { get; set; }
         [NotMapped]
         [Display(Name = "Item types")]

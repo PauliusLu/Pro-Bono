@@ -32,11 +32,17 @@ namespace Karma.Controllers
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-            string user = User.Identity.Name;
+            User user = _context.User.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
 
-            List<Chat> userChats = await _context.Message.Where(m => m.Username == user || m.Chat.AttachedPost.UserId == user)
-                .Select(m => m.Chat).ToListAsync();
-            List<Message> allMessages = await _context.Message.Where(m => userChats.Contains(m.Chat))
+            List<Chat> userChats = await _context.Message
+                .Include(m => m.Chat.Creator)
+                .Include(m => m.Chat.PostUser)
+                .Where(m => m.Sender == user || m.Chat.AttachedPost.UserId == user.UserName)
+                .Select(m => m.Chat)
+                .ToListAsync();
+            List<Message> allMessages = await _context.Message
+                .Include(m => m.Sender)
+                .Where(m => userChats.Contains(m.Chat))
                 .OrderBy(m => m.Date).Include(m => m.Chat.AttachedPost).ToListAsync();
 
             bool isValidChatId = false;
@@ -82,7 +88,7 @@ namespace Karma.Controllers
                 MarkChatAsSeen(chat, user);
             }
 
-            var userReviews = await _context.UserReview.Where(m => m.CreatorId == user).ToListAsync();
+            var userReviews = await _context.UserReview.Where(m => m.CreatorId == user.UserName).ToListAsync();
             ViewBag.UserReviews = userReviews;
 
             return View(messages);
@@ -132,12 +138,12 @@ namespace Karma.Controllers
             if (ModelState.IsValid)
             {
                 Message message = CreateMessage(m);
-                MarkChatAsNotSeen(message.Chat, message.Username);
+                MarkChatAsNotSeen(message.Chat, message.Sender);
 
                 _context.Add(message);
                 await _context.SaveChangesAsync();
 
-                return new EmptyResult();
+                return StatusCode(204);
             }
             return PartialView(m);
         }
@@ -168,12 +174,13 @@ namespace Karma.Controllers
 
         private Message CreateMessage(CreateMessageModel m)
         {
+            User user = _context.User.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
             Message message = new()
             {
                 Chat = _context.Chat.Find(m.ChatId),
                 Date = DateTime.UtcNow,
                 Text = m.Text,
-                Username = User.Identity.Name
+                Sender = user
             };
 
             return message;
@@ -186,11 +193,11 @@ namespace Karma.Controllers
             public string Receiver { get; set; }
         }
 
-        private void MarkChatAsNotSeen(Chat chat, string userId)
+        private void MarkChatAsNotSeen(Chat chat, User user)
         {
             UpdateChat(chat, delegate (Chat c)
             {
-                if (c.CreatorId == userId)
+                if (c.Creator == user)
                 {
                     c.IsSeenByPostUser = false;
                 }
@@ -201,11 +208,11 @@ namespace Karma.Controllers
             });
         }
 
-        private void MarkChatAsSeen(Chat chat, string userId)
+        private void MarkChatAsSeen(Chat chat, User user)
         {
             UpdateChat(chat, delegate (Chat c)
             {
-                if (c.CreatorId == userId)
+                if (c.Creator == user)
                 {
                     c.IsSeenByCreator = true;
                 }

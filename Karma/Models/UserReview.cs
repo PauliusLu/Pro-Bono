@@ -15,7 +15,9 @@ namespace Karma.Models
         public Post Post { get; set; }
         [Required]
         public string CreatorId { get; set; }
+        public User Creator { get; set; }
         [Required]
+        [Display(Name = "Receiver username")]
         public string ReceiverId { get; set; }
         [Required]
         public int Rating { get; set; }
@@ -29,6 +31,14 @@ namespace Karma.Models
         public UserReview()
         {
 
+        }
+
+        static public float CountRatingAverage(List<UserReview> ratings)
+        {
+            int count = ratings.Count();
+            float sum = ratings.Sum(m => m.Rating);
+
+            return sum == 0 ? 0 : sum / count;
         }
     }
 }

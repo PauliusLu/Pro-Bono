@@ -26,7 +26,7 @@ namespace Karma.Models
         }
 
         public static readonly string ImagesDirName = Path.Combine("data", "PostImages");
-        public static readonly string DefaultImagesDirName = Path.Combine("data", "DefaultPostImages");
+        public static readonly string DefaultImagesDirName = Path.Combine("data", "PostImages", "Default");
 
         [Key]
         public int Id { get; set; }
