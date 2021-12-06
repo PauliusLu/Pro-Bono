@@ -58,9 +58,7 @@ namespace Karma
                     options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             // Adding singleton for Google Maps API
-            var maps = new GoogleMaps();
-            maps.ServiceApiKey = Configuration.GetValue<string>("GoogleMaps:ServiceApiKey");
-            services.AddSingleton<GoogleMaps>(maps);
+            services.AddSingleton<GoogleMaps>(ConfigureGoogleMaps());
 
             // Adding identity
             services.AddIdentity<Karma.Models.User, IdentityRole>()
@@ -139,6 +137,14 @@ namespace Karma
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Post.ImagesDirName));
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Advert.ImagesDirName));
             System.IO.Directory.CreateDirectory(Path.Combine(env.WebRootPath, Karma.Models.Charity.ImagesDirName));
+        }
+
+        private GoogleMaps ConfigureGoogleMaps()
+        {
+            GoogleMaps maps = new GoogleMaps();
+            maps.ServiceApiKey = Configuration.GetValue<string>("GoogleMaps:ServiceApiKey");
+
+            return maps;
         }
     }
 }

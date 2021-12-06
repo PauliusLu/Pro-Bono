@@ -83,20 +83,20 @@ namespace Karma.Controllers
 
         public async Task<List<Address>> GetCharityLocales(Charity charity)
         {
-            var addresses = new List<Address>();
-            var charityAddresses = GetCharityAddresses(charity).Result;
-            var serviceApiKey = _googleMaps.ServiceApiKey;
+            List<Address> addresses = new List<Address>();
+            List<CharityAddress> charityAddresses = GetCharityAddresses(charity).Result;
+            string serviceApiKey = _googleMaps.ServiceApiKey;
 
             if (serviceApiKey != null)
             {
                 ViewBag.ApiKey = serviceApiKey; 
-                var geocoder = new GoogleGeocoder(serviceApiKey);
+                GoogleGeocoder geocoder = new GoogleGeocoder(serviceApiKey);
 
-                foreach (var address in charityAddresses)
+                foreach (CharityAddress address in charityAddresses)
                 {
-                    var fullAddress = address.GetFullAddress();
-                    var googleAddress = await geocoder.GeocodeAsync(fullAddress);
-                    var first = googleAddress.FirstOrDefault();
+                    string fullAddress = address.GetFullAddress();
+                    IEnumerable<GoogleAddress> googleAddress = await geocoder.GeocodeAsync(fullAddress);
+                    GoogleAddress first = googleAddress.FirstOrDefault();
 
                     if(first != null)
                         addresses.Add(first);

@@ -41,12 +41,12 @@ namespace Karma.Models
 
         public String GetFullAddress()
         {
-            var streetAndHouseNumber = string.Join(" ", this.Street, this.HouseNumber);
+            string streetAndHouseNumber = string.Join(" ", Street, HouseNumber);
 
-            var fullAddress = string.Join(", ", this.Country, this.City, streetAndHouseNumber);
+            string fullAddress = string.Join(", ", Country, City, streetAndHouseNumber);
 
-            if (!string.IsNullOrEmpty(this.PostCode))
-                fullAddress = string.Join(", ", fullAddress, this.PostCode);
+            if (!string.IsNullOrEmpty(PostCode))
+                fullAddress = string.Join(", ", fullAddress, PostCode);
 
             return fullAddress;
         }
