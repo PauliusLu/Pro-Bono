@@ -149,7 +149,7 @@ namespace Karma.Controllers
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !String.IsNullOrEmpty(m.Text))
             {
                 Message message = _messageService.CreateMessage(_context, m, User.Identity.Name);
                 MarkChatAsNotSeen(message.Chat, message.Sender);
