@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -371,49 +372,42 @@ namespace Karma.Controllers
         public async Task<IActionResult> ViewReports(int? page, string sorting, string? aggr)
         {
             const int ReportsPerPage = 6;
+            ReportDataModel reportsDM = GetFilteredReports(page, sorting, aggr, ReportsPerPage, ViewData);
+            return View(reportsDM);
+        }
+
+        private ReportDataModel GetFilteredReports(int? page, string sorting, string aggr, int reportsPerPage, ViewDataDictionary viewData)
+        {
             var reports = _context.Report.ToList();
             var posts = _context.Post.ToList();
             bool filter = false;
 
             ReportStates rptState = ReportStates.Open;
+
             if (sorting != null)
             {
                 filter = true;
-                ViewData["filter"] = true;
+                viewData["filter"] = true;
                 rptState = (ReportStates)Enum.Parse(typeof(ReportStates), sorting);
             }
 
-            if (aggr == "on")
+            var reportsDM = new ReportDataModel
             {
-                //Grouped reports
-                var grpReports = (from report in reports
-                                  where filter == false || report.ReportState == rptState
-                                  group report by report.PostId)
-                                    .Skip(ReportsPerPage * ((page ?? 1) - 1))
-                                    .Take(ReportsPerPage);
+                page = page,
+                sorting = sorting,
+                aggr = aggr
+            };
 
-                //Aggregated reports
-                grpReports.ForEach((group) =>
-                {
-                    group.First().ReportMessage = group.Select(a => a.ReportMessage)
-                         .Aggregate((old, next) => { return old + "\n" + next; });
-                });
-                
-                ViewData["grpReports"] = grpReports.Select(m => m).ToList();
-                ViewData["aggr"] = true;
-                var reportsAndPosts = grpReports.Select(m => m.First()).ToList().Join(posts, m => m.PostId, p => p.Id, (m, p) => { return new { post = p, report = m }; });
-                ViewData["reportsAndPosts"] = reportsAndPosts.Select(m => m).ToList();
-                var reportsDMg = new ReportDataModel
-                {
-                    Reports = reportsAndPosts.Select(m => m.report).ToList(),
-                    page = page,
-                    sorting = sorting,
-                    aggr = aggr
-                };
-                return View(reportsDMg);
 
-            }
+            if (aggr == "on")
+                reportsDM.Reports = GetAggregatedReports(reports, posts, reportsPerPage, rptState, filter, page, viewData);
+            else
+                reportsDM.Reports = GetPagedReports(reports, posts, reportsPerPage, rptState, filter, page, viewData);
+            return reportsDM;
+        }
 
+        private List<Report> GetPagedReports(List<Report> reports, List<Post> posts, int reportsPerPage, ReportStates rptState, bool filter, int? page, ViewDataDictionary viewData)
+        {
             //Paged reports
             var pgdReports = (from report in reports
                               join pst in posts
@@ -424,20 +418,42 @@ namespace Karma.Controllers
                                   post = pst,
                                   report = report
                               })
-                              .Skip(ReportsPerPage * ((page ?? 1) - 1))
-                              .Take(ReportsPerPage);
+                              .Skip(reportsPerPage * ((page ?? 1) - 1))
+                              .Take(reportsPerPage);
 
             ViewData["reportsAndPosts"] = pgdReports.Select(m => m).ToList();
-
-            var reportsDM = new ReportDataModel
-            {
-                Reports = /*reports,*/ pgdReports.Select(m => m.report).ToList(),
-                page = page,
-                sorting = sorting,
-                aggr = aggr
-            };
-            return View(reportsDM);
+            return pgdReports.Select(m => m.report).ToList();
         }
 
+        private List<Report> GetAggregatedReports(List<Report> reports, List<Post> posts, int reportsPerPage, ReportStates rptState, bool filter, int? page, ViewDataDictionary viewData)
+        {
+            //Grouped reports
+            var grpReports = (from report in reports
+                              where filter == false || report.ReportState == rptState
+                              group report by report.PostId)
+                                .Skip(reportsPerPage * ((page ?? 1) - 1))
+                                .Take(reportsPerPage);
+
+            //Aggregated reports
+            grpReports.ForEach((group) =>
+            {
+                group.First().ReportMessage = group.Select(a => a.ReportMessage)
+                     .Aggregate((old, next) => { return old + "\n" + next; });
+            });
+
+            ViewData["grpReports"] = grpReports.Select(m => m).ToList();
+            ViewData["aggr"] = true;
+            var reportsAndPosts = grpReports.Select(m => m.First())
+                                            .ToList()
+                                            .Join(posts,
+                                                  m => m.PostId,
+                                                  p => p.Id,
+                                                  (m, p) => { 
+                                                      return new { post = p, report = m }; 
+                                                  });
+            ViewData["reportsAndPosts"] = reportsAndPosts.Select(m => m)
+                                                         .ToList();
+            return reportsAndPosts.Select(m => m.report).ToList();
+        }
     }
 }
