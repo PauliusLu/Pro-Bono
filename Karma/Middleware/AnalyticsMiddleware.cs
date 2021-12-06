@@ -68,7 +68,7 @@ namespace Karma.Middleware
                 .GetMetadata<ControllerActionDescriptor>();
         }
 
-        public string formatLogMessage(string user, string isAuth, string ip, string path, string? controller, string? action)
+        public string formatLogMessage(string user, string isAuth, string ip, string path, string controller, string action)
         {
             string controllerString = (controller == null) ? "" : $"\tController: {controller}\n";
             string actionString = (action == null) ? "" : $"\tAction: {action}\n";
