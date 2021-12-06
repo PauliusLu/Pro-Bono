@@ -399,11 +399,15 @@ namespace Karma.Controllers
                 aggr = aggr
             };
 
-
             if (aggr == "on")
+            {
                 reportsDM.Reports = GetAggregatedReports(reports, posts, reportsPerPage, rptState, filter, page, viewData);
+            }
             else
+            {
                 reportsDM.Reports = GetPagedReports(reports, posts, reportsPerPage, rptState, filter, page, viewData);
+            }
+
             return reportsDM;
         }
 
@@ -455,79 +459,6 @@ namespace Karma.Controllers
             ViewData["reportsAndPosts"] = reportsAndPosts.Select(m => m)
                                                          .ToList();
             return reportsAndPosts.Select(m => m.report).ToList();
-        }
-
-        [HttpGet]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> ViewReports(int? page, string sorting, string? aggr)
-        {
-            const int ReportsPerPage = 6;
-            var reports = _context.Report.ToList();
-            var posts = _context.Post.ToList();
-            bool filter = false;
-
-            ReportStates rptState = ReportStates.Open;
-            if (sorting != null)
-            {
-                filter = true;
-                ViewData["filter"] = true;
-                rptState = (ReportStates)Enum.Parse(typeof(ReportStates), sorting);
-            }
-
-            if (aggr == "on")
-            {
-                //Grouped reports
-                var grpReports = (from report in reports
-                                  where filter == false || report.ReportState == rptState
-                                  group report by report.PostId)
-                                    .Skip(ReportsPerPage * ((page ?? 1) - 1))
-                                    .Take(ReportsPerPage);
-
-                //Aggregated reports
-                grpReports.ForEach((group) =>
-                {
-                    group.First().ReportMessage = group.Select(a => a.ReportMessage)
-                         .Aggregate((old, next) => { return old + "\n" + next; });
-                });
-                
-                ViewData["grpReports"] = grpReports.Select(m => m).ToList();
-                ViewData["aggr"] = true;
-                var reportsAndPosts = grpReports.Select(m => m.First()).ToList().Join(posts, m => m.PostId, p => p.Id, (m, p) => { return new { post = p, report = m }; });
-                ViewData["reportsAndPosts"] = reportsAndPosts.Select(m => m).ToList();
-                var reportsDMg = new ReportDataModel
-                {
-                    Reports = reportsAndPosts.Select(m => m.report).ToList(),
-                    page = page,
-                    sorting = sorting,
-                    aggr = aggr
-                };
-                return View(reportsDMg);
-
-            }
-
-            //Paged reports
-            var pgdReports = (from report in reports
-                              join pst in posts
-                              on report.PostId equals pst.Id
-                              where filter == false || report.ReportState == rptState
-                              select new
-                              {
-                                  post = pst,
-                                  report = report
-                              })
-                              .Skip(ReportsPerPage * ((page ?? 1) - 1))
-                              .Take(ReportsPerPage);
-
-            ViewData["reportsAndPosts"] = pgdReports.Select(m => m).ToList();
-
-            var reportsDM = new ReportDataModel
-            {
-                Reports = /*reports,*/ pgdReports.Select(m => m.report).ToList(),
-                page = page,
-                sorting = sorting,
-                aggr = aggr
-            };
-            return View(reportsDM);
         }
 
     }
