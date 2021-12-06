@@ -160,7 +160,7 @@ namespace Karma.Controllers
 
             if (pm.Post.State == (int)Models.Post.PostState.Traded)
             {
-                int karmaPoints = 3;
+                int karmaPoints = Points.TradedPostValue;
                 var user = _context.User.Where(u => u.UserName == pm.Post.UserId).FirstOrDefault();
                 user.KarmaPoints += karmaPoints;
                 _context.Update(user);
