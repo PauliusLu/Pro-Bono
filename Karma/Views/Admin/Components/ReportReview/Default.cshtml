@@ -3,33 +3,50 @@
 @{
     ViewData["Title"] = "Review reports";
 }
-
+<form asp-controller="Admin" asp-action="ViewReports" method="get">
+    <div>
+        <select class="d-inline" name="sorting" asp-items="Html.GetEnumSelectList<Report.ReportStates>()">
+        </select>
+        <div class="border border-secondary mt-0 m-0 p-1 d-inline">
+            <input type="checkbox" name="aggr" />
+            <label for="aggr">Group reports</label>
+        </div>
+        <input type="submit" value="Search" />
+    </div>
+</form>
 @if (Model == null)
 {
     <h3>You have currently reviewed reports.</h3>
 }
 else
 {
-    <div class="post-cards container-fluid content-row">
-        <div class="row">
-            @foreach (var report in Model)
-            {
-                <div class="col col-12 col-lg-4">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            Reported by: <br />
-                            @report.ReporterId
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">@{
+<div class="post-cards container-fluid content-row">
+    @{
+    int count = 0;
+    <div class="row">
+        @foreach (var report in Model)
+        {
+            count++;
+            <div class="col col-12 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Reported by: <br />
+                        @report.ReporterId
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @{
                                 if (String.IsNullOrWhiteSpace(report.ReportMessage))
                                 {
                                     @("No message provided.");
-                                } else {
+                                }
+                                else
+                                {
                                     @(Html.DisplayFor(m => report.ReportMessage));
                                 }
-                            }</h5>
-                            <p class="mb-1 d-inline @switch (report.ReportState)
+                            }
+                        </h5>
+                        <p class="mb-1 d-inline @switch (report.ReportState)
                             {
                                 case Report.ReportStates.Open:
                                     @("bg-info");
@@ -45,15 +62,24 @@ else
                                     break;
                             }
                             rounded-pill p-1 pl-2 pr-2 card-text">
-                                @Html.DisplayFor(model => report.ReportState)
-                            </p>
-                            <br />
-                            <br />
-                            <a asp-controller="Admin" asp-action="ReportReview" asp-route-reportId=@report.Id class="btn btn-primary">Review report</a>
-                        </div>
+                            @Html.DisplayFor(model => report.ReportState)
+                        </p>
+                        <br />
+                        <br />
+                        <a asp-controller="Admin" asp-action="ReportReview" asp-route-reportId=@report.Id class="btn btn-primary">Review report</a>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
+    @if (ViewData["reportPage"] != null && (int)ViewData["reportPage"] != 1)
+    {
+        <a asp-controller="Admin" asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.ReportReview" asp-route-reportPage=@((int)ViewData["reportPage"] - 1) class="btn btn-success">Previous Page</a>
+    }
+    if (count != 0 && count == 6)
+    {
+        <a asp-controller="Admin" asp-action="SwitchToTabs" asp-route-adminTab="@Karma.Enums.AdminTab.ReportReview" asp-route-reportPage=@((int)(ViewData["reportPage"] ?? 1) + 1) class="btn btn-success">Next Page</a>
+    }
+    }
+</div>
 }

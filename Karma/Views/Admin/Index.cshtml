@@ -28,7 +28,7 @@
         @await Component.InvokeAsync(@Karma.Enums.AdminTab.CharityReview.ToString());
         break;
     case Enums.AdminTab.ReportReview:
-        @await Component.InvokeAsync(@Karma.Enums.AdminTab.ReportReview.ToString());
+        @await Component.InvokeAsync(@Karma.Enums.AdminTab.ReportReview.ToString(), ViewData["reportPage"]);
         break;
     default:
         break;

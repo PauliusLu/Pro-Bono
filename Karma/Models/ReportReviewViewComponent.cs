@@ -17,10 +17,11 @@ namespace Karma.Models
             _context = context;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(int? page)
         {
-            var dbReportList = await _context.Report.ToListAsync();
-
+            
+            var dbReportList = await _context.Report.Skip(((page ?? 1) - 1)*6).Take(6).ToListAsync();
+            ViewData["reportPage"] = page ?? 1;
             dbReportList.Sort((Report a, Report b) =>
             {
                 return a.ReportState.CompareTo(b.ReportState);
