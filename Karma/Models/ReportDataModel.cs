@@ -10,7 +10,7 @@ namespace Karma.Models
         public List<Report> Reports { get; set; }
         public int? page { get; set; }
         public string sorting { get; set; }
-        public string? aggr { get; set; }
+        public string aggr { get; set; }
 
         public static T Cast<T>(T typeHolder, Object x)
         {
