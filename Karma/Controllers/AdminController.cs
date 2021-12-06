@@ -39,14 +39,14 @@ namespace Karma.Controllers
             _iWebHostEnv = webHostEnv;
         }
 
-        public IActionResult Index(AdminTabViewModel tabViewModel)
+        public IActionResult Index(AdminTabViewModel tabViewModel, int? reportPage = null)
         {
             tabViewModel ??= new AdminTabViewModel(Enums.AdminTab.Users);
-            
+            ViewData["reportPage"] = reportPage;
             return View(tabViewModel);
         }
 
-        public IActionResult SwitchToTabs(Karma.Enums.AdminTab adminTab)
+        public IActionResult SwitchToTabs(Karma.Enums.AdminTab adminTab, int? reportPage = null)
         {
             var tabViewModel = new AdminTabViewModel();
 
@@ -66,7 +66,7 @@ namespace Karma.Controllers
                     break;
             }
 
-            return RedirectToAction(nameof(AdminController.Index), tabViewModel);
+            return RedirectToAction(nameof(AdminController.Index), new { ActiveTab = tabViewModel.ActiveTab, reportPage });
         }
 
         public IActionResult CreateRole()

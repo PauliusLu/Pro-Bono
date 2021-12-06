@@ -11,14 +11,14 @@
         </select>
         <div class="border border-secondary mt-0 m-0 p-1 d-inline">
             <input type="checkbox" name="aggr" />
-            <label for="aggr">Merge together</label>
+            <label for="aggr">Group Reports</label>
         </div>
         <input type="submit" value="Search" />
     </div>
 </form>
 @if (Model.Reports.Count == 0)
 {
-    @if (Model.page != null || Model.page != 1)
+    @if (Model.page != null && Model.page != 1)
     {
         <h3>No More Reports Found. Go back to previous page.</h3>
         <a asp-controller="Admin" asp-action="ViewReports" asp-route-page=@(Model.page - 1) asp-route-sorting=@Model.sorting asp-route-aggr=@Model.aggr class="btn btn-success">Previous Page</a>
