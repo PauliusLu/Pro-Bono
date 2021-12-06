@@ -3,6 +3,7 @@
 @{
     var rating = Math.Round(Model.RatingAverage);
     var preciseRating = String.Format("{0:0.00}", Model.RatingAverage);
+    int points = Model.currentUser.KarmaPoints;
 }
 
 <div class="card">
@@ -11,22 +12,35 @@
             <img src="~/@Model.currentUser.GetFullImagePath()" alt="Admin" class="rounded-circle" width="150">
             <div class="mt-3">
                 <h4>@Model.currentUser.Name @Model.currentUser.Surname</h4>
-                <p class="text-secondary mb-1">Karma</p>
+                <p class="text-secondary mb-1">Karma: @points points</p>
+                <span data-toggle="popover" data-trigger="hover"
+                      data-content="@Points.TradedPostValue points - for each successful trade.">
+                    <i class="bi bi-question-circle"></i>
+                </span>
+                <div class="progress">
+                    <div class="progress-bar bg-info" role="progressbar" style="width: @(points)%;" aria-valuenow="@points" aria-valuemin="10" aria-valuemax="100"></div>
+                </div>
                 <p class="text-muted font-size-sm">@Model.currentUser.UserName</p>
                 @if (Model.RatingAverage != 0)
                 {
-                for (int i = 0; i < 5; ++i, --rating)
-                {
-                <span class="fa fa-star @(rating > 0 ? " checked" : "" )"></span>
-                }
-                <p class="text-muted">@preciseRating/5.00</p>
-                <p><a asp-controller="UserReviews" asp-action="Index" asp-route-id="@Model.currentUser.UserName">View reviews</a></p>
+                    for (int i = 0; i < 5; ++i, --rating)
+                    {
+                        <span class="fa fa-star @(rating > 0 ? " checked" : "" )"></span>
+                    }
+                    <p class="text-muted">@preciseRating/5.00</p>
+                    <p><a asp-controller="UserReviews" asp-action="Index" asp-route-id="@Model.currentUser.UserName">View reviews</a></p>
                 }
                 else
                 {
-                <p class="text-primary font-size-sm">No reviews</p>
+                    <p class="text-primary font-size-sm">No reviews</p>
                 }
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+</script>
