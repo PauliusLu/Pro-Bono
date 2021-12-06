@@ -14,7 +14,14 @@ using Karma.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using System.IO;
+using Serilog;
 using Microsoft.AspNetCore.Authorization;
+using Karma.Middleware;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Extras.DynamicProxy;
+using Karma.Interceptor;
+using Karma.Services;
 
 namespace Karma
 {
@@ -40,11 +47,32 @@ namespace Karma
             System.IO.File.WriteAllText(path, types);
         }
 
+        public ILifetimeScope AutofacContainer { get; private set; }
         public IConfiguration Configuration { get; }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            // Register your own things directly with Autofac here. Don't
+            // call builder.Populate(), that happens in AutofacServiceProviderFactory
+            // for you.
+
+            builder.RegisterType<MessageService>().As<IMessageService>()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(MethodLog))
+                .InstancePerDependency();
+
+            builder.Register(c => new MethodLog());
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Logger = new LoggerConfiguration()
+             .WriteTo.File("logs/Log.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
+            services.AddSingleton(x => Log.Logger);
+
             // Adding localization services
             services.AddLocalization(option => { option.ResourcesPath = "Resources"; });
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
@@ -103,6 +131,9 @@ namespace Karma
                 app.UseStatusCodePagesWithRedirects("Error/{0}");
                 app.UseHsts();
             }
+
+            this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -118,6 +149,7 @@ namespace Karma
                 .AddSupportedUICultures(supportedCultures);
 
             app.UseRequestLocalization(localizationOptions);
+            app.UseAnalyticsMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

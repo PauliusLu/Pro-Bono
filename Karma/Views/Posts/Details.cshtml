@@ -110,18 +110,15 @@
             },
             confirmButtonColor: '#05718f',
             confirmButtonText: 'Send',
-            showCancelButton: true
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Your message is empty!'
+                }
+            }
         });
         if (text) {
             SendMessage(text);
-        }
-        else {
-            Swal.fire({
-                title: 'Could not send a message!',
-                text: 'Your message is empty.',
-                icon: 'error',
-                confirmButtonColor: '#05718f'
-            });
         }
     };
 

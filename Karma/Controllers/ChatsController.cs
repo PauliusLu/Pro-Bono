@@ -8,16 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using Karma.Data;
 using Karma.Models.Messaging;
 using Karma.Models;
+using Karma.Services;
 
 namespace Karma.Controllers
 {
     public class ChatsController : Controller
     {
         private readonly KarmaContext _context;
+        private readonly IMessageService _messageService;
 
-        public ChatsController(KarmaContext context)
+        public ChatsController(KarmaContext context, IMessageService messageService)
         {
             _context = context;
+            _messageService = messageService;
         }
 
         // GET: Chats/Create
@@ -67,7 +70,7 @@ namespace Karma.Controllers
                     .Where(c => c.AttachedPost.Id == chatData.PostId && c.Creator.UserName == user).ToListAsync();
                 Chat chat = chats?.FirstOrDefault();
 
-                chat = CreateChat(chatData, chat);
+                chat = _messageService.CreateChat(_context, chatData, user, chat);
                 if (chat != null)
                 {
                     return RedirectToAction("Index", "Messages", new { chatId = chat.Id });
@@ -101,38 +104,6 @@ namespace Karma.Controllers
             string count = UnseenMessagesNumber(userId);
             ViewBag.Count = count;
             return View();
-        }
-
-
-        private Chat CreateChat(CreateChatModel chatData, Chat chat = null)
-        {
-            User creator = _context.User.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
-            if (chat == null)
-            {
-                Post post = _context.Post.Find(chatData.PostId);
-                User postUser = _context.User.Where(u => u.UserName == post.UserId).FirstOrDefault();
-
-                chat = new(0, post, Chat.ChatState.Open, creator, postUser, true, false);
-                _context.Add(chat);
-            }
-            else
-            {
-                chat.IsSeenByPostUser = false;
-            }
-
-
-
-            Message message = new()
-            {
-                Chat = chat,
-                Date = DateTime.UtcNow,
-                Text = chatData.Text,
-                Sender = creator
-            };
-
-            _context.Add(message);
-            _context.SaveChangesAsync();
-            return chat;
         }
 
         private int UnseenMessagesCount(string userId)
