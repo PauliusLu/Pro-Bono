@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = "Profile";
-    int points = Model.currentUser.KarmaPoints;
 
+    int points = Model.currentUser.KarmaPoints;
     var rating = Math.Round(Model.RatingAverage);
     var preciseRating = String.Format("{0:0.00}", Model.RatingAverage);
 }
@@ -20,35 +20,9 @@
         <div class="main-body">
             <div class="row gutters-sm">
                 <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex flex-column align-items-center text-center">
-                                <img src="~/@Model.currentUser.GetFullImagePath()" alt="Admin" class="rounded-circle" width="150">
-                                <div class="mt-3">
-                                    <h4>@Model.currentUser.Name @Model.currentUser.Surname</h4>
-                                    <p class="text-secondary mb-1">Karma: @points points</p>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: @(points)%;" aria-valuenow="@points" aria-valuemin="10" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="text-muted font-size-sm">@Model.currentUser.UserName</p>
-                                    @if (Model.RatingAverage != 0)
-                                    {
-                                        for (int i = 0; i < 5; ++i, --rating)
-                                        {
-                                            <span class="fa fa-star @(rating > 0 ? "checked" : "")"></span>
-                                        }
-                                        <p class="text-muted">@preciseRating/5.00</p>
-                                        <p><a asp-controller="UserReviews" asp-action="Index" asp-route-userId="@Model.currentUser.UserName">View reviews</a></p>
-                                    }
-                                    else
-                                    {
-                                        <p class="text-primary font-size-sm">No reviews</p>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <partial name="~/Views/Profile/ProfileBox.cshtml" for="@Model">
                 </div>
+
                 <div class="col-md-8">
                     <div class="card mb-3">
                         <div class="card-body">
@@ -75,12 +49,20 @@
                                 <div class="col-sm-3">
                                     <h6 class="mb-0">Description</h6>
                                 </div>
-                                <div style="height: 66px; overflow: hidden; overflow-y: scroll" class="col-sm-9 text-secondary">
+                                <div style="height: 66px; overflow: hidden; overflow-y: scroll" rows="6" class="col-sm-9 text-secondary">
                                     @Model.currentUser.Description
                                 </div>
                             </div>
                         </div>
                     </div>
+                    @if (Model.currentUser.UserName == User.Identity.Name)
+                    {
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a class="btn btn-info" asp-controller="Profile" asp-action="Edit" asp-route-id="@Model.currentUser.UserName">Edit</a>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

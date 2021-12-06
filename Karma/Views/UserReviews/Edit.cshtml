@@ -37,7 +37,8 @@
                 </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" />  |
+                <a asp-action="Delete" asp-controller="UserReviews" asp-route-id="@Model.Id">Delete your review</a>
             </div>
         </form>
     </div>
