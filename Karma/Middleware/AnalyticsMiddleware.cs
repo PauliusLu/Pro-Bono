@@ -5,11 +5,12 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Karma.Middleware
 {
-    // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class AnalyticsMiddleware
     {
         private readonly RequestDelegate _next;
@@ -33,14 +34,30 @@ namespace Karma.Middleware
                                           context.Request.Path,
                                           controller, action);
 
-
-            await _next(context);
+            try
+            {
+                await _next(context);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e, $"Failure: {log}\n");
+                await HandleException(context);
+            }
 
             // Avoid logging multiple message GET requests
             if (action == "Index" && controller == "Messages")
                 return ;
 
             _logger.Information(log);
+        }
+
+        private Task HandleException(HttpContext context)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            string errorType = "Something is wrong with the website";
+
+            return context.Response.WriteAsync(new {Message = errorType}.ToString());
         }
 
         public ControllerActionDescriptor getDescriptor(HttpContext context)
